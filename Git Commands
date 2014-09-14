@@ -1,4 +1,4 @@
-LINUX commands:
+LINUX/UNIX commands:
 
 pwd 
 	lists present working directory
@@ -14,8 +14,6 @@ mkdir [directory_name]
 
 touch [file.extention]
 	creates a file
-
-text expander
 
 GIT Commands:
 
