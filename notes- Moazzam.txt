@@ -1,0 +1,97 @@
+LINUX commands:
+
+pwd 
+	lists present working directory
+
+ls
+	directory listing
+
+cd
+	change directory
+
+mkdir [directory_name]
+	make new directory with name directory_name
+
+touch [file.extention]
+	creates a file
+
+text expander
+
+GIT Commands:
+
+git init
+	Used to create a new git repository
+
+git status
+	Tells us the status of our working directory
+	Compares the difference between working directory and staging area assuming the file hasnt been added yet.
+	After adding it, it shows the difference between the staging and the repo.
+
+.gitignore
+	Tells git that it should completely ignore a certain file
+
+git add [file/folder]
+	Tells git to start tracking specific files or folders
+
+git commit
+	when we commit, the default file editior opens up and asks for a log message. Saving and quitting would commit the changes that we made.
+
+git log
+	Shows us all the commits that we made
+
+git log --oneline
+	shows us the log in one line form
+
+git diff <old> <new>
+	Shows us what has changed between any two commits
+
+git diff
+	Shows us what has changed between our working directory and our staging area
+
+git add -p 
+	 Lets us selectively stage changes
+	 (p here stands for patch)
+	 we would go through every hunk(something like chunk) but by bit and asks us if we wish to commit it
+
+
+
+git reset --hard
+	Deletes the changes between the staging and the a commit. Use diff before executing this command. No way to retrieve any of the things deleted this way. it also directly modifies the text file...
+
+git checkout <7 digit ID>
+git checkout <branch/commit/etc>
+	goes back in time to an older commit. The data is shown in the text file.
+	To go back to the latest commit, git checkout master
+
+HEAD is a label for the commit that we are currently at
+
+git revert <commit ID>
+	Reverts the commit by making a reverse commit, reverses all things done in the most recent commit. 
+	HEAD may be used as it is the pointer for the most recent commit.
+
+Branching in GIT
+git branch <newBranchName>
+	creates a new branch
+
+git checkout <branch>
+	helps us move into the other branch
+
+Branches - parallel universess where we can work on different things in isolation
+
+git branch
+	gives a list of all the branches in the repository
+
+git merge <branchName>
+	merges the branch specified with the master
+
+git remote add origin [URL]
+	Adds a git remote of the name origin
+	
+git pull [origin] [master]
+	Pulls from origin ( name of the server )  and into master ( name of the local repository).
+
+git push [remote ] [branch]
+	pushes commuts on [branch] to [remote] sever
+
+git clone [URL]
+	clones a copy of the URL 
