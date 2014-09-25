@@ -1,4 +1,12 @@
 //This is how we roll
+/* Epiphany Engine v0.1 alpha release
+ * Contains basic functionality to CRUD as well as Storage. 
+ * More details about the methods will be added soon
+ * 
+ * @author Mozzaam & Wei Yang
+ */
+
+
 import java.util.*;
 import java.io.*;
 
@@ -7,14 +15,15 @@ public class Logic {
 	public static main void(String[] args) {
 	ArrayList<ArrayList<Task>> EpiphanyMain = new ArrayList<ArrayList<Task>>();
 	
+	
+	
+	
+	
 	}
+	
 }
 
-class EpiphanyLogicFunctions {
-	
-	
 
-}
 
 
 class Task {
