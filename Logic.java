@@ -3,14 +3,14 @@
  * Contains basic functionality to CRUD as well as Storage. 
  * More details about the methods will be added soon
  * 
- * @author Mozzaam & Wei Yang
+ * @author Moazzam & Wei Yang
  */
-
+// Display search and project managemnt MOAZZAM
 
 import java.util.*;
 import java.io.*;
 
-public class Logic {
+public class Ephiphany {
 	// EpiphanyMain contains all the current projects which is stored in an array List
 	public static main void(String[] args) {
 	ArrayList<ArrayList<Task>> EpiphanyMain = new ArrayList<ArrayList<Task>>();
