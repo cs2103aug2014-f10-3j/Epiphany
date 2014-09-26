@@ -1,4 +1,4 @@
-import java.util.TreeSet;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.*;
 
@@ -8,7 +8,7 @@ public class EpiphanyInterpreter {
 		private static final String MESSAGE_COMMAND_PROMPT = "command: ";
 		private static final String REGEX_ADD_COMMAND = ".*\\s(by|on)\\s.*";
 		private static final String REGEX_SPLIT_ADD_COMMAND = "\\s(by|on)\\s(?!.*\\s(by|on)\\s)";
-		private static final TreeSet<String> actionWords = new TreeSet<String>();
+		private static final ArrayList<String> actionWords = new ArrayList<String>();
 		
 		/**
 		 * This is the main function which dictates the flow of the program. All the functionality is
@@ -22,7 +22,7 @@ public class EpiphanyInterpreter {
 		}
 
 		private void populateActionWords() throws FileNotFoundException{
-			File dict = new File("wordlist.txt");
+			File dict = new File("dictionary.txt");
 			Scanner dictScan = new Scanner(dict);
 			while(dictScan.hasNextLine()){
 				actionWords.add(dictScan.nextLine());
