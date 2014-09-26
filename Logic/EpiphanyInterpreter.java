@@ -1,11 +1,13 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 
 public class EpiphanyInterpreter {
 	///all the string constants that are involved in displaying things to the user.
 		private static final String MESSAGE_COMMAND_PROMPT = "command: ";
-		private static final String REGEX_ADD_COMMAND = ".*(by|on).*";
-		private static final String REGEX_SPLIT_ADD_COMMAND = ".(by|on).(?!.*.(by|on).)";
+		private static final String REGEX_ADD_COMMAND = ".*\\s(by|on)\\s.*";
+		private static final String REGEX_SPLIT_ADD_COMMAND = "\\s(by|on)\\s(?!.*\\s(by|on)\\s)";
+		private static final ArrayList<String> actionWords = new ArrayList<String>();
 		
 		/**
 		 * This is the main function which dictates the flow of the program. All the functionality is
@@ -14,9 +16,25 @@ public class EpiphanyInterpreter {
 		 */
 		public static void main(String[] args) {
 			EpiphanyInterpreter obj = new EpiphanyInterpreter();	
+			obj.populateActionWords();
 			obj.acceptUserInputUntilExit();
 		}
 
+		private void populateActionWords(){
+			actionWords.add("remember");
+			actionWords.add("call");
+			actionWords.add("finish");
+			actionWords.add("do");
+			actionWords.add("complete");
+			actionWords.add("buy");
+			actionWords.add("visit");
+			actionWords.add("watch");
+			actionWords.add("meet");
+			actionWords.add("read");
+			actionWords.add("revise");
+			actionWords.add("go");
+			actionWords.add("study");
+		}
 		/**
 		 * This method accepts the user inputs until the 'exit' command is entered. None of the actual
 		 * operations are carried out in this function - all the operations are left to the 'route' function.
@@ -34,23 +52,53 @@ public class EpiphanyInterpreter {
 		}
 
 		private String interpretCommand(String userInput) {
-			if(userInput.matches("(display|Display|view|View).*")){
+			if(userInput.matches("(display|view).*")){
 				return interpretDisplayCommand(userInput);
 			} else if(userInput.equals("exit")) {
 				return exitProgram();
-			} else if(userInput.matches(REGEX_ADD_COMMAND)) { 
+			} else if(userInput.matches("(search|find).*")) {
+				return interpretSearchCommand();
+			} else { 
 				return interpretAddCommand(userInput);
-			} else {
-				return "invalid command";
-			}
+			} 
+		}
+
+		private String interpretSearchCommand() {
+			// TODO Auto-generated method stub
+			return "search command";
 		}
 
 		private String interpretAddCommand(String userInput) {
-			// TODO Auto-generated method stub
+			if(userInput.matches(REGEX_ADD_COMMAND)){
 			String[] tokens = userInput.split(REGEX_SPLIT_ADD_COMMAND);
-			showToUser(tokens[0]);
-			showToUser(tokens[1]);
+			interpretTask(tokens[0]);
+			interpretDate(tokens[1]);
+			} else {
+				//Gibberish or single line command
+				if(userInput.contains(" ") && actionWords.contains(userInput.split(" ")[0])){
+					// possibly a single line command
+						return userInput;
+				
+				}
+				// else gibberish
+				else{
+					return "do you even english bro?";
+				}
+			}
+			// TODO Auto-generated method stub
 			return "regex found";
+		}
+
+		private void interpretTask(String string) {
+			// TODO Auto-generated method stub
+			showToUser(string);
+			
+		}
+
+		private void interpretDate(String string) {
+			// TODO Auto-generated method stub
+			showToUser(string);
+			
 		}
 
 		private String exitProgram() {
