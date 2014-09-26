@@ -1,5 +1,6 @@
-import java.util.ArrayList;
+import java.util.TreeSet;
 import java.util.Scanner;
+import java.io.*;
 
 
 public class EpiphanyInterpreter {
@@ -7,20 +8,26 @@ public class EpiphanyInterpreter {
 		private static final String MESSAGE_COMMAND_PROMPT = "command: ";
 		private static final String REGEX_ADD_COMMAND = ".*\\s(by|on)\\s.*";
 		private static final String REGEX_SPLIT_ADD_COMMAND = "\\s(by|on)\\s(?!.*\\s(by|on)\\s)";
-		private static final ArrayList<String> actionWords = new ArrayList<String>();
+		private static final TreeSet<String> actionWords = new TreeSet<String>();
 		
 		/**
 		 * This is the main function which dictates the flow of the program. All the functionality is
 		 * abstracted out to other methods.
 		 * @param args which contains the file name (at index 0) entered by the user.
 		 */
-		public static void main(String[] args) {
+		public static void main(String[] args) throws FileNotFoundException {
 			EpiphanyInterpreter obj = new EpiphanyInterpreter();	
 			obj.populateActionWords();
 			obj.acceptUserInputUntilExit();
 		}
 
-		private void populateActionWords(){
+		private void populateActionWords() throws FileNotFoundException{
+			File dict = new File("wordlist.txt");
+			Scanner dictScan = new Scanner(dict);
+			while(dictScan.hasNextLine()){
+				actionWords.add(dictScan.nextLine());
+			}
+			/*
 			actionWords.add("remember");
 			actionWords.add("call");
 			actionWords.add("finish");
@@ -34,6 +41,8 @@ public class EpiphanyInterpreter {
 			actionWords.add("revise");
 			actionWords.add("go");
 			actionWords.add("study");
+			*/
+
 		}
 		/**
 		 * This method accepts the user inputs until the 'exit' command is entered. None of the actual
