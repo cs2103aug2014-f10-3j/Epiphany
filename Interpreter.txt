@@ -1,0 +1,50 @@
+// Interpreter Discussion.
+
+//Session 1: Brainstorming User Input Techniques.
+
+Basically, a few user commands will give us a straight forward inkling as to what to do. Here we list out a possible way of checking what the user wants with a regex system. 
+
+functions
+
+-add
+-edit
+-search
+-sync
+
+
+
+if display/view
+	// do display <limiter>
+else if edit
+	// do edit function
+else if search
+	// search for relevant info
+else
+	//adding function.
+
+
+
+Possible Commands
+
+For ADD:
+
+do cs2103 tutorial 4 by next class
+watch indiana jones by tonight.
+remember to call zara
+read summer by the bay by the 5th.
+buy cake for sam on 16/7.
+buy cake for sam on 16th.
+buy cake for sam by 16 Jan
+buy cake for sam on 16-Jan-2015
+revise ma1101r chapter 2 ASAP.
+meet zara for dinner at the lagoon.
+meet zara for dinner by the lagoon.
+read the atlas by attenbourough.
+remember to bid for modules. bidding period from 16-21st.
+remember to bid for modules from 16 to 21st June.
+finish sep application by deadline.
+think of something todo.
+
+
+
+
