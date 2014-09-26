@@ -4,7 +4,8 @@ import java.util.Scanner;
 public class EpiphanyInterpreter {
 	///all the string constants that are involved in displaying things to the user.
 		private static final String MESSAGE_COMMAND_PROMPT = "command: ";
-		private static final String REGEX_ADD_COMMAND = ".*(by|on|from).*$";
+		private static final String REGEX_ADD_COMMAND = ".*(by|on).*";
+		private static final String REGEX_SPLIT_ADD_COMMAND = ".(by|on).(?!.*.(by|on).)";
 		
 		/**
 		 * This is the main function which dictates the flow of the program. All the functionality is
@@ -46,7 +47,7 @@ public class EpiphanyInterpreter {
 
 		private String interpretAddCommand(String userInput) {
 			// TODO Auto-generated method stub
-			String[] tokens = userInput.split(REGEX_ADD_COMMAND);
+			String[] tokens = userInput.split(REGEX_SPLIT_ADD_COMMAND);
 			showToUser(tokens[0]);
 			showToUser(tokens[1]);
 			return "regex found";
