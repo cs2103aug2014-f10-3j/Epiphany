@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+import java.util.TreeSet;
 import java.util.Scanner;
 import java.io.*;
 
@@ -8,7 +8,7 @@ public class EpiphanyInterpreter {
 		private static final String MESSAGE_COMMAND_PROMPT = "command: ";
 		private static final String REGEX_ADD_COMMAND = ".*\\s(by|on)\\s.*";
 		private static final String REGEX_SPLIT_ADD_COMMAND = "\\s(by|on)\\s(?!.*\\s(by|on)\\s)";
-		private static final ArrayList<String> actionWords = new ArrayList<String>();
+		private static final TreeSet<String> actionWords = new TreeSet<String>();
 		
 		/**
 		 * This is the main function which dictates the flow of the program. All the functionality is
