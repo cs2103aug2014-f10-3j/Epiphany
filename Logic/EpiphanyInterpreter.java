@@ -102,10 +102,11 @@ public class EpiphanyInterpreter {
 		//input could either be <x>st
 		//or <x>th.
 		StringBuilder st = new StringBuilder();
+		int i=0;
 
-		while(Character.isDigit(input.charAt(0))){
-			st.append(input.charAt(0));
-			input = input.substring(1);
+		while(i<input.length() && Character.isDigit(input.charAt(i))){
+			st.append(input.charAt(i));
+			i++;
 		}
 
 		return st.toString();
@@ -148,16 +149,9 @@ public class EpiphanyInterpreter {
 				Date today = cal.getTime();
 
 				if(l == 1){
-					if(isNumericDate(ans[0])){
-						int date = Integer.parseInt(ans[0]);
-						if(date >= today.getDate()){
-							// in within same month.
-							return "Date: " + date + " " + months.get(today.getMonth() + 1) + " " + (today.getYear() + 1900); // corner case from jan to dec.
-						} else{
-							return "Date: " + date + " " + months.get(today.getMonth() + 2) + " " + (today.getYear() + 1900);
-						}
-					} else if(ans[0].contains("st") || ans[0].contains("th")){
-						int date = Integer.parseInt(extractDate(str));
+					String stringDate = extractDate(str);
+					if(isNumericDate(stringDate)){
+						int date = Integer.parseInt(stringDate);
 						if(date >= today.getDate()){
 							// in within same month.
 							return "Date: " + date + " " + months.get(today.getMonth() + 1) + " " + (today.getYear() + 1900); // corner case from jan to dec.
