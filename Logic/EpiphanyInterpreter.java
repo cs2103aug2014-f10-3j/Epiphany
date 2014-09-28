@@ -128,7 +128,8 @@ public class EpiphanyInterpreter {
 					//16 Jan 2015
 					//16-Jan-2015
 					//Jan 16
-					String[] ans = str.split(" |-");
+					//16.6.2014
+					String[] ans = str.split(" |-|\\.|\\/");
 					int l = ans.length;
 					Calendar cal = Calendar.getInstance();
 					Date today = cal.getTime();
@@ -185,10 +186,11 @@ public class EpiphanyInterpreter {
 						// usually 3 part date will be typed as
 						// 16-Jan-2014
 						// 16 Jan 2014
+						// 16.6.14
 						String date = ans[0];
 						String month = ans[1];
 						String year = ans[2];
-						return "Date: " + date + " " + month + " " + year;
+						return "Date: " + date + " " + months.get(Integer.parseInt(month)) + " " + year;
 
 					}
 
