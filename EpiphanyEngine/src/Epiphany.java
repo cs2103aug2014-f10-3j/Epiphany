@@ -1,18 +1,26 @@
 //This is how we roll
 /* Epiphany Engine v0.1 alpha release
  * Contains basic functionality to CRUD as well as Storage. 
- * More details about the methods will be added soon
  * 
  * @author Moazzam & Wei Yang
  */
 
 import java.util.*;
-import java.io.*;
 
 public class Epiphany {
 	// EpiphanyMain contains all the current projects which is stored in an
 	// array List
 	public static ArrayList<ArrayList<Task>> EpiphanyMain;
+	
+	public static final String FILE_DEFAULT = "Default";
+	public static final String FILE_DEADLINE = "Deadline";
+	
+	// Default list to contain all floating tasks without deadline
+	Project Default = new Project(FILE_DEFAULT);
+
+	// Default list to contain all tasks WITH deadline
+	Project withDeadLine = new Project(FILE_DEADLINE);
+	
 	public static final String MESSAGE_WELCOME = " Welcome to TextBuddy++, your file, %s, is ready to use.";
 	public static final String MESSAGE_WRONG_ENTRY = "Wrong entry, please re-enter input.";
 	public static final String MESSAGE_SORTED = "Tasks sorted alphabetically!";
@@ -29,46 +37,17 @@ public class Epiphany {
 	public static final String MESSAGE_INVALID_SEARCH = "No results to display.";
 	public static final String MESSAGE_PROVIDE_ARGUMENT = "Argument missing, please re-enter command.";
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
+		//checkArguments(args);
 		EpiphanyMain = new ArrayList<ArrayList<Task>>();
 		Epiphany L1 = new Epiphany();
 		L1.run();
 	}
 	
-	public void run() {
-		
-
+	void run() throws Exception {
+		//printWelcomeMessage();
+		//processAllCommands();
 	}
-	
-	// ADD
-	/*Add: If user did not specify “dueDate”, “projectName”, Logic will assume it as of a null value. 
-Input: add “taskDescription”
-Description: adds a task without a deadline attached to it - a floating task
-Example: add “Save all of mankind”
-
-Input: add “taskDescription” by “dueDate”
-Description: adds a task with a deadline attached to it.
-Example: add “Prepare for project meeting” by “this Friday”
-
-Input: add “taskDescription” #projectName
-Description:adds a task without a deadline attached to it, to a specific project.
-Example: add “Save all of mankind” #justEverydayThings
-
-Input: add “taskDescription” by “dueDate” #projectName
-Description: adds a task with a deadline attached to it.
-Example: add “Prepare for project meeting” by “this Friday” #GEM2908
-
-	 * 
-	 */
-	
-	
-	
-	
-	
-	
-	// DELETE
-	
-	
 	
 	/**
 	 * Searches through the entire project for the given phrase.
@@ -103,7 +82,6 @@ Example: add “Prepare for project meeting” by “this Friday” #GEM2908
 			return searchResult;
 		}
 		return searchResult;
-
 	}
 	
 	//Displays all projects
@@ -127,7 +105,6 @@ Example: add “Prepare for project meeting” by “this Friday” #GEM2908
 	
 	// Displays a specific project
 	public ArrayList<Task> display(ArrayList<Task> lines) {
-
 		if (lines.isEmpty()) {
 			System.out.println(String.format(MESSAGE_DISPLAY_ERROR));
 		} else {

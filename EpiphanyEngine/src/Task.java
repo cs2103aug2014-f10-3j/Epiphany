@@ -6,8 +6,11 @@ public class Task {
 	private boolean isCompleted;
 
 	//Constructor for Task
-	public Task() {
-		
+	public Task(String i, String date, String ProjectName) {
+		this.instruction = i;
+		this.deadLine = date;
+		this.ProjectName = ProjectName;
+		this.isCompleted = false;
 	}
 
 	// Accessors
@@ -18,6 +21,14 @@ public class Task {
 	String getDeadline() {
 		return this.deadLine;
 	}
+	
+	public String getProjectName() {
+		return this.ProjectName;
+	}
+	
+	public boolean status() {
+		return isCompleted;
+	}
 
 	// Mutators
 	void setInstruction(String newInstruction) {
@@ -27,9 +38,12 @@ public class Task {
 	void setDeadLine(String newDeadline) {
 		this.deadLine = newDeadline;
 	}
-
-	public String getProjectName() {
-		// TODO Auto-generated method stub
-		return this.ProjectName;
+	
+	void setProjectName(String newProjectName) {
+		this.ProjectName = newProjectName;
+	}
+	
+	void setIsCompleted(boolean value) {
+		this.isCompleted = value;
 	}
 }
