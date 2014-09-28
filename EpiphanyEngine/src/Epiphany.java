@@ -1,0 +1,142 @@
+//This is how we roll
+/* Epiphany Engine v0.1 alpha release
+ * Contains basic functionality to CRUD as well as Storage. 
+ * More details about the methods will be added soon
+ * 
+ * @author Moazzam & Wei Yang
+ */
+
+import java.util.*;
+import java.io.*;
+
+public class Epiphany {
+	// EpiphanyMain contains all the current projects which is stored in an
+	// array List
+	public static ArrayList<ArrayList<Task>> EpiphanyMain;
+	public static final String MESSAGE_WELCOME = " Welcome to TextBuddy++, your file, %s, is ready to use.";
+	public static final String MESSAGE_WRONG_ENTRY = "Wrong entry, please re-enter input.";
+	public static final String MESSAGE_SORTED = "Tasks sorted alphabetically!";
+	public static final String MESSAGE_DELETE_INVALID = " %s, is already empty, please re-enter command.";
+	public static final String MESSAGE_NO_ENTRY = "No such entry exists in %s.";
+	public static final String MESSAGE_DELETE = "Deleted from %s  %s.";
+	public static final String MESSAGE_CLEAR_EMPTY = "%s ";
+	public static final String MESSAGE_ADD = "Added to %s: %s.";
+	public static final String MESSAGE_DISPLAY_ERROR = "No items to display.";
+	public static final String MESSAGE_CLEAR = "All content deleted from %s.";
+	public static final String MESSAGE_DISPLAY = "%d. %s";
+	public static final String MESSAGE_EXIT = "Thank you for using %s, good bye!";
+	public static final String MESSAGE_SORT = "All lines are now sorted.";
+	public static final String MESSAGE_INVALID_SEARCH = "No results to display.";
+	public static final String MESSAGE_PROVIDE_ARGUMENT = "Argument missing, please re-enter command.";
+
+	public static void main(String[] args) {
+		EpiphanyMain = new ArrayList<ArrayList<Task>>();
+		Epiphany L1 = new Epiphany();
+		L1.run();
+	}
+	
+	public void run() {
+		
+
+	}
+	
+	// ADD
+	/*Add: If user did not specify “dueDate”, “projectName”, Logic will assume it as of a null value. 
+Input: add “taskDescription”
+Description: adds a task without a deadline attached to it - a floating task
+Example: add “Save all of mankind”
+
+Input: add “taskDescription” by “dueDate”
+Description: adds a task with a deadline attached to it.
+Example: add “Prepare for project meeting” by “this Friday”
+
+Input: add “taskDescription” #projectName
+Description:adds a task without a deadline attached to it, to a specific project.
+Example: add “Save all of mankind” #justEverydayThings
+
+Input: add “taskDescription” by “dueDate” #projectName
+Description: adds a task with a deadline attached to it.
+Example: add “Prepare for project meeting” by “this Friday” #GEM2908
+
+	 * 
+	 */
+	
+	
+	
+	
+	
+	
+	// DELETE
+	
+	
+	
+	/**
+	 * Searches through the entire project for the given phrase.
+	 * 
+	 * @param phrase
+	 *            the search phrase provided by the use
+	 * @return an ArrayList of tasks that match the given phrase
+	 */
+	public ArrayList<Task> search(String phrase) {
+		ArrayList<Task> searchResult = new ArrayList<Task>(); // Would contain
+																// the list of
+																// tasks
+																// that are in
+																// the search
+																// result
+
+		for (int i = 0; i < EpiphanyMain.size(); i++) {// Searches the entire
+														// list
+			for (int j = 0; j < EpiphanyMain.get(i).size(); j++) {// Searches
+																	// each
+																	// project
+
+				Task line = (EpiphanyMain.get(i)).get(j);
+				if (line.getInstruction().contains(phrase)) {
+					searchResult.add(line);
+				}
+			}
+			if (searchResult.isEmpty()) {
+				System.out.println(MESSAGE_INVALID_SEARCH);
+			}
+			display(searchResult);
+			return searchResult;
+		}
+		return searchResult;
+
+	}
+	
+	//Displays all projects
+	public void displayAll(ArrayList<ArrayList<Task>> Epiphany){
+		if(Epiphany.isEmpty()){
+			System.out.println("Nothing to display.");
+		}
+		else{
+			for(int i = 0; i < Epiphany.size(); i++){
+				Task name = Epiphany.get(i).get(0);
+				System.out.print("Project: " + i + name.getProjectName());
+				int counter = 1;
+				for(int j = 0; j < Epiphany.get(i).size(); j++){
+					Task task = Epiphany.get(i).get(j);
+					System.out.println(String.format(MESSAGE_DISPLAY, counter, task.getInstruction()));
+				counter++;
+			}
+			}
+		}
+	}
+	
+	// Displays a specific project
+	public ArrayList<Task> display(ArrayList<Task> lines) {
+
+		if (lines.isEmpty()) {
+			System.out.println(String.format(MESSAGE_DISPLAY_ERROR));
+		} else {
+			int counter = 1;
+			for (Task task : lines) {
+				System.out.println(String.format(MESSAGE_DISPLAY, counter, task.getInstruction()));
+				counter++;
+			}
+		}
+		return lines;
+	}
+}
