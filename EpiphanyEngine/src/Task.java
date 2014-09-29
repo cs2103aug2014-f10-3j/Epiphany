@@ -1,3 +1,11 @@
+/* Epiphany Engine v0.1 alpha release
+ * Project & Class under a separate class file
+ * 
+ * This class contains all the relevant methods needed by the Task class
+ * 
+ * @author Moazzam & Wei Yang
+ */
+
 public class Task {
 
 	private String instruction;
@@ -10,7 +18,7 @@ public class Task {
 		this.instruction = i;
 		this.deadLine = date;
 		this.ProjectName = ProjectName;
-		this.isCompleted = false;
+		this.isCompleted = false; //Set as false as a default
 	}
 
 	// Accessors

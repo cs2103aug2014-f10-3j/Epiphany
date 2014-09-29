@@ -1,3 +1,11 @@
+/* Epiphany Engine v0.1 alpha release
+ * Project & Class under a separate class file
+ * 
+ * This class contains all the relevant methods needed by the Project class
+ * 
+ * @author Moazzam & Wei Yang
+ */
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;

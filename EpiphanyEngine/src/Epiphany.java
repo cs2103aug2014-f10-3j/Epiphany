@@ -1,6 +1,6 @@
 //This is how we roll
 /* Epiphany Engine v0.1 alpha release
- * Contains basic functionality to CRUD as well as Storage. 
+ * Project & Class under a separate class file
  * 
  * @author Moazzam & Wei Yang
  */
@@ -57,19 +57,12 @@ public class Epiphany {
 	 * @return an ArrayList of tasks that match the given phrase
 	 */
 	public ArrayList<Task> search(String phrase) {
-		ArrayList<Task> searchResult = new ArrayList<Task>(); // Would contain
-																// the list of
-																// tasks
-																// that are in
-																// the search
-																// result
-
-		for (int i = 0; i < EpiphanyMain.size(); i++) {// Searches the entire
-														// list
-			for (int j = 0; j < EpiphanyMain.get(i).size(); j++) {// Searches
-																	// each
-																	// project
-
+		// Temp array list created to contain the list of tasks that are inside the search result
+		ArrayList<Task> searchResult = new ArrayList<Task>(); 
+		// Searches the entire list
+		for (int i = 0; i < EpiphanyMain.size(); i++) {				
+			// Searches for each project
+			for (int j = 0; j < EpiphanyMain.get(i).size(); j++) {
 				Task line = (EpiphanyMain.get(i)).get(j);
 				if (line.getInstruction().contains(phrase)) {
 					searchResult.add(line);
@@ -79,7 +72,6 @@ public class Epiphany {
 				System.out.println(MESSAGE_INVALID_SEARCH);
 			}
 			display(searchResult);
-			return searchResult;
 		}
 		return searchResult;
 	}
