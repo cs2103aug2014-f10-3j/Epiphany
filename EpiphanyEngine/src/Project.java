@@ -10,9 +10,11 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import com.sun.javafx.tk.Toolkit.Task;
 
 public class Project {
-	private String projectName;
+	
+	private String MESSAGE_QUERY = "Which task would you like to delete? Choose the desired index and enter it on the next line";
 	private ArrayList<Task> items;
 
 	// Constructor
@@ -32,6 +34,12 @@ public class Project {
 	
 	public ArrayList<Task> getTaskList() {
 		return this.items;
+	}
+	
+	public void displayProjectTask() {
+		for (int i = 0; i<this.getTaskList().size(); i++) {
+			System.out.println((i + 1) + " " + this.getTaskList().get(i));
+		}
 	}
 
 	// This function would allow us to change the name of a project
@@ -81,6 +89,7 @@ public class Project {
 			}
 		}
 	}
+	
 	/* Delete function has 2 approaches
 	 * 
 	 * 1.
@@ -98,7 +107,9 @@ public class Project {
 		if ((indexToDelete == null) && this.getTaskList().contains(phrase)) {
 			// display all tasks in project
 			// ask what user wants to delete
-			
+			this.displayProjectTask();
+			System.out.println(MESSAGE_QUERY);
+			// if user selects an input, and then the engine parses the index into the same method
 		} else if (indexToDelete != null) {
 			this.getTaskList().remove(indexToDelete);
 		}

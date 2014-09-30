@@ -34,7 +34,7 @@ public class Task {
 		return this.ProjectName;
 	}
 	
-	public boolean status() {
+	public boolean isStatus() {
 		return isCompleted;
 	}
 
@@ -51,7 +51,14 @@ public class Task {
 		this.ProjectName = newProjectName;
 	}
 	
-	void setIsCompleted(boolean value) {
+	void isCompletedUpdate(boolean value) {
 		this.isCompleted = value;
+	}
+	
+	// displays current status of Task
+	String toString() {
+		// for floating tasks: should return the default project list
+		return this.getProjectName() + " " + this.getInstruction() + 
+				" ,Completed: " + this.isStatus();
 	}
 }
