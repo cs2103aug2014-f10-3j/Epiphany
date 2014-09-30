@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.text.SimpleDateFormat;
 
+import DateInterpreter.*;
+
 public class EpiphanyInterpreter {
 	///all the string constants that are involved in displaying things to the user.
 	private static final String MESSAGE_COMMAND_PROMPT = "command: ";
@@ -48,21 +50,6 @@ public class EpiphanyInterpreter {
 		while(dictScan.hasNextLine()){
 			actionWords.add(dictScan.nextLine());
 		}
-		/*
-			actionWords.add("remember");
-			actionWords.add("call");
-			actionWords.add("finish");
-			actionWords.add("do");
-			actionWords.add("complete");
-			actionWords.add("buy");
-			actionWords.add("visit");
-			actionWords.add("watch");
-			actionWords.add("meet");
-			actionWords.add("read");
-			actionWords.add("revise");
-			actionWords.add("go");
-			actionWords.add("study");
-		 */
 
 	}
 	/**
@@ -130,11 +117,10 @@ public class EpiphanyInterpreter {
 			String[] tokens = userInput.split(REGEX_SPLIT_ADD_COMMAND);
 			interpretTask(tokens[0]);
 			interpretDate(tokens[1]);
-
+			return "add command";
 			// we something to work with after regex split.
 			//either by or from.
-			String str = tokens[1];
-			if(str.matches(".*\\d+.*")){
+			/*if(str.matches(".*\\d+.*")){
 				// contains a number, probably a date.
 				//16th.
 				//16-Jan
@@ -222,7 +208,7 @@ public class EpiphanyInterpreter {
 			//next week
 			//next month
 			return "LOL";
-		}
+		}*/
 	} else {
 		//Gibberish or single line command
 		if(userInput.contains(" ") && actionWords.contains(userInput.split(" ")[0])){
@@ -247,7 +233,7 @@ private void interpretTask(String string) {
 
 private void interpretDate(String string) {
 	// TODO Auto-generated method stub
-	showToUser(string);
+	showToUser(strtotime.convert(string).toString());
 
 }
 
