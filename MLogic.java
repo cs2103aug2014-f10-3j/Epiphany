@@ -37,7 +37,7 @@ public class MLogic {
 		L1.addTask("we are still working", null, "CS");
 		L1.addTask("we are really still working", null, "CS");
 		L1.addTask("Hello there", null, "We rock");
-		L1.displayAll(EpiphanyMain);
+		// L1.displayAll(EpiphanyMain);
 		L1.displayProjects();
 		L1.test();
 		// L1.displayAL(EpiphanyMain.get(0));
@@ -55,11 +55,16 @@ public class MLogic {
 		Task hello = new Task("hello");
 		Task hello1 = new Task("hello there");
 		Task hello2 = new Task("hello, how are you");
+		Task hello3 = new Task("hello new ", "", "CS2103");
 		partTest.add(hello);
 		partTest.add(hello1);
 		partTest.add(hello2);
+		partTest.add(hello3);
 		testing.add(partTest);
 		displayAll(testing);
+		displayProjects();
+		//System.out.print(hello3.ProjectName);
+
 		EpiphanyMain = testing;
 		search("are");
 
@@ -153,7 +158,7 @@ public class MLogic {
 	 * @param name
 	 *            The name of the project that we wish to display.
 	 */
-	public void displayProjects(String name) {
+	public void displayProject(String name) {
 		for (int i = 0; i < EpiphanyMain.size(); i++) {
 			if (EpiphanyMain.get(i).get(0).ProjectName.equals(name)) {
 				ArrayList<Task> temporaryProject = EpiphanyMain.get(i);
@@ -169,8 +174,12 @@ public class MLogic {
 	 */
 	public void displayProjects() {
 		int count = 1;
-		for (String s : projectNames) {
-			System.out.println(count + "." + s + ".");
+		if (projectNames.isEmpty()) {
+			System.out.println("Projects folder is empty");
+		} else {
+			for (String s : projectNames) {
+				System.out.println(count + "." + s + ".");
+			}
 		}
 	}
 
