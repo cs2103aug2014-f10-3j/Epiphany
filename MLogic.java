@@ -34,7 +34,35 @@ public class MLogic {
 		EpiphanyMain = new ArrayList<ArrayList<Task>>();
 		projectNames = new ArrayList<String>();
 		MLogic L1 = new MLogic();
+		L1.addTask("we are still working", null, "CS");
+		L1.addTask("we are really still working", null, "CS");
+		L1.addTask("Hello there", null, "We rock");
+		L1.displayAll(EpiphanyMain);
+		L1.displayProjects();
+		L1.test();
+		// L1.displayAL(EpiphanyMain.get(0));
+		for (String s : projectNames) {
+			System.out.println(s);
+		}
+		// L1.addTask("we ", null, null);
+
 		L1.run();
+	}
+
+	public void test() {
+		ArrayList<ArrayList<Task>> testing = new ArrayList<ArrayList<Task>>();
+		ArrayList<Task> partTest = new ArrayList<Task>();
+		Task hello = new Task("hello");
+		Task hello1 = new Task("hello there");
+		Task hello2 = new Task("hello, how are you");
+		partTest.add(hello);
+		partTest.add(hello1);
+		partTest.add(hello2);
+		testing.add(partTest);
+		displayAll(testing);
+		EpiphanyMain = testing;
+		search("are");
+
 	}
 
 	public void run() {
@@ -68,25 +96,28 @@ public class MLogic {
 				}
 			}
 		}
-			if (searchResult.isEmpty()) {
-				System.out.println(MESSAGE_INVALID_SEARCH);
-			}
-			display(searchResult);
-			return searchResult;
+		if (searchResult.isEmpty()) {
+			System.out.println(MESSAGE_INVALID_SEARCH);
 		}
-	
-
-	
+		System.out.println("Search result:");
+		displayAL(searchResult);
+		return searchResult;
+	}
 
 	// Displays all projects
 	public void displayAll(ArrayList<ArrayList<Task>> Epihany) {
 		if (Epihany.isEmpty()) {
 			System.out.println("Nothing to display.");
 		} else {
-			System.out.println("Project: Default");
-			for (int i = 1; i < Epihany.size(); i++) {
+
+			for (int i = 0; i < Epihany.size(); i++) {// CHNAGED I FORM 1 TO 0
 				Task name = Epihany.get(i).get(0);
-				System.out.print("Project: " + i + "." + name.ProjectName);
+				if (i == 0) {
+					System.out.println("Project: Default");
+				} else {
+					System.out
+							.println("Project: " + i + "." + name.ProjectName);
+				}
 				int counter = 1;
 				for (int j = 0; j < Epihany.get(i).size(); j++) {
 					Task s = Epihany.get(i).get(j);
@@ -94,17 +125,18 @@ public class MLogic {
 							s.instruction));
 					counter++;
 				}
+
 			}
 		}
 	}
 
 	// Displays a specific project
-	public ArrayList<Task> display(ArrayList<Task> expected) {
+	public ArrayList<Task> displayAL(ArrayList<Task> expected) {
 
 		if (expected.isEmpty()) {
 			System.out.println(String.format(MESSAGE_DISPLAY_ERROR));
 		} else {
-			
+
 			int counter = 1;
 			for (Task s : expected) {
 				System.out.println(String.format(MESSAGE_DISPLAY, counter,
@@ -114,85 +146,93 @@ public class MLogic {
 		}
 		return expected;
 	}
+
 	/**
 	 * displays the contents of any one project
-	 * @param name 		The name of the project that we wish to display.
+	 * 
+	 * @param name
+	 *            The name of the project that we wish to display.
 	 */
-	public void displayProjects(String name){
-		for(int i = 0; i < EpiphanyMain.size(); i++){
-			if(EpiphanyMain.get(i).get(0).ProjectName.equals(name)){
+	public void displayProjects(String name) {
+		for (int i = 0; i < EpiphanyMain.size(); i++) {
+			if (EpiphanyMain.get(i).get(0).ProjectName.equals(name)) {
 				ArrayList<Task> temporaryProject = EpiphanyMain.get(i);
-				display(temporaryProject);
-			}
-			else{
+				displayAL(temporaryProject);
+			} else {
 				System.out.println("No such project exists.");
 			}
 		}
 	}
+
 	/**
 	 * Displays the names and indices of all the projects that exist
 	 */
-	public void displayProjects(){
+	public void displayProjects() {
 		int count = 1;
-		for(String s: projectNames){
+		for (String s : projectNames) {
 			System.out.println(count + "." + s + ".");
 		}
 	}
-	public void addTask(String input, String date, String project) {
-		
-		
-			if (date == null && project == null) {
-				// Adds it to the default project
-				EpiphanyMain.get(0).add(new Task(input));
-			} else if (date == null && project != null) {
-				// Finds the project name and appends the task in
-				// THis would terminate right?
-				for(String s: projectNames){
-					int count = 1;
-					if(s.equals(project)){
-						EpiphanyMain.get(count).add(new Task(input, null, project));
-					}
-					else if(!s.equals(project)){
-						count++;
-					}
-				// Create a new project if one does not exist
-					projectNames.add(project);
-					ArrayList<Task> latest = new ArrayList<Task>();
-					latest.add(new Task(input, null, project));
-					EpiphanyMain.add(latest);
-					// Create a new file to store the new data
-					try {
-						createNewFile(project, latest);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-				// I have not yet incorporated the add with date.
-				
 
-			} else if (date != null){
-				// add to default project with deadline
-				for(int i = 0; i < projectNames.size(); i++){
-					if(projectNames.get(i).equals(project)){
-						EpiphanyMain.get(i).add(new Task(input, date, project));
-					}
+	public void addTask(String input) {
+		ArrayList<Task> hello = EpiphanyMain.get(0);
+		hello.add(new Task(input));
+	}
+
+	public void addTask(String input, String date, String project) {
+
+		if (!project.equals(null)) {
+			// Finds the project name and appends the task in
+			// THis would terminate right?
+			for (String s : projectNames) {
+				int count = 1;
+				if (s.equals(project)) {
+					EpiphanyMain.get(count).add(new Task(input, null, project));
+				} else if (!s.equals(project)) {
+					count++;
 				}
-				
+				// Create a new project if one does not exist
+				projectNames.add(project);
+				ArrayList<Task> latest = new ArrayList<Task>();
+				latest.add(new Task(input, null, project));
+				EpiphanyMain.add(latest);
+				// Create a new file to store the new data
+				try {
+					createNewFile(project, latest);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
+
+			if (date == null) {
+
+			}
+			// I have not yet incorporated the add with date.
+
+		} else {
+			// add to default project
+			for (int i = 0; i < projectNames.size(); i++) {
+				if (projectNames.get(i).equals(project)) {
+					EpiphanyMain.get(i).add(new Task(input, date, project));
+				}
+			}
+
 		}
-	
+	}
 
 	class Task {
 
 		private String instruction;
 		private String deadLine;
 		private String ProjectName;
-		//private boolean isCompleted;
+
+		// private boolean isCompleted;
 
 		public Task(String input) {
 			this.instruction = input;
 		}
-		public Task(String input, String date, String project){
+
+		public Task(String input, String date, String project) {
 			this.instruction = input;
 			this.deadLine = date;
 			this.ProjectName = project;
@@ -212,6 +252,10 @@ public class MLogic {
 			this.instruction = newInstruction;
 		}
 
+		void setProjectName(String name) {
+			this.ProjectName = name;
+		}
+
 		void setDeadLine(String newDeadline) {
 			this.deadLine = newDeadline;
 		}
@@ -220,12 +264,13 @@ public class MLogic {
 	// Should this be a class or should I simply convert this into a method?
 	class Project {
 		private String projectName;
-		//private ArrayList items;
+
+		// private ArrayList items;
 
 		// Constructor
 		public Project(String name, ArrayList<Task> items) {
 			this.setProjectName(name);
-			//this.items = items;
+			// this.items = items;
 			try {
 				createNewFile(projectName, items);
 			} catch (IOException e) {
@@ -261,7 +306,8 @@ public class MLogic {
 		int counter = 1;
 
 		for (Task s : items) {
-			writer.write(counter + ". " + s.instruction);
+			writer.write(counter + ". " + s.getInstruction());// or
+																// s.instruction
 			counter++;
 			writer.newLine();
 			writer.flush();
@@ -269,3 +315,4 @@ public class MLogic {
 		writer.close();
 	}
 }
+// treeset for iteration using sort//f
