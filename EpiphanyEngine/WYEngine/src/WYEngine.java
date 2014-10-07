@@ -20,7 +20,7 @@ public class WYEngine {
 	public static ArrayList<ArrayList<Task>> EpiphanyMain;
 	public static ArrayList<Date> testDate1;
 
-	public static final String MESSAGE_WELCOME = " Welcome to TextBuddy++, your file, %s, is ready to use.";
+	public static final String MESSAGE_WELCOME = " Welcome to Epiphany!";
 	public static final String MESSAGE_WRONG_ENTRY = "Wrong entry, please re-enter input.";
 	public static final String MESSAGE_SORTED = "Tasks sorted alphabetically!";
 	public static final String MESSAGE_DELETE_INVALID = " %s, is already empty, please re-enter command.";
@@ -35,18 +35,36 @@ public class WYEngine {
 	public static final String MESSAGE_SORT = "All lines are now sorted.";
 	public static final String MESSAGE_INVALID_SEARCH = "No results to display.";
 	public static final String MESSAGE_PROVIDE_ARGUMENT = "Argument missing, please re-enter command.";
+	private static final String ERROR_MESSAGE_INVALID_FORMAT = null;
+	private static final String ERROR_WRONG_INPUT = null;
+	private static final String ERROR_COMMAND_TYPE_NULL = null;
+	private static final String MESSAGE_COMMAND = "command: \n";
 	private Scanner sc;
 	private Scanner sc2;
+	
+	//Global variable used to scan all the input from the users
+	private static Scanner scanner = new Scanner(System.in);
+	
+	enum CommandTypes {
+		ADD, DISPLAY, DELETE, CLEAR, EXIT, INVALID, SEARCH, SORT
+	};
 
 	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {
-		EpiphanyMain = new ArrayList<ArrayList<Task>>();
-		projectNames = new ArrayList<String>();
-		defaultProject = new ArrayList<Task>();
-	    testDate1 = new ArrayList<Date>();
-		
-		// testing out date class	
+		// Initializing engine
 		WYEngine L1 = new WYEngine();
+		L1.run();
+		
+		L1.printToUser(MESSAGE_WELCOME, null, null);
+		while (true) {
+			System.out.print(MESSAGE_COMMAND);
+			String userCommand = scanner.nextLine();
+			L1.executeCommand(userCommand);
+		}
+	}
+		
+		/*
+		// testing out date class	
 		L1.testSort();
 		for (Date s: testDate1) {
 			System.out.println(s);
@@ -58,13 +76,11 @@ public class WYEngine {
 		L1.addTask("testing another time", new Date(31,10,2014), null);
 		L1.addTask("testing third time", new Date(31,4,2014), null);
 		L1.addTask("Why am I so pretty", null, null);
-		
-		
+				
 		L1.addTask("we are still working", null, "CS");
 		L1.addTask("we are really still working", null, "CS");
 		L1.addTask("Hello there", null, "We rock");
 		L1.addTask("software engineering much wow", null, "2103");
-
 
 		System.out.println();
 		L1.displayAll(EpiphanyMain);
@@ -76,25 +92,8 @@ public class WYEngine {
 
 		System.out.println();
 		L1.search("are");
-		
-		
-		
-		//L1.deleteProjectFromMain();
-		//L1.displayProjects();
-
-		/*
-			System.out.println("List of projects: ");
-			for (String s : projectNames) {
-				System.out.println(s);
-			}
-		 */
-
-		// System.out.println();
-		// L1.displayProject("CS");
-
-		// L1.addTask("we ", null, null);
-		// L1.run();
 	}
+	*/
 	
 	public void testSort() {
 	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
@@ -161,7 +160,10 @@ public class WYEngine {
 	 */
 
 	public void run() {
-
+		EpiphanyMain = new ArrayList<ArrayList<Task>>();
+		projectNames = new ArrayList<String>();
+		defaultProject = new ArrayList<Task>();
+	    testDate1 = new ArrayList<Date>();
 	}
 
 	/**
@@ -435,6 +437,87 @@ public class WYEngine {
 		return stringDate;
 	}
 	
+	// User Interface Methods:
+	// We receive instruction from the intepreter: 
+	/* e.g.: add buy groceries for upcoming week 
+	 * need some way to filter what is <Date> & <ProjectName>
+	 * 
+	 * for now its just the basic
+	 */
+	public void executeCommand(String userCommand) {
+		if (userCommand.trim().equals("")) // if there is no input message
+			String.format(ERROR_MESSAGE_INVALID_FORMAT, userCommand);
+
+		String commandTypeString = getFirstWord(userCommand);
+		String instruction = removeFirstWord(userCommand);
+		CommandTypes commandType = determineCommandType(commandTypeString);
+
+		switch (commandType) {
+		case ADD:
+			addTask(instruction, null, null);
+			break;
+		case DISPLAY: //displays the entire arraylist
+			displayAll(EpiphanyMain);
+			break;
+		case DELETE:
+			//deleteText(userCommand, textFile, sourceFile);
+			break;
+		case CLEAR:
+			//clearAllText(userCommand, textFile, sourceFile);
+			break;
+		case SEARCH:
+			search(instruction);
+			break;
+		case SORT:
+			//sort(textFile);
+			break;
+		case EXIT:
+			System.exit(0);
+
+		default:
+			// throw an error if the command is not recognized
+			throw new Error(ERROR_WRONG_INPUT);
+		}
+	}
+
+	private CommandTypes determineCommandType(String commandTypeString) {
+		if (commandTypeString == null)
+			throw new Error(ERROR_COMMAND_TYPE_NULL);
+
+		if (commandTypeString.equalsIgnoreCase("add")) {
+			return CommandTypes.ADD;
+		} else if (commandTypeString.equalsIgnoreCase("display")) {
+			return CommandTypes.DISPLAY;
+		} else if (commandTypeString.equalsIgnoreCase("delete")) {
+			return CommandTypes.DELETE;
+		} else if (commandTypeString.equalsIgnoreCase("clear")) {
+			return CommandTypes.CLEAR;
+		} else if (commandTypeString.equalsIgnoreCase("search")) {
+			return CommandTypes.SEARCH;
+		} else if (commandTypeString.equalsIgnoreCase("sort")) {
+			return CommandTypes.SORT;
+		} else if (commandTypeString.equalsIgnoreCase("exit")) {
+			return CommandTypes.EXIT;
+		} else {
+			return null;
+		}
+	}
+	
+	private String getFirstWord(String userCommand) {
+		String commandTypeString = userCommand.trim().split("\\s+")[0];
+		return commandTypeString;
+	}
+
+	
+	private String removeFirstWord(String userCommand) {
+		return userCommand.replace(getFirstWord(userCommand), "").trim();
+	}
+	
+	private void printToUser(String text, String arg1, String arg2) {
+		String printText = String.format(text, arg1, arg2);
+		System.out.print(printText);
+	}
+	
 
 	public class Task {
 		private String instruction;
@@ -547,5 +630,8 @@ public class WYEngine {
 		}
 		writer.close();
 	}
+	
+	
+	
 }
 // treeset for iteration using sort//
