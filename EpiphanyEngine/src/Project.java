@@ -105,11 +105,16 @@ public class Project {
 
 	public void deleteTask(Integer indexToDelete, String phrase) {
 		if ((indexToDelete == null) && this.getTaskList().contains(phrase)) {
+			
 			// display all tasks in project
 			// ask what user wants to delete
+			
 			this.displayProjectTask();
 			System.out.println(MESSAGE_QUERY);
+			
 			// if user selects an input, and then the engine parses the index into the same method
+			
+		
 		} else if (indexToDelete != null) {
 			this.getTaskList().remove(indexToDelete);
 		}

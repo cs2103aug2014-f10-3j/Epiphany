@@ -1,11 +1,3 @@
-/* Epiphany Engine v0.1 alpha release
- * Project & Class under a separate class file
- * 
- * This class contains all the relevant methods needed by the Task class
- * 
- * @author Moazzam & Wei Yang
- */
-
 public class Task {
 	private String instruction;
 	private String deadLine;
@@ -52,12 +44,5 @@ public class Task {
 	
 	void isCompletedUpdate(boolean value) {
 		this.isCompleted = value;
-	}
-	
-	// displays current status of Task
-	String toString() {
-		// for floating tasks: should return the default project list
-		return this.getProjectName() + " " + this.getInstruction() + 
-				" ,Completed: " + this.isStatus();
 	}
 }

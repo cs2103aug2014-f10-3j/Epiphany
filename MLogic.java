@@ -14,6 +14,7 @@ public class MLogic {
 	// array List
 	public static ArrayList<String> projectNames;
 	public static ArrayList<ArrayList<Task>> EpiphanyMain;
+	
 	public static final String MESSAGE_WELCOME = " Welcome to TextBuddy++, your file, %s, is ready to use.";
 	public static final String MESSAGE_WRONG_ENTRY = "Wrong entry, please re-enter input.";
 	public static final String MESSAGE_SORTED = "Tasks sorted alphabetically!";
@@ -270,6 +271,8 @@ public class MLogic {
 		}
 	}
 
+
+
 	// Should this be a class or should I simply convert this into a method?
 	class Project {
 		private String projectName;
@@ -324,4 +327,4 @@ public class MLogic {
 		writer.close();
 	}
 }
-// treeset for iteration using sort//f
+// treeset for iteration using sort//

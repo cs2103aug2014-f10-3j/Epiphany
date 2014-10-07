@@ -7,14 +7,14 @@
 
 import java.util.*;
 
+import com.sun.javafx.tk.Toolkit.Task;
+
 public class Epiphany {
 	// EpiphanyMain contains all the current projects which is stored in an
 	// array List
+	public static ArrayList<String> projectNames;
 	public static ArrayList<ArrayList<Task>> EpiphanyMain;
-
-	public static final String FILE_DEFAULT = "Default";
-	public static final String FILE_DEADLINE = "Deadline";
-
+		
 	// Default list to contain all floating tasks without deadline
 	Project Default = new Project(FILE_DEFAULT);
 
@@ -41,11 +41,43 @@ public class Epiphany {
 	public static final String MESSAGE_INVALID_SEARCH = "No results to display.";
 	public static final String MESSAGE_PROVIDE_ARGUMENT = "Argument missing, please re-enter command.";
 
-	public static void main(String[] args) throws Exception {
-		//checkArguments(args);
+	public static void main(String[] args) {
 		EpiphanyMain = new ArrayList<ArrayList<Task>>();
-		Epiphany L1 = new Epiphany();
+		projectNames = new ArrayList<String>();
+		MLogic L1 = new MLogic();
+		L1.addTask("we are still working", null, "CS");
+		L1.addTask("we are really still working", null, "CS");
+		L1.addTask("Hello there", null, "We rock");
+		// L1.displayAll(EpiphanyMain);
+		L1.displayProjects();
+		L1.test();
+		// L1.displayAL(EpiphanyMain.get(0));
+		for (String s : projectNames) {
+			System.out.println(s);
+		}
+		// L1.addTask("we ", null, null);
+
 		L1.run();
+	}
+	
+	public void test() {
+		ArrayList<ArrayList<Task>> testing = new ArrayList<ArrayList<Task>>();
+		ArrayList<Task> partTest = new ArrayList<Task>();
+		Task hello = new Task("hello");
+		Task hello1 = new Task("hello there");
+		Task hello2 = new Task("hello, how are you");
+		Task hello3 = new Task("hello new ", "", "CS2103");
+		partTest.add(hello);
+		partTest.add(hello1);
+		partTest.add(hello2);
+		partTest.add(hello3);
+		testing.add(partTest);
+		displayAll(testing);
+		displayProjects();
+		//System.out.print(hello3.ProjectName);
+
+		EpiphanyMain = testing;
+		search("are");
 	}
 
 	void run() throws Exception {
@@ -138,4 +170,75 @@ public class Epiphany {
 		}
 		return lines;
 	}
+	
+	// add task
+	public void addTask(String input, String date, String project) {
+		
+		if (date == null && project == null) {
+			// Adds it to the default project
+			EpiphanyMain.get(0).add(new Task(input));
+		} else if (date == null && project != null) {
+			// Finds the project name and appends the task in
+			// THis would terminate right?
+			for(String s: projectNames){
+				int count = 1;
+				if(s.equals(project)){
+					EpiphanyMain.get(count).add(new Task(input, null, project));
+				}
+				else if(!s.equals(project)){
+					count++;
+				}
+			// Create a new project if one does not exist
+				projectNames.add(project);
+				ArrayList<Task> latest = new ArrayList<Task>();
+				latest.add(new Task(input, null, project));
+				EpiphanyMain.add(latest);
+				// Create a new file to store the new data
+				try {
+					createNewFile(project, latest);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			// I have not yet incorporated the add with date.
+			
+
+		} else if (date != null){
+			// add to default project with deadline
+			for(int i = 0; i < projectNames.size(); i++){
+				if(projectNames.get(i).equals(project)){
+					EpiphanyMain.get(i).add(new Task(input, date, project));
+				}
+			}
+			
+		}
+	}
+	
+	// find project
+	public ArrayList<Task> findProject(String ProjectName) {
+		return EpiphanyMain.contains(ProjectName);
+	}
+	
+	// delete task
+	public void deleteTask(Integer indexToDelete, String phrase) {
+		Scanner sc = new Scanner(System.in;)
+		int input = sc.nextInt();
+		if ((indexToDelete == null) && this.getTaskList().contains(phrase)) {
+			EpiphanyMain.search(phrase);
+			System.out.println("Which task would you like to delete?");
+			// accept input
+			this.deleteTask(input, nill);
+			
+			
+		} else if (indexToDelete != null) {
+			
+		}
+	}
+	
+	//sort ()
+	// sort by deadline
+	
+	
+	
+
 }
