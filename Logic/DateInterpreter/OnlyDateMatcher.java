@@ -1,4 +1,4 @@
-package DateInterpreter;
+package Logic.DateInterpreter;
 
 import java.util.Calendar;
 import java.util.Date;

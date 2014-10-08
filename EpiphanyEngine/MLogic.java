@@ -1,3 +1,4 @@
+package EpiphanyEngine;
 //This is how we roll
 /* Epiphany Engine v0.1 alpha release
  * Contains basic functionality to CRUD as well as Storage. 

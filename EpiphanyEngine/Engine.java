@@ -1,3 +1,4 @@
+package EpiphanyEngine;
 //This is how we roll
 /* Epiphany Engine v0.1 alpha release
  * Contains basic functionality to CRUD as well as Storage. 
@@ -11,6 +12,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.io.*;
+
+import Logic.CommandType.*;
 
 public class Engine {
 	// EpiphanyMain contains all the current projects which is stored in an
@@ -190,7 +193,17 @@ public class Engine {
 			}
 		}
 	}
-
+	
+	//to-do
+	public void display(String userCommand) {
+		if (userCommand.equals("all")){
+			this.displayAll(EpiphanyMain);
+		} else {
+			// need to check if its a valid project first
+			this.displayProject(userCommand);
+		}
+	}
+	
 	// Helper function: Displays an ArrayList project
 	public ArrayList<Task> displayArrayList(ArrayList<Task> expected) {
 
@@ -404,32 +417,26 @@ public class Engine {
 	 * 
 	 * for now its just the basic
 	 */
-	public void executeCommand(String userCommand) {
-		if (userCommand.trim().equals("")) // if there is no input message
-			String.format(ERROR_MESSAGE_INVALID_FORMAT, userCommand);
-
-		String commandTypeString = getFirstWord(userCommand);
-		String instruction = removeFirstWord(userCommand);
-		CommandTypes commandType = determineCommandType(commandTypeString);
+	public void executeCommand(CommandType userCommand) {
+		CommandTypes commandType = determineCommandType(userCommand);
 
 		switch (commandType) {
 		case ADD:
-			addTask(instruction, null, null);
+			AddCommandType addUserCommand = (AddCommandType) userCommand;
+			addTask(addUserCommand.getDescription(), addUserCommand.getDate(), addUserCommand.getProjectName());
 			break;
 		case DISPLAY: // displays the entire arraylist
-			displayAll(EpiphanyMain);
+			DisplayCommandType displayUserCommand = (DisplayCommandType) userCommand;
+			displayAll(displayUserCommand.getModifiers());
 			break;
 		case DELETE:
-			deleteTask(instruction);
-			break;
-		case CLEAR:
-			// clearAllText(userCommand, textFile, sourceFile);
+			DeleteCommandType deleteUserCommand = (DeleteCommandType) userCommand;
+			deleteTask(deleteUserCommand.getTaskDescription(), deleteUserCommand.getProjectName());
 			break;
 		case SEARCH:
-			search(instruction);
+			SearchCommandType searchUserCommand = (SearchCommandType) userCommand;
+			search(searchUserCommand.getTaskDescription(),searchUserCommand.getProjectName());
 			break;
-		case EXIT:
-			System.exit(0);
 
 		default:
 			// throw an error if the command is not recognized
@@ -437,22 +444,18 @@ public class Engine {
 		}
 	}
 
-	private CommandTypes determineCommandType(String commandTypeString) {
-		if (commandTypeString == null)
+	private CommandTypes determineCommandType(CommandType commandType) {
+		if (commandType == null)
 			throw new Error(ERROR_COMMAND_TYPE_NULL);
 
-		if (commandTypeString.equalsIgnoreCase("add")) {
+		if (commandType.getType().equalsIgnoreCase("add")) {
 			return CommandTypes.ADD;
-		} else if (commandTypeString.equalsIgnoreCase("display")) {
+		} else if (commandType.getType().equalsIgnoreCase("display")) {
 			return CommandTypes.DISPLAY;
-		} else if (commandTypeString.equalsIgnoreCase("delete")) {
+		} else if (commandType.getType().equalsIgnoreCase("delete")) {
 			return CommandTypes.DELETE;
-		} else if (commandTypeString.equalsIgnoreCase("clear")) {
-			return CommandTypes.CLEAR;
-		} else if (commandTypeString.equalsIgnoreCase("search")) {
+		} else if (commandType.getType().equalsIgnoreCase("search")) {
 			return CommandTypes.SEARCH;
-		} else if (commandTypeString.equalsIgnoreCase("exit")) {
-			return CommandTypes.EXIT;
 		} else {
 			return null;
 		}

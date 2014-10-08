@@ -1,4 +1,4 @@
-package CommandType;
+package Logic.CommandType;
 
 public class SearchCommandType implements CommandType{
 
