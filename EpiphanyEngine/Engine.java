@@ -12,15 +12,16 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.io.*;
 
-public class WYEngine {
+public class Engine {
 	// EpiphanyMain contains all the current projects which is stored in an
 	// array List
 	public static ArrayList<String> projectNames;
 	public static ArrayList<Task> defaultProject;
 	public static ArrayList<ArrayList<Task>> EpiphanyMain;
 	public static ArrayList<Date> testDate1;
+	public static ArrayList<Task> testDateSort;
 
-	public static final String MESSAGE_WELCOME = " Welcome to Epiphany!";
+	public static final String MESSAGE_WELCOME = " Welcome to Epiphany!\n";
 	public static final String MESSAGE_WRONG_ENTRY = "Wrong entry, please re-enter input.";
 	public static final String MESSAGE_SORTED = "Tasks sorted alphabetically!";
 	public static final String MESSAGE_DELETE_INVALID = " %s, is already empty, please re-enter command.";
@@ -41,18 +42,17 @@ public class WYEngine {
 	private static final String MESSAGE_COMMAND = "command: \n";
 	private Scanner sc;
 	private Scanner sc2;
-	
-	//Global variable used to scan all the input from the users
+
+	// Global variable used to scan all the input from the users
 	private static Scanner scanner = new Scanner(System.in);
-	
+
 	enum CommandTypes {
-		ADD, DISPLAY, DELETE, CLEAR, EXIT, INVALID, SEARCH, SORT
+		ADD, DISPLAY, DELETE, CLEAR, EXIT, INVALID, SEARCH
 	};
 
-	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {
 		// Initializing engine
-		WYEngine L1 = new WYEngine();
+		Engine L1 = new Engine();
 		L1.run();
 		
 		L1.printToUser(MESSAGE_WELCOME, null, null);
@@ -63,107 +63,69 @@ public class WYEngine {
 		}
 	}
 		
-		/*
-		// testing out date class	
-		L1.testSort();
-		for (Date s: testDate1) {
-			System.out.println(s);
-		}
-		
-		EpiphanyMain.add(defaultProject);
-		L1.addTask(null, null, null);
-		L1.addTask("testing time", null , null);
-		L1.addTask("testing another time", new Date(31,10,2014), null);
-		L1.addTask("testing third time", new Date(31,4,2014), null);
-		L1.addTask("Why am I so pretty", null, null);
-				
-		L1.addTask("we are still working", null, "CS");
-		L1.addTask("we are really still working", null, "CS");
-		L1.addTask("Hello there", null, "We rock");
-		L1.addTask("software engineering much wow", null, "2103");
+	 /*
+	  L1.addTask(null, null, null);
+	  L1.addTask("testing time", null , null);
+	  L1.addTask("testing another time", null, null);
+	  L1.addTask("testing third time", null, null);
+	  L1.addTask("Why am I so pretty", null, null);
+	  
+	  L1.addTask("we are still working", null, "CS");
+	  L1.addTask("we are really still working", null, "CS");
+	  L1.addTask("Hello there", null, "We rock");
+	  L1.addTask("software engineering much wow", null, "2103");
+	  
+	  System.out.println(); 
+	  L1.displayAll(EpiphanyMain);
+	  
+	  System.out.println("List of projects: ");
+	  L1.displayProjects(); 
 
-		System.out.println();
-		L1.displayAll(EpiphanyMain);
+	  System.out.println(); 
+	  L1.search("are"); 
+	  
+	  L1.test();
+	  System.out.println();
+	  for (Task s: testDateSort) {
+		  System.out.println(s.toString());
+	  }
 
-		System.out.println("List of projects: ");
-		L1.displayProjects();
-		// L1.test();
-		// L1.displayAL(EpiphanyMain.get(0));
-
-		System.out.println();
-		L1.search("are");
+	  }
+	
+	@SuppressWarnings("deprecation")
+	public void test() {
+		testDateSort.add(new Task("hello1", new Date(), null));
+		testDateSort.add(new Task("hello2", new Date(114,10,4), null));
+		testDateSort.add(new Task("hello3", new Date(114,12,25), null));
+		sortDateInProject(testDateSort);
 	}
 	*/
-	
+	 
+
 	public void testSort() {
-	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-	    try {
-			 Date one = sdf.parse("31-4-2014");
-			 Date two = sdf.parse("10-10-2014");
-			 Date three = sdf.parse("31-12-2014");
-			 Date four = sdf.parse("17-6-2014");
-			 testDate1.add(one);
-			 testDate1.add(two);
-			 testDate1.add(three);
-			 testDate1.add(four);
-			 Collections.sort(testDate1, new customComparator());
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		try {
+			Date one = sdf.parse("31-4-2014");
+			Date two = sdf.parse("10-10-2014");
+			Date three = sdf.parse("31-12-2014");
+			Date four = sdf.parse("17-6-2014");
+			testDate1.add(one);
+			testDate1.add(two);
+			testDate1.add(three);
+			testDate1.add(four);
+			Collections.sort(testDate1, new customComparator());
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 	}
 
-	/*
-		public void test() {
-			ArrayList<ArrayList<Task>> testing = new ArrayList<ArrayList<Task>>();
-
-			ArrayList<Task> testProject = new ArrayList<Task>();
-			ArrayList<Task> cs2103 = new ArrayList<Task>();
-
-			Task hello = new Task("hello", null, null);
-			Task hello1 = new Task("hello there", null, null);
-			Task hello2 = new Task("complete PS4", null, "CS2010");
-			Task hello3 = new Task("Celebrate mum's birthday, complete birthday card ", null , "CS2103");
-
-			Task one = new Task("The little fox", null, "CS2103");
-			Task two = new Task("Is capable of", null, "CS2103");
-			Task three = new Task("flying his fox", null, "CS2103");
-
-
-			addTask("hello", null, null);
-			addTask("hello there", null, null);
-			addTask("complete PS4", null, "CS2010");
-			addTask("Celebrate mum's birthday, complete birthday card ", null , "CS2103");
-
-			addTask("The little fox", null, "CS2103");
-			addTask("Is capable of", null, "CS2103");
-			addTask("flying his fox", null, "CS2103");
-
-			testing.add(testProject);
-			testing.add(cs2103);
-
-			displayAll(testing);
-			System.out.println();
-
-			displayProjects();
-			//System.out.print(hello3.ProjectName);
-
-			System.out.println();
-			EpiphanyMain = testing;
-			//search("complete");
-			System.out.println();
-			displayTaskToDelete("complete", search("complete"));
-			//deleteProject(null, "testProject");
-
-			System.out.println();
-			deleteProject(null, "CS2103");
-		}
-	 */
-
 	public void run() {
 		EpiphanyMain = new ArrayList<ArrayList<Task>>();
 		projectNames = new ArrayList<String>();
 		defaultProject = new ArrayList<Task>();
-	    testDate1 = new ArrayList<Date>();
+		EpiphanyMain.add(defaultProject);
+		testDate1 = new ArrayList<Date>();
+		testDateSort = new ArrayList<Task>();
 	}
 
 	/**
@@ -173,24 +135,25 @@ public class WYEngine {
 	 *            the search phrase provided by the use
 	 * @return an ArrayList of tasks that match the given phrase
 	 */
+	public void search(String phrase, String projectName) {
+	for(int i = 0; i< projectNames.size(); i++){
+		for(int j = 0; j< EpiphanyMain.get(i).size(); j++){
+			
+		//////FIXXXXXX
+		if(EpiphanyMain.get(i).contains(phrase)){
+			System.out.println();
+		}
+		}
+	}
+	}
+	
+		
 	public ArrayList<Task> search(String phrase) {
-		// updated the String method to ignore cases:
-		// String phrase = new String(targetPhrase).toLowerCase();
-		ArrayList<Task> searchResult = new ArrayList<Task>(); // Would contain
-		// the list of
-		// tasks
-		// that are in
-		// the search
-		// result
-
-		for (int i = 0; i < EpiphanyMain.size(); i++) {// Searches the entire
-			// list
-			for (int j = 0; j < EpiphanyMain.get(i).size(); j++) {// Searches
-				// each
-				// project
-
+		ArrayList<Task> searchResult = new ArrayList<Task>();
+		for (int i = 0; i < EpiphanyMain.size(); i++) {
+			for (int j = 0; j < EpiphanyMain.get(i).size(); j++) {
 				Task line = (EpiphanyMain.get(i)).get(j);
-				if (line.instruction.contains(phrase)) {
+				if (line.instruction.toLowerCase().contains(phrase.toLowerCase())) {
 					searchResult.add(line);
 				}
 			}
@@ -200,7 +163,7 @@ public class WYEngine {
 			return searchResult; // empty
 		}
 		System.out.println("Search result:");
-		displayAL(searchResult); //returns an arraylist of tasks
+		displayArrayList(searchResult); // returns an arraylist of tasks
 		return searchResult;
 	}
 
@@ -209,14 +172,13 @@ public class WYEngine {
 		if (Epiphany.isEmpty()) {
 			System.out.println("Nothing to display.");
 		} else {
-
-			for (int i = 0; i < Epiphany.size(); i++) {// CHNAGED I FORM 1 TO 0
+			for (int i = 0; i < Epiphany.size(); i++) {
 				Task name = Epiphany.get(i).get(0);
 				if (i == 0) {
 					System.out.println("Project: Default");
 				} else {
-					System.out
-					.println("Project: " + i + ". " + name.ProjectName);
+					System.out.println("Project: " + i + ". "
+							+ name.ProjectName);
 				}
 				int counter = 1;
 				for (int j = 0; j < Epiphany.get(i).size(); j++) {
@@ -229,8 +191,8 @@ public class WYEngine {
 		}
 	}
 
-	// Displays a specific project
-	public ArrayList<Task> displayAL(ArrayList<Task> expected) {
+	// Helper function: Displays an ArrayList project
+	public ArrayList<Task> displayArrayList(ArrayList<Task> expected) {
 
 		if (expected.isEmpty()) {
 			System.out.println(String.format(MESSAGE_DISPLAY_ERROR));
@@ -246,7 +208,6 @@ public class WYEngine {
 		return expected;
 	}
 
-	// doesnt work as intended
 	/**
 	 * displays the contents of any one project
 	 * 
@@ -257,16 +218,16 @@ public class WYEngine {
 		for (int i = 0; i < EpiphanyMain.size(); i++) {
 			if (EpiphanyMain.get(i).get(0).getProjectName().equals(name)) {
 				ArrayList<Task> temporaryProject = EpiphanyMain.get(i);
-				displayAL(temporaryProject);
-			} else {  
+				displayArrayList(temporaryProject);
+			} else {
 				System.out.println("No such project exists.");
 			}
 		}
 	}
 
 	/**
-	 * Displays the names and indices of all the projects that exist
-	 * without showing the default project
+	 * Displays the names and indices of all the projects that exist without
+	 * showing the default project
 	 */
 	public void displayProjects() {
 		int count = 1;
@@ -275,77 +236,46 @@ public class WYEngine {
 		} else {
 			for (String s : projectNames) {
 				System.out.println(count + ". " + s + ".");
-				count ++;
+				count++;
 			}
 		}
 	}
 
-	// unnecessary method
-	/*
-		public void addTask(String input) {
-			ArrayList<Task> hello = EpiphanyMain.get(0);
-			hello.add(new Task(input));
-		}
-	 */
-
-	/*
-		public void addTask(String input, Date date, String project) {
-			if (!project.equals(null)) {
-				// Finds the project name and appends the task in
-				// THis would terminate right?
-				for (String s : projectNames) {
-					int count = 1;
-					if (s.equals(project)) {
-						EpiphanyMain.get(count).add(new Task(input, null, project));
-					} else if (!s.equals(project)) {
-						count++;
-					} 
-					// Create a new project if one does not exist
-					projectNames.add(project);
-					ArrayList<Task> latest = new ArrayList<Task>();
-					latest.add(new Task(input, null, project));
-					EpiphanyMain.add(latest);
-					// Create a new file to store the new data
-					try {
-						createNewFile(project, latest);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-				if (date == null) {
-				}
-				// I have not yet incorporated the add with date.
-			} else {
-				// add to default project
-				for (int i = 0; i < projectNames.size(); i++) {
-					if (projectNames.get(i).equals(project)) {
-						EpiphanyMain.get(i).add(new Task(input, date, project));
-					}
-				}
-			}
-		}
-	 */
-
 	public void addTask(String instruction, Date date, String project) {
 		if (instruction == null) {
-			System.out.println("Please give a task name"); // convert this to static final
+			System.out.println("Please give a task name"); // convert this to
+															// static final
 		} else {
 			if (date == null && project == null) { // for tasks without deadline
 				defaultProject.add(new Task(instruction, null, null));
+				System.out.println(instruction + " has been added!");
+				
 			} else if (date == null && project != null) {
 
 				// check if the project exists first, if not
 				// create a new file for the new project.
 
-				if (projectNames.contains(project)) { //does not deal with upper or lower cases yet.
+				if (projectNames.contains(project)) { // does not deal with
+														// upper or lower cases
+														// yet.
 					int count = 1; // start from 1, 0 is the default project
-					EpiphanyMain.get(count).add(new Task(instruction, null, project));
+					EpiphanyMain.get(count).add(
+							new Task(instruction, null, project));
 
-				} else if (!projectNames.contains(project)){ // create a new file for the project
-					projectNames.add(project); //update the projectNames arrayList
+				} else if (!projectNames.contains(project)) { // create a new
+																// file for the
+																// project
+					projectNames.add(project);
 					ArrayList<Task> latest = new ArrayList<Task>();
-					latest.add(new Task(instruction, null, project)); //add new task inside this new project called latest
-					//Project newProject = new Project(project, latest);
+					latest.add(new Task(instruction, null, project)); // add new
+																		// task
+																		// inside
+																		// this
+																		// new
+																		// project
+																		// called
+																		// latest
+					// Project newProject = new Project(project, latest);
 					EpiphanyMain.add(latest);
 					// Create a new file to store the new data
 					try {
@@ -358,62 +288,78 @@ public class WYEngine {
 			} else if (date != null && project == null) {
 
 				// add tasks with deadline into the default
-				// and sort according to priority
+				// and sort according to priority12/12/2019
 				defaultProject.add(new Task(instruction, date, null));
+				sortDateInProject(defaultProject);
 				// defaultProject.sort()
 			}
-		}	
+		}
 	}
 
-	//cant delete default project. make this a failsafe.
-	/*
-		public void deleteProject(Integer input, String projectName) {
-			displayProjects();
-			sc = new Scanner(System.in);
-			if (sc.hasNext()) {
-				int value = sc.nextInt();
-				projectNames.remove(value - 1);
+	public void deleteTask(String instruction, String projectName) {
+		for (String s : projectNames) {
+			int count = 0;
+			if (s.equals(projectName)) {
+				for (int i = 0; i < EpiphanyMain.get(count).size(); i++) {
+					if (EpiphanyMain.get(count).get(i).getInstruction().equals(instruction)) {
+						EpiphanyMain.get(count).remove(i);
+						System.out.println("Removed: " + instruction
+								+ "successfully");
+
+					}
+				}
 			} else {
-				if (projectNames.contains(projectName)) {
-					projectNames.remove(projectName);
+				count++;
+			}
+		}
+	}
+
+	public void deleteTask(String instruction) {
+		for (int i = 0; i < EpiphanyMain.size(); i++) {
+			for (int j = 0; j < EpiphanyMain.get(i).size(); j++) {
+			if (EpiphanyMain.get(i).get(j).getInstruction().equals(instruction)) {
+				EpiphanyMain.get(i).remove(j);
+				System.out.println("Removed: " + instruction
+							+ " successfully");
+				}
+				else {
+					continue;
 				}
 			}
 		}
-	 */
-	
-	public void deleteTaskWithinProject(String phrase, ArrayList<Task> project) {
-		if (project.contains(phrase)) {
-			int count = project.lastIndexOf(phrase);
-			project.remove(count);
-		}
 	}
-	
-	public void deleteProjectFromMain(ArrayList<Task> projectName) {
-		if (EpiphanyMain.contains(projectName) && projectNames.contains(projectName)) {
+
+
+	public void deleteProject(ArrayList<Task> projectName) {
+		if (EpiphanyMain.contains(projectName)
+				&& projectNames.contains(projectName)) {
 			int count = EpiphanyMain.lastIndexOf(projectName);
 			int count1 = projectNames.lastIndexOf(projectName);
 			EpiphanyMain.remove(count);
 			projectNames.remove(count1);
-		} 
-	}
-
-	public void displayTaskToDelete(String phrase, ArrayList<Task> temp) {
-		for (int i = 0; i<temp.size(); i++) {
-			System.out.println(i + 1 + ". " + temp.get(i).getInstruction() + " " + temp.get(i).getProjectName());
 		}
 	}
 
+	public void displayTaskToDelete(String phrase, ArrayList<Task> temp) {
+		for (int i = 0; i < temp.size(); i++) {
+			System.out.println(i + 1 + ". " + temp.get(i).getInstruction()
+					+ " " + temp.get(i).getProjectName());
+		}
+	}
 
-	//sorts by deadline. meaning the phrase with the earliest date will show first.
-	//date format is quite crude for now, can be polymorphised later.
-	// for now date is sorted according to DDMMYYYY 
-	// will specify to include time as well. TTTT to settle the cases of tasks on the same day.
+	// sorts by deadline. meaning the phrase with the earliest date will show
+	// first.
+	// date format is quite crude for now, can be polymorphised later.
+	// for now date is sorted according to DDMMYYYY
+	// will specify to include time as well. TTTT to settle the cases of tasks
+	// on the same day.
 	
+
 	public Date formatDate(String dateStr) {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 		try {
-		Date date = sdf.parse(dateStr);
-		return date;
+			Date date = sdf.parse(dateStr);
+			return date;
 		} catch (ParseException e) {
 			return null;
 		}
@@ -423,24 +369,38 @@ public class WYEngine {
 		Collections.sort(testDate, new customComparator());
 	}
 	
+	public ArrayList<Task> sortDateInProject(ArrayList<Task> project) {
+		Collections.sort(project, new taskDateComparator());
+		return project;
+		
+	}
+	
+	public class taskDateComparator implements Comparator<Task> {
+		@Override
+		public int compare(Task one, Task two) {
+			return one.getDeadline().compareTo(two.getDeadline());
+		}
+	}
+	
 	public class customComparator implements Comparator<Date> {
 		@Override
 		public int compare(Date one, Date two) {
 			return one.compareTo(two);
 		}
 	}
-	
+
 	public String toString(Date deadLine) {
 		String dateFormat = "dd-MM-yyyy";
 		SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
 		String stringDate = sdf.format(deadLine);
 		return stringDate;
 	}
-	
+
 	// User Interface Methods:
-	// We receive instruction from the intepreter: 
-	/* e.g.: add buy groceries for upcoming week 
-	 * need some way to filter what is <Date> & <ProjectName>
+	// We receive instruction from the interpreter:
+	/*
+	 * e.g.: add buy groceries for upcoming week need some way to filter what is
+	 * <Date> & <ProjectName>
 	 * 
 	 * for now its just the basic
 	 */
@@ -456,20 +416,17 @@ public class WYEngine {
 		case ADD:
 			addTask(instruction, null, null);
 			break;
-		case DISPLAY: //displays the entire arraylist
+		case DISPLAY: // displays the entire arraylist
 			displayAll(EpiphanyMain);
 			break;
 		case DELETE:
-			//deleteText(userCommand, textFile, sourceFile);
+			deleteTask(instruction);
 			break;
 		case CLEAR:
-			//clearAllText(userCommand, textFile, sourceFile);
+			// clearAllText(userCommand, textFile, sourceFile);
 			break;
 		case SEARCH:
 			search(instruction);
-			break;
-		case SORT:
-			//sort(textFile);
 			break;
 		case EXIT:
 			System.exit(0);
@@ -494,30 +451,26 @@ public class WYEngine {
 			return CommandTypes.CLEAR;
 		} else if (commandTypeString.equalsIgnoreCase("search")) {
 			return CommandTypes.SEARCH;
-		} else if (commandTypeString.equalsIgnoreCase("sort")) {
-			return CommandTypes.SORT;
 		} else if (commandTypeString.equalsIgnoreCase("exit")) {
 			return CommandTypes.EXIT;
 		} else {
 			return null;
 		}
 	}
-	
+
 	private String getFirstWord(String userCommand) {
 		String commandTypeString = userCommand.trim().split("\\s+")[0];
 		return commandTypeString;
 	}
 
-	
 	private String removeFirstWord(String userCommand) {
 		return userCommand.replace(getFirstWord(userCommand), "").trim();
 	}
-	
+
 	private void printToUser(String text, String arg1, String arg2) {
 		String printText = String.format(text, arg1, arg2);
 		System.out.print(printText);
 	}
-	
 
 	public class Task {
 		private String instruction;
@@ -526,14 +479,13 @@ public class WYEngine {
 		private String ProjectName;
 		private boolean isCompleted;
 
-
-		//Constructor for Task
+		// Constructor for Task
 		public Task(String i, Date date, String ProjectName) {
 			this.instruction = i;
 			this.deadLine = date;
-			
+
 			this.ProjectName = ProjectName;
-			this.isCompleted = false; //Set as false as a default
+			this.isCompleted = false; // Set as false as a default
 		}
 
 		// Accessors
@@ -552,7 +504,6 @@ public class WYEngine {
 		public boolean isStatus() {
 			return isCompleted;
 		}
-		
 
 		// Mutators
 		void setInstruction(String newInstruction) {
@@ -570,9 +521,12 @@ public class WYEngine {
 		void isCompletedUpdate(boolean value) {
 			this.isCompleted = value;
 		}
+		
+		@Override
+		public String toString() {
+			return this.getInstruction() + "has the deadline: " + this.getDeadline();
+		}
 	}
-
-
 
 	// Should this be a class or should I simply convert this into a method?
 	class Project {
@@ -630,8 +584,6 @@ public class WYEngine {
 		}
 		writer.close();
 	}
-	
-	
-	
+
 }
 // treeset for iteration using sort//
