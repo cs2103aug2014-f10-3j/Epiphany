@@ -21,6 +21,7 @@ public final class strtotime {
         matchers.add(new DateFormatMatcherThree(new SimpleDateFormat("dd-MM-yyyy")));
         matchers.add(new DateFormatMatcherThree(new SimpleDateFormat("dd MM yyyy")));
         matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd MMM")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd/MM")));
         matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd'st' MMM")));
         matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd'nd' MMM")));
         matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd'rd' MMM")));

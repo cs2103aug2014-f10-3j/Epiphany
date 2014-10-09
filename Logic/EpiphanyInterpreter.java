@@ -1,21 +1,28 @@
+package Logic;
+
 import java.io.*; 
 import java.util.Scanner;
 
 import java.util.Date; 
-import java.util.TreeSet; 
-import java.util.HashMap;
+import java.util.TreeSet;
 
-import DateInterpreter.*;
-import CommandType.*; 
+import Logic.DateInterpreter.*;
+import Logic.CommandType.*; 
 
+import EpiphanyEngine.*;
 
 public class EpiphanyInterpreter {
 	///all the string constants that are involved in displaying things to the user.
 	private static final String MESSAGE_COMMAND_PROMPT = "command: ";
+	private static final String MESSAGE_INVALID_COMMAND = "Invalid command!";
 	private static final String REGEX_ADD_COMMAND = ".*\\s(by|on)\\s.*";
 	private static final String REGEX_SPLIT_ADD_COMMAND = "\\s(by|on)\\s(?!.*\\s(by|on)\\s)";
 	private static final TreeSet<String> actionWords = new TreeSet<String>(); //dictionary
-	private static final HashMap<Integer, String> months = new HashMap<Integer, String>();
+	Engine engine;
+	
+	public EpiphanyInterpreter() {
+		engine = new Engine();
+	}
 
 	/**
 	 * This is the main function which dictates the flow of the program. All the functionality is
@@ -38,7 +45,12 @@ public class EpiphanyInterpreter {
 		do{
 			System.out.print(MESSAGE_COMMAND_PROMPT);
 			userInput = input.nextLine();
-			interpretCommand(userInput);
+			CommandType toPassToEngine = interpretCommand(userInput);
+			if(toPassToEngine != null){
+				engine.executeCommand(toPassToEngine);
+			} else{
+				System.out.println(MESSAGE_INVALID_COMMAND);
+			}
 		} while(!userInput.equalsIgnoreCase("exit"));
 		input.close();
 	}
@@ -55,6 +67,8 @@ public class EpiphanyInterpreter {
 			return exitProgram();
 		} else if(userInput.matches("(search|find).*")) {
 			return interpretSearchCommand(userInput);
+		} else if(userInput.matches("(delete|remove).*")) {
+			return interpretDeleteCommand(userInput);
 		} else { 
 			return interpretAddCommand(userInput);
 		} 
@@ -93,6 +107,11 @@ public class EpiphanyInterpreter {
 	private CommandType interpretSearchCommand(String userInput) {
 		String findMe = userInput.substring(userInput.indexOf(' ') + 1);   
 		return new SearchCommandType(findMe);
+	}
+	
+	private CommandType interpretDeleteCommand(String userInput) {
+		String toDelete = userInput.substring(userInput.indexOf(' ') + 1);   
+		return new DeleteCommandType(toDelete);
 	}
 
 	/**

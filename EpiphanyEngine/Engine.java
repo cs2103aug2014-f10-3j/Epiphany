@@ -24,7 +24,7 @@ public class Engine {
 	public static ArrayList<Date> testDate1;
 	public static ArrayList<Task> testDateSort;
 
-	public static final String MESSAGE_WELCOME = " Welcome to Epiphany!\n";
+	//public static final String MESSAGE_WELCOME = " Welcome to Epiphany!\n";
 	public static final String MESSAGE_WRONG_ENTRY = "Wrong entry, please re-enter input.";
 	public static final String MESSAGE_SORTED = "Tasks sorted alphabetically!";
 	public static final String MESSAGE_DELETE_INVALID = " %s, is already empty, please re-enter command.";
@@ -49,61 +49,13 @@ public class Engine {
 	// Global variable used to scan all the input from the users
 	private static Scanner scanner = new Scanner(System.in);
 
-	enum CommandTypes {
+	enum CommandTypesEnum {
 		ADD, DISPLAY, DELETE, CLEAR, EXIT, INVALID, SEARCH
 	};
-
-	public static void main(String[] args) {
-		// Initializing engine
-		Engine L1 = new Engine();
-		L1.run();
-		
-		L1.printToUser(MESSAGE_WELCOME, null, null);
-		while (true) {
-			System.out.print(MESSAGE_COMMAND);
-			String userCommand = scanner.nextLine();
-			L1.executeCommand(userCommand);
-		}
-	}
-		
-	 /*
-	  L1.addTask(null, null, null);
-	  L1.addTask("testing time", null , null);
-	  L1.addTask("testing another time", null, null);
-	  L1.addTask("testing third time", null, null);
-	  L1.addTask("Why am I so pretty", null, null);
-	  
-	  L1.addTask("we are still working", null, "CS");
-	  L1.addTask("we are really still working", null, "CS");
-	  L1.addTask("Hello there", null, "We rock");
-	  L1.addTask("software engineering much wow", null, "2103");
-	  
-	  System.out.println(); 
-	  L1.displayAll(EpiphanyMain);
-	  
-	  System.out.println("List of projects: ");
-	  L1.displayProjects(); 
-
-	  System.out.println(); 
-	  L1.search("are"); 
-	  
-	  L1.test();
-	  System.out.println();
-	  for (Task s: testDateSort) {
-		  System.out.println(s.toString());
-	  }
-
-	  }
 	
-	@SuppressWarnings("deprecation")
-	public void test() {
-		testDateSort.add(new Task("hello1", new Date(), null));
-		testDateSort.add(new Task("hello2", new Date(114,10,4), null));
-		testDateSort.add(new Task("hello3", new Date(114,12,25), null));
-		sortDateInProject(testDateSort);
-	}
-	*/
-	 
+	public Engine() {
+		run();
+	} 
 
 	public void testSort() {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
@@ -129,29 +81,10 @@ public class Engine {
 		EpiphanyMain.add(defaultProject);
 		testDate1 = new ArrayList<Date>();
 		testDateSort = new ArrayList<Task>();
+		projectNames.add("default");
 	}
-
-	/**
-	 * Searches through the entire project for the given phrase.
-	 * 
-	 * @param phrase
-	 *            the search phrase provided by the use
-	 * @return an ArrayList of tasks that match the given phrase
-	 */
-	public void search(String phrase, String projectName) {
-	for(int i = 0; i< projectNames.size(); i++){
-		for(int j = 0; j< EpiphanyMain.get(i).size(); j++){
-			
-		//////FIXXXXXX
-		if(EpiphanyMain.get(i).contains(phrase)){
-			System.out.println();
-		}
-		}
-	}
-	}
-	
 		
-	public ArrayList<Task> search(String phrase) {
+	public ArrayList<Task> search(String phrase, String projectName) {
 		ArrayList<Task> searchResult = new ArrayList<Task>();
 		for (int i = 0; i < EpiphanyMain.size(); i++) {
 			for (int j = 0; j < EpiphanyMain.get(i).size(); j++) {
@@ -172,7 +105,7 @@ public class Engine {
 
 	// Displays all projects
 	public void displayAll(ArrayList<ArrayList<Task>> Epiphany) {
-		if (Epiphany.isEmpty()) {
+		if (Epiphany.size() == 1 && Epiphany.get(0).isEmpty()) {
 			System.out.println("Nothing to display.");
 		} else {
 			for (int i = 0; i < Epiphany.size(); i++) {
@@ -186,8 +119,9 @@ public class Engine {
 				int counter = 1;
 				for (int j = 0; j < Epiphany.get(i).size(); j++) {
 					Task s = Epiphany.get(i).get(j);
-					System.out.println(String.format(MESSAGE_DISPLAY, counter,
+					System.out.print(String.format(MESSAGE_DISPLAY, counter,
 							s.instruction));
+					System.out.println("	" + s.getDeadline());
 					counter++;
 				}
 			}
@@ -259,11 +193,11 @@ public class Engine {
 			System.out.println("Please give a task name"); // convert this to
 															// static final
 		} else {
-			if (date == null && project == null) { // for tasks without deadline
+			if (date == null && project.equals("default")) { // for tasks without deadline
 				defaultProject.add(new Task(instruction, null, null));
-				System.out.println(instruction + " has been added!");
+				System.out.println("Task has been added!");
 				
-			} else if (date == null && project != null) {
+			} else if (date == null && !project.equals("default")) {//Project included no date.
 
 				// check if the project exists first, if not
 				// create a new file for the new project.
@@ -297,14 +231,16 @@ public class Engine {
 						e.printStackTrace();
 					}
 				}
+				System.out.println("Task has been added!");
 
-			} else if (date != null && project == null) {
+			} else if (date != null && project.equals("default")) { //Have date, no project
 
 				// add tasks with deadline into the default
 				// and sort according to priority12/12/2019
 				defaultProject.add(new Task(instruction, date, null));
 				sortDateInProject(defaultProject);
 				// defaultProject.sort()
+				System.out.println("Task has been added!");
 			}
 		}
 	}
@@ -312,12 +248,12 @@ public class Engine {
 	public void deleteTask(String instruction, String projectName) {
 		for (String s : projectNames) {
 			int count = 0;
-			if (s.equals(projectName)) {
+			if (s.equals("default")) {
 				for (int i = 0; i < EpiphanyMain.get(count).size(); i++) {
 					if (EpiphanyMain.get(count).get(i).getInstruction().equals(instruction)) {
 						EpiphanyMain.get(count).remove(i);
 						System.out.println("Removed: " + instruction
-								+ "successfully");
+								+ " successfully");
 
 					}
 				}
@@ -418,7 +354,7 @@ public class Engine {
 	 * for now its just the basic
 	 */
 	public void executeCommand(CommandType userCommand) {
-		CommandTypes commandType = determineCommandType(userCommand);
+		CommandTypesEnum commandType = determineCommandType(userCommand);
 
 		switch (commandType) {
 		case ADD:
@@ -427,7 +363,7 @@ public class Engine {
 			break;
 		case DISPLAY: // displays the entire arraylist
 			DisplayCommandType displayUserCommand = (DisplayCommandType) userCommand;
-			displayAll(displayUserCommand.getModifiers());
+			display(displayUserCommand.getModifiers());
 			break;
 		case DELETE:
 			DeleteCommandType deleteUserCommand = (DeleteCommandType) userCommand;
@@ -444,18 +380,18 @@ public class Engine {
 		}
 	}
 
-	private CommandTypes determineCommandType(CommandType commandType) {
+	private CommandTypesEnum determineCommandType(CommandType commandType) {
 		if (commandType == null)
 			throw new Error(ERROR_COMMAND_TYPE_NULL);
 
 		if (commandType.getType().equalsIgnoreCase("add")) {
-			return CommandTypes.ADD;
+			return CommandTypesEnum.ADD;
 		} else if (commandType.getType().equalsIgnoreCase("display")) {
-			return CommandTypes.DISPLAY;
+			return CommandTypesEnum.DISPLAY;
 		} else if (commandType.getType().equalsIgnoreCase("delete")) {
-			return CommandTypes.DELETE;
+			return CommandTypesEnum.DELETE;
 		} else if (commandType.getType().equalsIgnoreCase("search")) {
-			return CommandTypes.SEARCH;
+			return CommandTypesEnum.SEARCH;
 		} else {
 			return null;
 		}
