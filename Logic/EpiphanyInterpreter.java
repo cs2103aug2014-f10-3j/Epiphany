@@ -1,17 +1,16 @@
 package Logic;
 
 import java.io.*; 
+import java.util.InputMismatchException;
 import java.util.Scanner;
-
 import java.util.Date; 
 import java.util.TreeSet;
 
 import Logic.DateInterpreter.*;
 import Logic.CommandType.*; 
-
 import EpiphanyEngine.*;
 
-public class EpiphanyInterpreter {
+public class EpiphanyInterpreter implements deleteObserver{
 	///all the string constants that are involved in displaying things to the user.
 	private static final String MESSAGE_COMMAND_PROMPT = "command: ";
 	private static final String MESSAGE_INVALID_COMMAND = "Invalid command!";
@@ -19,9 +18,13 @@ public class EpiphanyInterpreter {
 	private static final String REGEX_SPLIT_ADD_COMMAND = "\\s(by|on)\\s(?!.*\\s(by|on)\\s)";
 	private static final TreeSet<String> actionWords = new TreeSet<String>(); //dictionary
 	Engine engine;
+	Scanner input; //This scanner will deal with all input from user.
+	UIHandler uiHandler; 
 	
 	public EpiphanyInterpreter() {
 		engine = new Engine();
+		input = new Scanner( System.in );
+		uiHandler = UIHandler.getInstance();
 	}
 
 	/**
@@ -40,16 +43,15 @@ public class EpiphanyInterpreter {
 	 * operations are carried out in this function - all the operations are left to the 'route' function.
 	 */
 	void acceptUserInputUntilExit() {
-		Scanner input = new Scanner( System.in );
 		String userInput;
 		do{
-			System.out.print(MESSAGE_COMMAND_PROMPT);
+			uiHandler.printToTerminal(MESSAGE_COMMAND_PROMPT, "inline");
 			userInput = input.nextLine();
 			CommandType toPassToEngine = interpretCommand(userInput);
 			if(toPassToEngine != null){
 				engine.executeCommand(toPassToEngine);
 			} else{
-				System.out.println(MESSAGE_INVALID_COMMAND);
+				uiHandler.printToTerminal(MESSAGE_INVALID_COMMAND);
 			}
 		} while(!userInput.equalsIgnoreCase("exit"));
 		input.close();
@@ -160,6 +162,28 @@ public class EpiphanyInterpreter {
 		Scanner dictScan = new Scanner(dict);
 		while(dictScan.hasNextLine()){
 			actionWords.add(dictScan.nextLine());
+		}
+	}
+	
+	@Override
+	/**
+	 * When delete is called we will perform a search for the given key, tasks that contain this
+	 * key will be enumerated to the user.
+	 * This function asks the user for the index of the task to be deleted (from the enumerated list)
+	 */
+	public int askForAdditionalInformation() {
+		String inputFromUser = input.nextLine();
+		try{
+			int indexFromUser = Integer.parseInt(inputFromUser);
+			return indexFromUser;
+		} catch (NumberFormatException e){
+			uiHandler.printToTerminal("You have entered an invalid number. Press y to try again, press n to cancel delete.");
+			String userResponse = input.nextLine();
+			if(userResponse.equalsIgnoreCase("y")){
+				return askForAdditionalInformation();
+			} else{
+				return -1;
+			}
 		}
 	}
 }
