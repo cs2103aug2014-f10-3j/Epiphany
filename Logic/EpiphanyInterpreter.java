@@ -14,8 +14,8 @@ public class EpiphanyInterpreter implements deleteObserver{
 	///all the string constants that are involved in displaying things to the user.
 	private static final String MESSAGE_COMMAND_PROMPT = "command: ";
 	private static final String MESSAGE_INVALID_COMMAND = "Invalid command!";
-	private static final String REGEX_ADD_COMMAND = ".*\\s(by|on)\\s.*";
-	private static final String REGEX_SPLIT_ADD_COMMAND = "\\s(by|on)\\s(?!.*\\s(by|on)\\s)";
+	private static final String REGEX_ADD_COMMAND = ".*\\s(by|on|in)\\s.*";
+	private static final String REGEX_SPLIT_ADD_COMMAND = "\\s(by|on|in)\\s(?!.*\\s(by|on|in)\\s)";
 	private static final TreeSet<String> actionWords = new TreeSet<String>(); //dictionary
 	Engine engine;
 	Scanner input; //This scanner will deal with all input from user.

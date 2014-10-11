@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 class WeeksMatcher implements strtotime.Matcher {
 
     private final Pattern weeks = Pattern.compile("[\\-\\+]?\\d+ weeks");
+    private final Pattern inAWeek = Pattern.compile("a week");
 
     @Override
     public Date tryConvert(String input) {
@@ -15,6 +16,11 @@ class WeeksMatcher implements strtotime.Matcher {
             int w = Integer.parseInt(input.split(" ")[0]);
             Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.DAY_OF_YEAR, w * 7);
+            return calendar.getTime();
+        }
+        if (inAWeek.matcher(input).matches()) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DAY_OF_YEAR, 7);
             return calendar.getTime();
         }
 

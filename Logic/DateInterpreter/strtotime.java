@@ -11,9 +11,10 @@ public final class strtotime {
 
     static {
         matchers = new LinkedList<Matcher>();
-        matchers.add(new TomorrowMatcher());
+        matchers.add(new SoonMatcher());
         matchers.add(new DaysMatcher());
         matchers.add(new WeeksMatcher());
+        matchers.add(new ExtendedDayMatcher());
         matchers.add(new DayMatcher());
         matchers.add(new OnlyDateMatcher());
         matchers.add(new DateFormatMatcherThree(new SimpleDateFormat("dd.MM.yyyy")));
