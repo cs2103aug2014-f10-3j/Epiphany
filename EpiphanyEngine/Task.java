@@ -1,12 +1,28 @@
-// Task Class that stores tasks.
+package EpiphanyEngine;
+
+
 import java.util.*;
+
+/**
+ * This class aims to help in the creation and management of tasks. Each task contains an instruction,
+ * a deadline of class Date, a projectName which is the name of the project that the task is stored
+ * under and a boolean variable to check if the task has been completed.
+ * @author Moazzam
+ *
+ */
 public class Task {
 		private String instruction;
 		private Date deadLine;
 		private String projectName;
 		private boolean isCompleted;
 
-		// Constructor for Task
+		/**
+		 * Overloaded constructors for the creation of tasks are shown below. They differ in the 
+		 * type of arguments that they receive.
+		 * @param instruction	stores the actual task	
+		 * @param date			stores the deadline
+		 * @param ProjectName	stores the name of the project that the task belongs to
+		 */
 		public Task(String instruction, Date date, String ProjectName) {
 			this.instruction = instruction;
 			this.deadLine = date;
@@ -27,7 +43,7 @@ public class Task {
 			this.projectName = projectName;
 		}
 
-		// Accessors
+		
 		public String getInstruction() {
 			return this.instruction;
 		}

@@ -1,9 +1,18 @@
+package EpiphanyEngine;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
 
+/**
+ * This class is used to create and modify projects that are created by the engine. A project contains
+ * a project name and an array list of Tasks. The tasks would be stored within the array list
+ * and the project name would be used to identify this project.
+ * @author Moazzam
+ *
+ */
 class Project {
 		private String projectName;
 		private ArrayList<Task> items;
