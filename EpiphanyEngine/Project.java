@@ -1,3 +1,5 @@
+//Project Class that handles tasks.
+
 class Project {
 		private String projectName;
 		private ArrayList<Task> items;

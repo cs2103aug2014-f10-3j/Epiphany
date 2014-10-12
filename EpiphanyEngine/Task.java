@@ -1,3 +1,5 @@
+// Task Class that stores tasks.
+
 public class Task {
 		private String instruction;
 		private Date deadLine;
