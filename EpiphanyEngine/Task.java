@@ -7,7 +7,8 @@ import java.util.*;
  * This class aims to help in the creation and management of tasks. Each task contains an instruction,
  * a deadline of class Date, a projectName which is the name of the project that the task is stored
  * under and a boolean variable to check if the task has been completed.
- * @author Moazzam
+ * 
+ * @author Moazzam  and Wei Yang
  *
  */
 public class Task {
