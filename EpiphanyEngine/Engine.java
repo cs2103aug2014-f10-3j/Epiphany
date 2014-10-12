@@ -1,10 +1,10 @@
-package EpiphanyEngine;
 //This is how we roll
 /* Epiphany Engine v0.1 alpha release
  * Contains basic functionality to CRUD as well as Storage. 
  * More details about the methods will be added soon
  * 
  * @author Moazzam & Wei Yang
+ * For date & time we will be using a custom class called Joda Time.
  * 
  */
 import java.text.ParseException;
@@ -12,18 +12,16 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.io.*;
 
-import Logic.CommandType.*;
-
 public class Engine {
 	// EpiphanyMain contains all the current projects which is stored in an
 	// array List
 	public static ArrayList<String> projectNames;
 	public static ArrayList<Task> defaultProject;
-	public static ArrayList<ArrayList<Task>> EpiphanyMain;
+	public static ArrayList<Project> EpiphanyMain;
 	public static ArrayList<Date> testDate1;
 	public static ArrayList<Task> testDateSort;
 
-	//public static final String MESSAGE_WELCOME = " Welcome to Epiphany!\n";
+	// public static final String MESSAGE_WELCOME = " Welcome to Epiphany!\n";
 	public static final String MESSAGE_WRONG_ENTRY = "Wrong entry, please re-enter input.";
 	public static final String MESSAGE_SORTED = "Tasks sorted alphabetically!";
 	public static final String MESSAGE_DELETE_INVALID = " %s, is already empty, please re-enter command.";
@@ -42,101 +40,88 @@ public class Engine {
 	private static final String ERROR_WRONG_INPUT = null;
 	private static final String ERROR_COMMAND_TYPE_NULL = null;
 	private static final String MESSAGE_COMMAND = "command: \n";
-	private Scanner sc;
-	private Scanner sc2;
-
-	// Global variable used to scan all the input from the users
-	private static Scanner scanner = new Scanner(System.in);
 
 	enum CommandTypesEnum {
 		ADD, DISPLAY, DELETE, CLEAR, EXIT, INVALID, SEARCH
 	};
-	
+
 	public Engine() {
 		run();
-	} 
-
-	public void testSort() {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-		try {
-			Date one = sdf.parse("31-4-2014");
-			Date two = sdf.parse("10-10-2014");
-			Date three = sdf.parse("31-12-2014");
-			Date four = sdf.parse("17-6-2014");
-			testDate1.add(one);
-			testDate1.add(two);
-			testDate1.add(three);
-			testDate1.add(four);
-			Collections.sort(testDate1, new customComparator());
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
 	}
 
 	public void run() {
-		EpiphanyMain = new ArrayList<ArrayList<Task>>();
+		EpiphanyMain = new ArrayList<Project>();
 		projectNames = new ArrayList<String>();
 		defaultProject = new ArrayList<Task>();
-		EpiphanyMain.add(defaultProject);
+		EpiphanyMain.add(new Project("default", defaultProject));// TEST
+
 		testDate1 = new ArrayList<Date>();
 		testDateSort = new ArrayList<Task>();
 		projectNames.add("default");
 	}
-		
+
 	public ArrayList<Task> search(String phrase, String projectName) {
 		ArrayList<Task> searchResult = new ArrayList<Task>();
+		ArrayList<Task> temp;
 		for (int i = 0; i < EpiphanyMain.size(); i++) {
-			for (int j = 0; j < EpiphanyMain.get(i).size(); j++) {
-				Task line = (EpiphanyMain.get(i)).get(j);
-				if (line.instruction.toLowerCase().contains(phrase.toLowerCase())) {
-					searchResult.add(line);
+			if (EpiphanyMain.get(i).getProjectName().equals(projectName)) {
+				temp = EpiphanyMain.get(i).getTaskList();
+				for (int j = 0; j < temp.size(); j++) {
+					if (temp.get(j).getInstruction().toLowerCase()
+							.contains(phrase.toLowerCase())) {
+						searchResult.add(temp.get(j));
+					}
+
+					else {
+						continue;
+					}
+
 				}
+				if (searchResult.isEmpty()) {
+					System.out.println(MESSAGE_INVALID_SEARCH);
+
+				}
+				System.out.println("Search result:"); // UI handler
+				displayArrayList(searchResult);
+
 			}
 		}
-		if (searchResult.isEmpty()) {
-			System.out.println(MESSAGE_INVALID_SEARCH);
-			return searchResult; // empty
-		}
-		System.out.println("Search result:");
-		displayArrayList(searchResult); // returns an arraylist of tasks
 		return searchResult;
 	}
 
 	// Displays all projects
-	public void displayAll(ArrayList<ArrayList<Task>> Epiphany) {
-		if (Epiphany.size() == 1 && Epiphany.get(0).isEmpty()) {
-			System.out.println("Nothing to display.");
+	public void displayAll() {
+		if (EpiphanyMain.size() == 1
+				&& EpiphanyMain.get(0).getTaskList().isEmpty()) {
+			System.out.println("Nothing to display.");// UI handler
 		} else {
-			for (int i = 0; i < Epiphany.size(); i++) {
-				Task name = Epiphany.get(i).get(0);
-				if (i == 0) {
-					System.out.println("Project: Default");
-				} else {
-					System.out.println("Project: " + i + ". "
-							+ name.ProjectName);
-				}
-				int counter = 1;
-				for (int j = 0; j < Epiphany.get(i).size(); j++) {
-					Task s = Epiphany.get(i).get(j);
-					System.out.print(String.format(MESSAGE_DISPLAY, counter,
-							s.instruction));
-					System.out.println("	" + s.getDeadline());
-					counter++;
+			for (int i = 0; i < EpiphanyMain.size(); i++) {
+				Project curr = EpiphanyMain.get(i);
+				System.out.println("Project: " + (i + 1)
+						+ curr.getProjectName());
+				ArrayList<Task> currentArrayList = curr.getTaskList();
+				for (int j = 0; j < currentArrayList.size(); j++) {
+					if (currentArrayList.isEmpty()) {
+						System.out.println("IT IS EMPTY"); // UI handler
+					} else {
+						for (int k = 0; k < currentArrayList.size(); k++) {
+							System.out.println((k + 1)
+									+ curr.getTaskList().get(k)
+											.getInstruction());
+						}
+					}
 				}
 			}
 		}
 	}
-	
-	//to-do
-	public void display(String userCommand) {
-		if (userCommand.equals("all")){
-			this.displayAll(EpiphanyMain);
-		} else {
-			// need to check if its a valid project first
-			this.displayProject(userCommand);
-		}
-	}
-	
+
+	// to-do in interpreter
+	/*
+	 * public void display(String userCommand) { if (userCommand.equals("all"))
+	 * { this.displayAll(EpiphanyMain); } else { // need to check if its a valid
+	 * project first this.displayProject(userCommand); } }
+	 */
+
 	// Helper function: Displays an ArrayList project
 	public ArrayList<Task> displayArrayList(ArrayList<Task> expected) {
 
@@ -147,7 +132,7 @@ public class Engine {
 			int counter = 1;
 			for (Task s : expected) {
 				System.out.println(String.format(MESSAGE_DISPLAY, counter,
-						s.instruction));
+						s.getInstruction()));
 				counter++;
 			}
 		}
@@ -160,13 +145,16 @@ public class Engine {
 	 * @param name
 	 *            The name of the project that we wish to display.
 	 */
-	public void displayProject(String name) {
+	public void displayProject(Project tempName) {
 		for (int i = 0; i < EpiphanyMain.size(); i++) {
-			if (EpiphanyMain.get(i).get(0).getProjectName().equals(name)) {
-				ArrayList<Task> temporaryProject = EpiphanyMain.get(i);
-				displayArrayList(temporaryProject);
+			String nameTempProject = tempName.getProjectName().toLowerCase();
+			String abc = EpiphanyMain.get(i).getProjectName().toLowerCase();
+			if (abc.equals(nameTempProject)) {
+				ArrayList<Task> temporaryProjectList = EpiphanyMain.get(i)
+						.getTaskList();
+				displayArrayList(temporaryProjectList);
 			} else {
-				System.out.println("No such project exists.");
+				System.out.println("No such project exists."); // UI handler
 			}
 		}
 	}
@@ -189,94 +177,95 @@ public class Engine {
 
 	public void addTask(String instruction, Date date, String project) {
 		if (instruction == null) {
-			System.out.println("Please give a task name"); // convert this to
-															// static final
+			System.out.println("Please give a task name"); // UI Handler
 		} else {
-			if (date == null && project.equals("default")) { // for tasks without deadline
-				defaultProject.add(new Task(instruction, null, null));
-				System.out.println("Task has been added!");
-				
-			} else if (date == null && !project.equals("default")) {//Project included no date.
+			if (date == null && project.equals("default")) {
 
-				// check if the project exists first, if not
-				// create a new file for the new project.
+				ArrayList<Task> currProjectList = EpiphanyMain.get(0)
+						.getTaskList();
+				currProjectList.add(new Task(instruction, null, null));
+				System.out.println("Task has been added!"); // UI handler
+
+			} else if (date == null && !project.equals("default")) {// Project
+																	// included
+																	// no date.
 
 				if (projectNames.contains(project)) { // does not deal with
 														// upper or lower cases
 														// yet.
-					int count = 1; // start from 1, 0 is the default project
-					EpiphanyMain.get(count).add(
-							new Task(instruction, null, project));
-
-				} else if (!projectNames.contains(project)) { // create a new
-																// file for the
-																// project
+					for (int i = 0; i < EpiphanyMain.size(); i++) {
+						if (EpiphanyMain.get(i).getProjectName()
+								.equals(project)) {
+							ArrayList<Task> currentProjectList = EpiphanyMain
+									.get(i).getTaskList();
+							currentProjectList.add(new Task(instruction, null,
+									project));
+						}
+					}
+				} else if (!projectNames.contains(project)) {
 					projectNames.add(project);
 					ArrayList<Task> latest = new ArrayList<Task>();
-					latest.add(new Task(instruction, null, project)); // add new
-																		// task
-																		// inside
-																		// this
-																		// new
-																		// project
-																		// called
-																		// latest
-					// Project newProject = new Project(project, latest);
-					EpiphanyMain.add(latest);
-					// Create a new file to store the new data
-					try {
-						createNewFile(project, latest);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+					latest.add(new Task(instruction, null, project));
+					EpiphanyMain.add(new Project(project, latest));
+					System.out.println("Task has been added!");
 				}
-				System.out.println("Task has been added!");
 
-			} else if (date != null && project.equals("default")) { //Have date, no project
-
-				// add tasks with deadline into the default
-				// and sort according to priority12/12/2019
-				defaultProject.add(new Task(instruction, date, null));
-				sortDateInProject(defaultProject);
+			} else if (date != null && project.equals("default")) {
+				ArrayList<Task> currList = EpiphanyMain.get(0).getTaskList();
+				currList.add(new Task(instruction, date, "default"));
+				sortDateInProject(currList);
 				// defaultProject.sort()
 				System.out.println("Task has been added!");
+			} else {
+				if (projectNames.contains(project)) {
+
+					for (int i = 0; i < EpiphanyMain.size(); i++) {
+						if (EpiphanyMain.get(i).getProjectName()
+								.equals(project)) {
+							ArrayList<Task> currentProjectList = EpiphanyMain
+									.get(i).getTaskList();
+							currentProjectList.add(new Task(instruction, date,
+									project));
+							sortDateInProject(currentProjectList);
+						}
+					}
+				}
 			}
 		}
+
+	}
+
+	public void save(Project toBeUpdated) {
+
+	}
+
+	public void save() {
+
 	}
 
 	public void deleteTask(String instruction, String projectName) {
-		for (String s : projectNames) {
-			int count = 0;
-			if (s.equals("default")) {
-				for (int i = 0; i < EpiphanyMain.get(count).size(); i++) {
-					if (EpiphanyMain.get(count).get(i).getInstruction().equals(instruction)) {
-						EpiphanyMain.get(count).remove(i);
-						System.out.println("Removed: " + instruction
-								+ " successfully");
+		if (!projectName.contains(projectName)) {
+			System.out.println("Such a project does not exist");
+		} else {
+			for (int i = 0; i < EpiphanyMain.size(); i++) {
+				String current = EpiphanyMain.get(i).getProjectName()
+						.toLowerCase();
+				if (current.contains(projectName.toLowerCase())) {
+					ArrayList<Task> currTaskList = EpiphanyMain.get(i)
+							.getTaskList();
 
+					for (int j = 0; j < currTaskList.size(); j++) {
+						if (currTaskList.contains(instruction)) {
+							currTaskList.remove(j);
+							System.out.print("Removed successfully");
+						}
 					}
 				}
-			} else {
-				count++;
+
 			}
+
 		}
 	}
-
-	public void deleteTask(String instruction) {
-		for (int i = 0; i < EpiphanyMain.size(); i++) {
-			for (int j = 0; j < EpiphanyMain.get(i).size(); j++) {
-			if (EpiphanyMain.get(i).get(j).getInstruction().equals(instruction)) {
-				EpiphanyMain.get(i).remove(j);
-				System.out.println("Removed: " + instruction
-							+ " successfully");
-				}
-				else {
-					continue;
-				}
-			}
-		}
-	}
-
 
 	public void deleteProject(ArrayList<Task> projectName) {
 		if (EpiphanyMain.contains(projectName)
@@ -301,7 +290,6 @@ public class Engine {
 	// for now date is sorted according to DDMMYYYY
 	// will specify to include time as well. TTTT to settle the cases of tasks
 	// on the same day.
-	
 
 	public Date formatDate(String dateStr) {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
@@ -316,20 +304,20 @@ public class Engine {
 	public void sortDateInList(ArrayList<Date> testDate) {
 		Collections.sort(testDate, new customComparator());
 	}
-	
+
 	public ArrayList<Task> sortDateInProject(ArrayList<Task> project) {
 		Collections.sort(project, new taskDateComparator());
 		return project;
-		
+
 	}
-	
+
 	public class taskDateComparator implements Comparator<Task> {
 		@Override
 		public int compare(Task one, Task two) {
 			return one.getDeadline().compareTo(two.getDeadline());
 		}
 	}
-	
+
 	public class customComparator implements Comparator<Date> {
 		@Override
 		public int compare(Date one, Date two) {
@@ -358,7 +346,8 @@ public class Engine {
 		switch (commandType) {
 		case ADD:
 			AddCommandType addUserCommand = (AddCommandType) userCommand;
-			addTask(addUserCommand.getDescription(), addUserCommand.getDate(), addUserCommand.getProjectName());
+			addTask(addUserCommand.getDescription(), addUserCommand.getDate(),
+					addUserCommand.getProjectName());
 			break;
 		case DISPLAY: // displays the entire arraylist
 			DisplayCommandType displayUserCommand = (DisplayCommandType) userCommand;
@@ -366,11 +355,13 @@ public class Engine {
 			break;
 		case DELETE:
 			DeleteCommandType deleteUserCommand = (DeleteCommandType) userCommand;
-			deleteTask(deleteUserCommand.getTaskDescription(), deleteUserCommand.getProjectName());
+			deleteTask(deleteUserCommand.getTaskDescription(),
+					deleteUserCommand.getProjectName());
 			break;
 		case SEARCH:
 			SearchCommandType searchUserCommand = (SearchCommandType) userCommand;
-			search(searchUserCommand.getTaskDescription(),searchUserCommand.getProjectName());
+			search(searchUserCommand.getTaskDescription(),
+					searchUserCommand.getProjectName());
 			break;
 
 		default:
@@ -409,10 +400,6 @@ public class Engine {
 		String printText = String.format(text, arg1, arg2);
 		System.out.print(printText);
 	}
-
-	
-
-	
 
 	/**
 	 * Creates a new text file to store the new project file
