@@ -1,3 +1,9 @@
+/**
+ * This is a class that can be instantiated to represent an search command.
+ * 
+ * @author abdulla contractor and amit gamane
+ */
+
 package Logic.CommandType;
 
 public class SearchCommandType implements CommandType{
