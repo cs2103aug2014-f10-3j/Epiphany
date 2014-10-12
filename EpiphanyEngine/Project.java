@@ -1,9 +1,13 @@
+<<<<<<< HEAD
 package EpiphanyEngine;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
+=======
+//Project Class that handles tasks.
+>>>>>>> FETCH_HEAD
 
 class Project {
 		private String projectName;

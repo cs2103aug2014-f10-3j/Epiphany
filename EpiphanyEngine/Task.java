@@ -1,6 +1,10 @@
+<<<<<<< HEAD
 package EpiphanyEngine;
 
 import java.util.*;
+=======
+// Task Class that stores tasks.
+>>>>>>> FETCH_HEAD
 
 public class Task {
 	
