@@ -13,7 +13,7 @@ import java.util.*;
  * @author Moazzam
  *
  */
-class Project {
+public class Project {
 		private String projectName;
 		private ArrayList<Task> items;
 

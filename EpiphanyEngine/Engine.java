@@ -1,14 +1,5 @@
 package EpiphanyEngine;
 
-//This is how we roll
-/* Epiphany Engine v0.1 alpha release
- * Contains basic functionality to CRUD as well as Storage. 
- * More details about the methods will be added soon
- * 
- * @author Moazzam & Wei Yang
- * For date & time we will be using a custom class called Joda Time.
- * 
- */
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;

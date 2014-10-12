@@ -10,6 +10,16 @@ import Logic.DateInterpreter.*;
 import Logic.CommandType.*; 
 import EpiphanyEngine.*;
 
+/**
+ * This class parses the input from the user. The intepreter draws on several helper classes to accept simple
+ * and natural English, parses it and passes it onto the Engine Class via the CommandType Interface. 
+ * 
+ * This class follows the Observer pattern by implementing deleteObserver.
+ * @author Amit and Abdulla
+ *
+ */
+
+
 public class EpiphanyInterpreter implements deleteObserver{
 	///all the string constants that are involved in displaying things to the user.
 	private static final String MESSAGE_COMMAND_PROMPT = "command: ";

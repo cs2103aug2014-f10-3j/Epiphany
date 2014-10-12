@@ -1,8 +1,3 @@
-/**
- * This is a class that can be instantiated to represent a delete command.
- * 
- * @author abdulla contractor and amit gamane
- */
 package Logic.CommandType;
 
 public class DeleteCommandType implements CommandType{
