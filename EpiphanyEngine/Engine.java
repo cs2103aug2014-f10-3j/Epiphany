@@ -5,7 +5,6 @@ package EpiphanyEngine;
  * More details about the methods will be added soon
  * 
  * @author Moazzam & Wei Yang
- * For date & time we will be using a custom class called Joda Time.
  * 
  */
 import java.text.ParseException;
@@ -411,91 +410,9 @@ public class Engine {
 		System.out.print(printText);
 	}
 
-	public class Task {
-		private String instruction;
-		private Date deadLine;
-		private String date;
-		private String ProjectName;
-		private boolean isCompleted;
+	
 
-		// Constructor for Task
-		public Task(String i, Date date, String ProjectName) {
-			this.instruction = i;
-			this.deadLine = date;
-
-			this.ProjectName = ProjectName;
-			this.isCompleted = false; // Set as false as a default
-		}
-
-		// Accessors
-		String getInstruction() {
-			return this.instruction;
-		}
-
-		Date getDeadline() {
-			return this.deadLine;
-		}
-
-		public String getProjectName() {
-			return this.ProjectName;
-		}
-
-		public boolean isStatus() {
-			return isCompleted;
-		}
-
-		// Mutators
-		void setInstruction(String newInstruction) {
-			this.instruction = newInstruction;
-		}
-
-		void setDeadLine(Date newDate) {
-			this.deadLine = newDate;
-		}
-
-		void setProjectName(String newProjectName) {
-			this.ProjectName = newProjectName;
-		}
-
-		void isCompletedUpdate(boolean value) {
-			this.isCompleted = value;
-		}
-		
-		@Override
-		public String toString() {
-			return this.getInstruction() + "has the deadline: " + this.getDeadline();
-		}
-	}
-
-	// Should this be a class or should I simply convert this into a method?
-	class Project {
-		private String projectName;
-		private ArrayList<Task> items;
-
-		// Constructor
-		public Project(String name, ArrayList<Task> items) {
-			this.setProjectName(name);
-			// this.items = items;
-			try {
-				createNewFile(projectName, items);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-
-		public String getProjectName() {
-			return projectName;
-		}
-
-		public ArrayList<Task> getTaskList() {
-			return items;
-		}
-
-		// This function would allow us to change the name of a project
-		public void setProjectName(String projectName) {
-			this.projectName = projectName;
-		}
-	}
+	
 
 	/**
 	 * Creates a new text file to store the new project file
