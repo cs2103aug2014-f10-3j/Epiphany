@@ -1,13 +1,8 @@
-<<<<<<< HEAD
-package EpiphanyEngine;
-
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
-=======
-//Project Class that handles tasks.
->>>>>>> FETCH_HEAD
+
 
 class Project {
 		private String projectName;
@@ -16,7 +11,7 @@ class Project {
 		// Constructor
 		public Project(String name, ArrayList<Task> items) {
 			this.setProjectName(name);
-			// this.items = items;
+			this.items = items;
 			try {
 				createNewFile(projectName, items);
 			} catch (IOException e) {
@@ -24,7 +19,18 @@ class Project {
 			}
 		}
 
+		
+		public String getProjectName() {
+			return projectName;
+		}
 
+		public ArrayList<Task> getTaskList() {
+			return items;
+		}
+
+		public void setProjectName(String projectName) {
+			this.projectName = projectName;
+		}
 		/**
 		 * Creates a new text file to store the new project file
 		 * 
@@ -51,18 +57,4 @@ class Project {
 			}
 			writer.close();
 		}
-
-
-		public String getProjectName() {
-			return projectName;
-		}
-
-		public ArrayList<Task> getTaskList() {
-			return items;
-		}
-
-		// This function would allow us to change the name of a project
-		public void setProjectName(String projectName) {
-			this.projectName = projectName;
-		}
-	}
+}
