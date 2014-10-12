@@ -389,8 +389,9 @@ public class Engine {
 		return stringDate;
 	}
 /**
- * 
- * @param userCommand
+ * Interpreter passes in a command type object. This method determines which type of command it is 
+ * and uses the appropriate methods using the switch statements.
+ * @param userCommand is the command that the interpreter send in.
  */
 	
 	public void executeCommand(CommandType userCommand) {
@@ -424,7 +425,11 @@ public class Engine {
 			throw new Error(ERROR_WRONG_INPUT);
 		}
 	}
-
+/**
+ * Takes a command type input, as is given by the interpreter and returns the appropriate case.
+ * @param 	Input from the interpreter that needs to be filtered.	
+ * @return  the type of command
+ */
 	private CommandTypesEnum determineCommandType(CommandType commandType) {
 		if (commandType == null)
 			throw new Error(ERROR_COMMAND_TYPE_NULL);
@@ -457,47 +462,3 @@ public class Engine {
 	}
 
 }
-// to-do in interpreter
-/*
- * public void display(String userCommand) { if (userCommand.equals("all")) {
- * this.displayAll(EpiphanyMain); } else { // need to check if its a valid
- * project first this.displayProject(userCommand); } }
- */
-
-// Helper function: Displays an ArrayList project
-/*
- * private void addTask(String instruction, Date date, String project) { if
- * (instruction == null) { System.out.println("Please give a task name"); // UI
- * Handler } else { if (date == null && project.equals("default")) {
- * 
- * ArrayList<Task> currProjectList = EpiphanyMain.get(0) .getTaskList();
- * currProjectList.add(new Task(instruction, null, null));
- * System.out.println("Task has been added!"); // UI handler
- * 
- * } else if (date == null && !project.equals("default")) {// Project //
- * included // no date.
- * 
- * if (projectNames.contains(project)) { // does not deal with // upper or lower
- * cases // yet. for (int i = 0; i < EpiphanyMain.size(); i++) { if
- * (EpiphanyMain.get(i).getProjectName() .equals(project)) { ArrayList<Task>
- * currentProjectList = EpiphanyMain .get(i).getTaskList();
- * currentProjectList.add(new Task(instruction, null, project)); } } } else if
- * (!projectNames.contains(project)) { projectNames.add(project);
- * ArrayList<Task> latest = new ArrayList<Task>(); latest.add(new
- * Task(instruction, null, project)); EpiphanyMain.add(new Project(project,
- * latest)); System.out.println("Task has been added!"); }
- * 
- * } else if (date != null && project.equals("default")) { ArrayList<Task>
- * currList = EpiphanyMain.get(0).getTaskList(); currList.add(new
- * Task(instruction, date, "default")); sortDateInProject(currList); //
- * defaultProject.sort() System.out.println("Task has been added!"); } else { if
- * (projectNames.contains(project)) {
- * 
- * for (int i = 0; i < EpiphanyMain.size(); i++) { if
- * (EpiphanyMain.get(i).getProjectName() .equals(project)) { ArrayList<Task>
- * currentProjectList = EpiphanyMain .get(i).getTaskList();
- * currentProjectList.add(new Task(instruction, date, project));
- * sortDateInProject(currentProjectList); } } } } }
- * 
- * }
- */
