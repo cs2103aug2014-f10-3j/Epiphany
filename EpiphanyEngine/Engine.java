@@ -21,7 +21,7 @@ import java.io.*;
  * 
  * Missing: Storing projects in separate files (save).
  * 
- * @author Moazzam
+ * @author Moazzam and Wei Yang
  *
  */
 public class Engine {

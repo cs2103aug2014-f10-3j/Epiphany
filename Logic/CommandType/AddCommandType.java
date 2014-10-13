@@ -1,3 +1,7 @@
+package Logic.CommandType;
+
+import java.util.Date;
+
 /**
  * This is a class that can be instantiated to represent an add command. It can
  * support all types of add commands (with date and project, without date with project,
@@ -6,11 +10,6 @@
  * 
  * @author abdulla contractor and amit gamane
  */
-
-package Logic.CommandType;
-
-import java.util.Date;
-
 
 public class AddCommandType implements CommandType {
 	
