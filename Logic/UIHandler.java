@@ -1,11 +1,10 @@
+package Logic;
 /**
  * This is a singleton class that can be instantiated and used to perform
  * all display to the user interface.
  * 
  * @author abdulla contractor and amit gamane
  */
- package Logic;
- 
  public class UIHandler{
  	static UIHandler uiHandler;
  	
