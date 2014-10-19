@@ -34,6 +34,7 @@ public class Task {
 		
 		public Task(String instruction){
 			this.instruction = instruction;
+			
 		}
 		public Task(String instruction, Date date){
 			this.instruction = instruction;
@@ -42,6 +43,7 @@ public class Task {
 		public Task(String instruction, String projectName){
 			this.instruction = instruction;
 			this.projectName = projectName;
+			
 		}
 
 		

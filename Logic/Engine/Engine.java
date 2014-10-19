@@ -138,18 +138,22 @@ public class Engine {
 		} else {
 			for (int i = 0; i < EpiphanyMain.size(); i++) {
 				Project curr = EpiphanyMain.get(i);
-				System.out.println("Project: " + (i + 1)
-						+ curr.getProjectName());
+				System.out.println("Project: " + "\n" + (i + 1) + ". "
+						+ curr.getProjectName() + ":");
 				ArrayList<Task> currentArrayList = curr.getTaskList();
-				for (int j = 0; j < currentArrayList.size(); j++) {
-					if (currentArrayList.isEmpty()) {
-						System.out.println("IT IS EMPTY"); // UI handler
-					} else {
-						for (int k = 0; k < currentArrayList.size(); k++) {
-							System.out.println((k + 1)
-									+ curr.getTaskList().get(k)
-											.getInstruction());
-						}
+
+				if (currentArrayList.isEmpty()) {
+					System.out.println("IT IS EMPTY"); // UI handler
+				} else {
+					for (int k = 0; k < currentArrayList.size(); k++) {
+						Task currTask = currentArrayList.get(k);
+						// should i try a try-catch block
+
+						Date currDate = currTask.getDeadline();
+						// Stem.out.println(currDate);
+						System.out.println("\t" + (k + 1) + ". "
+								+ currTask.getInstruction() + "\t" + currDate);
+
 					}
 				}
 			}
@@ -225,19 +229,13 @@ public class Engine {
 	private void addTask(String instruction, Date date, String projectName) {
 		if (instruction == null) {
 			System.out.println("Please provide a task name"); // UI Handler
-		} else {
-			if (date == null) {
-				addTaskWithDate(projectName, instruction);
-
-			} else if (!projectNames.contains(projectName)) {
-				projectNames.add(projectName);
-				ArrayList<Task> latest = new ArrayList<Task>();
-				latest.add(new Task(instruction, projectName));
-				EpiphanyMain.add(new Project(projectName, latest));
-				System.out.println("New project created");
-				System.out.println("Task has been added!");
-
-			} else {// If date is not equal to null
+		}
+		if (!projectNames.contains(projectName)) {
+			createNewProject(projectName, instruction, date);
+		} 
+		if (date == null) {
+				addTaskWithoutDate(projectName, instruction);
+			} else {
 				if (projectNames.contains(projectName)) {
 
 					for (int i = 0; i < EpiphanyMain.size(); i++) {
@@ -248,15 +246,27 @@ public class Engine {
 							currentProjectList.add(new Task(instruction, date,
 									projectName));
 							sortDateInProject(EpiphanyMain.get(i).getTaskList());
-
-						}
 					}
 				}
 			}
 		}
 	}
 
-	private void addTaskWithDate(String projectName, String instruction) {
+	private void createNewProject(String projectName, String instruction,
+			Date date) {
+		projectNames.add(projectName);
+		ArrayList<Task> latest = new ArrayList<Task>();
+		if (date == null) {
+			latest.add(new Task(instruction, projectName));
+		} else if (date != null) {
+			latest.add(new Task(instruction, date, projectName));
+		}
+		EpiphanyMain.add(new Project(projectName, latest));
+		System.out.println("New project created");
+		System.out.println("Task has been added!");
+	}
+
+	private void addTaskWithoutDate(String projectName, String instruction) {
 		if (projectNames.contains(projectName.toLowerCase())) {
 			for (int i = 0; i < EpiphanyMain.size(); i++) {
 				if (EpiphanyMain.get(i).getProjectName().equals(projectName)) {
@@ -479,3 +489,8 @@ public class Engine {
 	}
 
 }
+/*
+ * if(currTask.getDeadline().equals(null)) { System.out.println("\t" + (k + 1) +
+ * ". " + currTask.getInstruction()); } else{ System.out.println("\t" + (k + 1)
+ * + ". " + currTask.getInstruction() + "\t" + currTask.getDeadline()); }
+ */
