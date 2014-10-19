@@ -116,36 +116,27 @@ public class Project {
 			FileWriter f = new FileWriter(fileName);
 			BufferedWriter writer = new BufferedWriter(f);
 			
-			if(!this.deadLineList.isEmpty()){
-				writer.write("DEADLINE:");
-
+				// for deadline
 				for(Task t : dLineList){
 					writer.write(t.toString());
 					writer.newLine();
 					writer.flush();
 				}
-			}
-			
-			
-			if(!this.intervalList.isEmpty()){
-				writer.write("INTERVAL:");
-	
+				
+				//for interval
 				for(Task t : interList){
 					writer.write(t.toString());
 					writer.newLine();
 					writer.flush();
 				}
-			}
-			
-			if(!this.floatingList.isEmpty()){
-				writer.write("FLOATING:");
-	
+				
+				//for floating
 				for(Task t : floatList){
 					writer.write(t.toString());
 					writer.newLine();
 					writer.flush();
 				}
-			}
+			
 	
 			writer.close();
 		}

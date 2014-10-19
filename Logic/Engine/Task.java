@@ -93,11 +93,21 @@ public class Task {
 			return this.isCompleted;
 		}
 		
+		public String getType(){
+			if(!this.hasDeadLine()){
+				return "floating";
+			}else if(this.hasInterval()){
+				return "interval";
+			}else{
+				return "deadline";
+			}
+		}
+		
 /**********************Other Methods******************************/	
 
 		@Override
 		public String toString() {
-			return this.getTaskDescription() + "has the deadline: " + this.getDeadline();
+			return this.getType() + "||" + this.getTaskDescription() + "||" + this.getStartDate() + "||" + this.getDeadline() + "||" + this.getProjectName() + "||" + this.isCompleted();
 		}
 
 		
