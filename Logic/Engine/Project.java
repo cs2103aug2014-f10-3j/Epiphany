@@ -29,7 +29,23 @@ public class Project {
 			deadLineList = new ArrayList<Task>();
 			intervalList = new ArrayList<Task>();
 			floatingList = new ArrayList<Task>();
+			
+			populateLists(list);
 			createNewFile(projectName, deadLineList, intervalList, floatingList); //creates a new text file with relevant info. 
+		}
+
+		
+		private void populateLists(ArrayList<Task> list) {
+			for(Task t : list){
+				String type = t.getType();
+				if(type.equals("interval")){
+					intervalList.add(t);
+				}else if(type.equals("deadline")){
+					deadLineList.add(t);
+				}else if(type.equals("floating")){
+					floatingList.add(t);
+				}
+			}
 		}
 
 /**********************Getters***********************************/		
