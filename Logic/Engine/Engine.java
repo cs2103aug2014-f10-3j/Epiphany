@@ -3,8 +3,6 @@ package Logic.Engine;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.io.*;
-
 import Logic.Interpreter.CommandType.*;
 
 /**
@@ -18,8 +16,8 @@ import Logic.Interpreter.CommandType.*;
  * The interpreter would pass in the commands from the user and this class would
  * be used to store, modify and update the projects that the user creates.
  * 
- * It currently has the abilty to add, delete, search and display. Additionally,
- * it has complete project management.
+ * It currently has the ability to add, delete, search and display.
+ * Additionally, it has complete project management.
  * 
  * Missing: Storing projects in separate files (save).
  * 
@@ -53,7 +51,7 @@ public class Engine {
 	/**
 	 * Enums are used for type safety.
 	 * 
-	 * @author Moazzam
+	 * @author Wei Yang
 	 *
 	 */
 	enum CommandTypesEnum {
@@ -226,43 +224,48 @@ public class Engine {
 	 */
 	private void addTask(String instruction, Date date, String projectName) {
 		if (instruction == null) {
-			System.out.println("Please give a task name"); // UI Handler
+			System.out.println("Please provide a task name"); // UI Handler
 		} else {
 			if (date == null) {
-				if (projectNames.contains(projectName.toLowerCase())) {
-					for (int i = 0; i < EpiphanyMain.size(); i++) {
-						if (EpiphanyMain.get(i).getProjectName().equals(projectName)) {
-							ArrayList<Task> currentProjectList = EpiphanyMain
-									.get(i).getTaskList();
-							currentProjectList.add(new Task(instruction,
-									projectName));
-						}
-					}
-				} else if (!projectNames.contains(projectName)) {
-					projectNames.add(projectName);
-					ArrayList<Task> latest = new ArrayList<Task>();
-					latest.add(new Task(instruction, projectName));
-					EpiphanyMain.add(new Project(projectName, latest));
-					System.out.println("New project created");
-					System.out.println("Task has been added!");
-				}
+				addTaskWithDate(projectName, instruction);
+
+			} else if (!projectNames.contains(projectName)) {
+				projectNames.add(projectName);
+				ArrayList<Task> latest = new ArrayList<Task>();
+				latest.add(new Task(instruction, projectName));
+				EpiphanyMain.add(new Project(projectName, latest));
+				System.out.println("New project created");
+				System.out.println("Task has been added!");
 
 			} else {// If date is not equal to null
 				if (projectNames.contains(projectName)) {
 
 					for (int i = 0; i < EpiphanyMain.size(); i++) {
-						if (EpiphanyMain.get(i).getProjectName().equals(projectName)) {
-							ArrayList<Task> currentProjectList = EpiphanyMain.get(i).getTaskList();
+						if (EpiphanyMain.get(i).getProjectName()
+								.equals(projectName)) {
+							ArrayList<Task> currentProjectList = EpiphanyMain
+									.get(i).getTaskList();
 							currentProjectList.add(new Task(instruction, date,
 									projectName));
 							sortDateInProject(EpiphanyMain.get(i).getTaskList());
-							
+
 						}
 					}
 				}
 			}
 		}
+	}
 
+	private void addTaskWithDate(String projectName, String instruction) {
+		if (projectNames.contains(projectName.toLowerCase())) {
+			for (int i = 0; i < EpiphanyMain.size(); i++) {
+				if (EpiphanyMain.get(i).getProjectName().equals(projectName)) {
+					ArrayList<Task> currentProjectList = EpiphanyMain.get(i)
+							.getTaskList();
+					currentProjectList.add(new Task(instruction, projectName));
+				}
+			}
+		}
 	}
 
 	private void save(Project toBeUpdated) {
@@ -294,12 +297,15 @@ public class Engine {
 
 		}
 	}
-/**
- * Finds the project are removes it entirely.
- * @param projectName	is the name of the project.
- */
-	public void deleteProject(ArrayList<Task> projectName){
-		if(EpiphanyMain.contains(projectName)
+
+	/**
+	 * Finds the project are removes it entirely.
+	 * 
+	 * @param projectName
+	 *            is the name of the project.
+	 */
+	public void deleteProject(ArrayList<Task> projectName) {
+		if (EpiphanyMain.contains(projectName)
 				&& projectNames.contains(projectName)) {
 			int count = EpiphanyMain.lastIndexOf(projectName);
 			int count1 = projectNames.lastIndexOf(projectName);
@@ -308,7 +314,6 @@ public class Engine {
 		}
 	}
 
-	
 	// sorts by deadline. meaning the phrase with the earliest date will show
 	// first.
 	// date format is quite crude for now, can be polymorphised later.
@@ -318,7 +323,9 @@ public class Engine {
 
 	/**
 	 * This function helps to format the date.
-	 * @param dateStr	String that contains the date
+	 * 
+	 * @param dateStr
+	 *            String that contains the date
 	 * @return formatted date.
 	 */
 	public Date formatDate(String dateStr) {
@@ -330,9 +337,12 @@ public class Engine {
 			return null;
 		}
 	}
+
 	/**
 	 * Sorts the date.
-	 * @param testDate  An ArryList of date that needs to be sorted.
+	 * 
+	 * @param testDate
+	 *            An ArryList of date that needs to be sorted.
 	 */
 	public void sortDateInList(ArrayList<Date> testDate) {
 		Collections.sort(testDate, new customComparator());
@@ -340,38 +350,44 @@ public class Engine {
 
 	/**
 	 * Helps to sort the tasks within a project
-	 * @param project The arrayList for a project that we update.
-	 * @return	a project's taskList sorted by Date.
+	 * 
+	 * @param project
+	 *            The arrayList for a project that we update.
+	 * @return a project's taskList sorted by Date.
 	 */
 	private ArrayList<Task> sortDateInProject(ArrayList<Task> project) {
 		Collections.sort(project, new taskDateComparator());
 		return project;
 
 	}
-/**
- * This method helps compare two tasks by basing it on their deadlines.
- * @author Moazzam
- *
- */
+
+	/**
+	 * This method helps compare two tasks by basing it on their deadlines.
+	 * 
+	 * @author Moazzam
+	 *
+	 */
 	private class taskDateComparator implements Comparator<Task> {
-		@Override
 		public int compare(Task one, Task two) {
 			return one.getDeadline().compareTo(two.getDeadline());
 		}
 	}
+
 	/**
 	 * This method helps compare two dates.
+	 * 
 	 * @author Moazzam
 	 *
 	 */
 	private class customComparator implements Comparator<Date> {
-		@Override
 		public int compare(Date one, Date two) {
 			return one.compareTo(two);
 		}
 	}
+
 	/**
 	 * Helps to format the date and return the formatted date.
+	 * 
 	 * @param deadLine
 	 * @return the formatted date.
 	 */
@@ -381,12 +397,16 @@ public class Engine {
 		String stringDate = sdf.format(deadLine);
 		return stringDate;
 	}
-/**
- * Interpreter passes in a command type object. This method determines which type of command it is 
- * and uses the appropriate methods using the switch statements.
- * @param userCommand is the command that the interpreter send in.
- */
-	
+
+	/**
+	 * Interpreter passes in a command type object. This method determines which
+	 * type of command it is and uses the appropriate methods using the switch
+	 * statements.
+	 * 
+	 * @param userCommand
+	 *            is the command that the interpreter send in.
+	 */
+
 	public void executeCommand(CommandType userCommand) {
 		CommandTypesEnum commandType = determineCommandType(userCommand);
 
@@ -418,11 +438,15 @@ public class Engine {
 			throw new Error(ERROR_WRONG_INPUT);
 		}
 	}
-/**
- * Takes a command type input, as is given by the interpreter and returns the appropriate case.
- * @param 	Input from the interpreter that needs to be filtered.	
- * @return  the type of command
- */
+
+	/**
+	 * Takes a command type input, as is given by the interpreter and returns
+	 * the appropriate case.
+	 * 
+	 * @param Input
+	 *            from the interpreter that needs to be filtered.
+	 * @return the type of command
+	 */
 	private CommandTypesEnum determineCommandType(CommandType commandType) {
 		if (commandType == null)
 			throw new Error(ERROR_COMMAND_TYPE_NULL);
