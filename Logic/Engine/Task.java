@@ -30,27 +30,6 @@ public class Task {
 			this.projectName = ProjectName;
 			this.isCompleted = false; // Set as false as a default
 		}
-		
-		public Task(String instruction){
-			this.taskDescription = instruction;
-			this.deadLine = null;
-			this.projectName = "default";
-			this.isCompleted = false;
-		}
-		
-		public Task(String instruction, Date date){
-			this.taskDescription = instruction;
-			this.deadLine = date;
-			this.projectName = "default";
-			this.isCompleted = false;
-		}
-		
-		public Task(String instruction, String projectName){
-			this.taskDescription = instruction;
-			this.deadLine = null;
-			this.projectName = projectName;
-			this.isCompleted = false;
-		}
 
 /**********************Getters******************************/		
 		public String getTaskDescription() {
