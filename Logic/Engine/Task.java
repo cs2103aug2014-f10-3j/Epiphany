@@ -13,6 +13,7 @@ import java.util.*;
  */
 public class Task {
 		private String taskDescription;
+		private Date from;
 		private Date deadLine;
 		private String projectName;
 		private boolean isCompleted;
@@ -24,9 +25,10 @@ public class Task {
 		 * @param date			stores the deadline
 		 * @param ProjectName	stores the name of the project that the task belongs to
 		 */
-		public Task(String instruction, Date date, String ProjectName) {
+		public Task(String instruction, Date from, Date deadLine, String ProjectName) {
 			this.taskDescription = instruction;
-			this.deadLine = date;
+			this.from = from;
+			this.deadLine = deadLine;
 			this.projectName = ProjectName;
 			this.isCompleted = false; // Set as false as a default
 		}
@@ -36,6 +38,10 @@ public class Task {
 			return this.taskDescription;
 		}
 
+		public Date getStartDate() {
+			return this.from;
+		}
+		
 		public Date getDeadline() {
 			return this.deadLine;
 		}
@@ -46,6 +52,26 @@ public class Task {
 
 		public boolean isCompleted() {
 			return isCompleted;
+		}
+		
+		public boolean hasTask() {
+			return (this.taskDescription == null) ? false : true;
+		}
+		
+		/**
+		 * Checks if this task has an interval, i.e a start and end date.
+		 * @return
+		 */
+		public boolean hasInterval(){
+			if(this.getStartDate() != null && this.getDeadline() != null){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		
+		public boolean hasDeadLine() {
+			return (this.deadLine == null) ? false : true;
 		}
 
 /**********************Mutators******************************/	
