@@ -46,7 +46,6 @@ public class AddCommandType implements CommandType {
 		projectName = _projectName;
 	}
 	
-	@Override
 	public String getType() {
 		return "add";
 	}

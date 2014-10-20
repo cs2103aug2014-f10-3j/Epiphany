@@ -37,10 +37,11 @@ import Logic.Interpreter.CommandType.*;
  * @author Moazzam and Wei Yang
  *
  */
-public class Engine {	
+public class Engine {
 
-	public static ArrayList<String> projectNames; // to give quick access to list of projects
-	public static ArrayList<Project> projectsList; 
+	public static ArrayList<String> projectNames; // to give quick access to
+													// list of projects
+	public static ArrayList<Project> projectsList;
 	public static ArrayList<Date> testDate1;
 	public static ArrayList<Task> testDateSort;
 	public static final String MESSAGE_WRONG_ENTRY = "Wrong entry, please re-enter input.";
@@ -69,22 +70,22 @@ public class Engine {
 	enum CommandTypesEnum {
 		ADD, DISPLAY, DELETE, CLEAR, EXIT, INVALID, SEARCH
 	};
-		
-	public static void main(String[] args) throws IOException, ParseException{
-		//TEST METHOD
-		
+
+	public static void main(String[] args) throws IOException, ParseException {
+		// TEST METHOD
+
 		Engine e = new Engine();
 		Date test = new Date();
-		
+
 		test.setDate(11);
 		test.setHours(22);
 		test.setMinutes(21);
 		test.setMonth(2);
 		test.setSeconds(21);
 		test.setYear(92);
-		
+
 		Task t = new Task("RULE THE WORLD", null, test, "default", false);
-		
+
 		e.projectsList.get(0).addTask(t);
 
 	}
@@ -94,31 +95,33 @@ public class Engine {
 	}
 
 	/**
-	 * Initializes the Engine to begin running.
-	 * Also, repopulates from existing text files.
-	 * @throws IOException 
-	 * @throws ParseException 
+	 * Initializes the Engine to begin running. Also, repopulates from existing
+	 * text files.
+	 * 
+	 * @throws IOException
+	 * @throws ParseException
 	 */
 	private void run() throws IOException, ParseException {
-		projectsList = new ArrayList<Project>(); 
-		projectNames = new ArrayList<String>();  
+		projectsList = new ArrayList<Project>();
+		projectNames = new ArrayList<String>();
 
 		initializeEngine();
-		
+
 	}
 
 	private void initializeEngine() throws IOException, FileNotFoundException,
 			ParseException {
-		//assume that projectNames exists.
+		// assume that projectNames exists.
 		int noOfProjects = countLines("projectMasterList");
-		
-		if(noOfProjects == 0){
-			
-			createDefault(); 	//default project does not exist. need to create.
-			
-		}else{
-			// there is atleast 1 project. Read in project names and populate tasks.
-		
+
+		if (noOfProjects == 0) {
+
+			createDefault(); // default project does not exist. need to create.
+
+		} else {
+			// there is atleast 1 project. Read in project names and populate
+			// tasks.
+
 			populateProjectNames();
 			populateProjectsWithTasks();
 		}
@@ -127,11 +130,12 @@ public class Engine {
 	private void createDefault() throws IOException {
 		projectNames.add("default");
 		projectsList.add(new Project("default", new ArrayList<Task>()));
-		
-		File file = new File("../Epiphany/src/Logic/Engine/projectMasterList.txt");
+
+		File file = new File(
+				"../Epiphany/src/Logic/Engine/projectMasterList.txt");
 		FileWriter f = new FileWriter(file, true);
 		BufferedWriter writer = new BufferedWriter(f);
-		
+
 		writer.write("default");
 		writer.flush();
 		writer.close();
@@ -139,37 +143,38 @@ public class Engine {
 
 	private void populateProjectsWithTasks() throws FileNotFoundException,
 			IOException, ParseException {
-		for(String fileName : projectNames){
+		for (String fileName : projectNames) {
 			ArrayList<Task> temp = new ArrayList<Task>();
-			
-			File f = new File("../Epiphany/src/Logic/Engine/Projects/" + fileName);
+
+			File f = new File("../Epiphany/src/Logic/Engine/Projects/"
+					+ fileName);
 			BufferedReader reader = new BufferedReader(new FileReader(f));
 			String line = null;
 			while ((line = reader.readLine()) != null) {
 				String[] taskComponents = line.split("~");
-				
+
 				String type = taskComponents[0];
 				String description = taskComponents[1];
 				Date from = parseDate(taskComponents[2]);
 				Date to = parseDate(taskComponents[3]);
 				String projName = taskComponents[4];
 				boolean status = parseBool(taskComponents[5]);
-				
+
 				Task t = null;
-				
-				if(type.equals("deadline")){
+
+				if (type.equals("deadline")) {
 					t = new Task(description, null, to, projName, status);
-				}else if(type.equals("interval")){
+				} else if (type.equals("interval")) {
 					t = new Task(description, from, to, projName, status);
-				}else if(type.equals("floating")){
+				} else if (type.equals("floating")) {
 					t = new Task(description, null, null, projName, status);
 				}
-				
+
 				temp.add(t);
 			}
-			
+
 			reader.close();
-			
+
 			Project p = new Project(fileName, temp);
 			projectsList.add(p);
 		}
@@ -177,64 +182,64 @@ public class Engine {
 
 	private Date parseDate(String input) throws ParseException {
 		Date date = new Date();
-		
-		if(!input.equals("null")){
-			SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+
+		if (!input.equals("null")) {
+			SimpleDateFormat sdf = new SimpleDateFormat(
+					"EEE MMM dd HH:mm:ss zzz yyyy");
 			date = sdf.parse(input);
-		}else{
+		} else {
 			return null;
 		}
-		
+
 		return date;
 
 		/*
-		String[] components = input.split(" ");
-		String dow = components[0];
-		String month = components[1];
-		int date = Integer.parseInt(components[2]);
-
-		String[] time = components[3].split(":");
-		int hour = Integer.parseInt(time[0]);
-		int min = Integer.parseInt(time[1]);
-		int seconds = Integer.parseInt(time[2]);
-		
-		int year = Integer.parseInt(components[5]);
-		*/		
+		 * String[] components = input.split(" "); String dow = components[0];
+		 * String month = components[1]; int date =
+		 * Integer.parseInt(components[2]);
+		 * 
+		 * String[] time = components[3].split(":"); int hour =
+		 * Integer.parseInt(time[0]); int min = Integer.parseInt(time[1]); int
+		 * seconds = Integer.parseInt(time[2]);
+		 * 
+		 * int year = Integer.parseInt(components[5]);
+		 */
 	}
 
 	private void populateProjectNames() throws FileNotFoundException,
 			IOException {
-		Scanner sc = new Scanner(new File("../Epiphany/src/Logic/Engine/projectMasterList.txt"));
-		while(sc.hasNextLine()){
+		Scanner sc = new Scanner(new File(
+				"../Epiphany/src/Logic/Engine/projectMasterList.txt"));
+		while (sc.hasNextLine()) {
 			projectNames.add(sc.nextLine());
 
 		}
 	}
-	
+
 	private boolean parseBool(String input) {
 		return (input.equalsIgnoreCase("true")) ? true : false;
 	}
 
 	public static int countLines(String filename) throws IOException {
-		File file =new File("../Epiphany/src/Logic/Engine/" + filename + ".txt");
-	    int lineNumber = 0;
- 
-		if(file.exists()){
+		File file = new File("../Epiphany/src/Logic/Engine/" + filename
+				+ ".txt");
+		int lineNumber = 0;
 
-		    FileReader fr = new FileReader(file);
-		    LineNumberReader lnr = new LineNumberReader(fr);
+		if (file.exists()) {
 
+			FileReader fr = new FileReader(file);
+			LineNumberReader lnr = new LineNumberReader(fr);
 
-	        while (lnr.readLine() != null){
-	        	lineNumber++;
-	        }
+			while (lnr.readLine() != null) {
+				lineNumber++;
+			}
 
-	        lnr.close();
+			lnr.close();
 		}
-		
-        return lineNumber;
+
+		return lineNumber;
 	}
-	
+
 	/**
 	 * Takes a command type input, as is given by the interpreter and returns
 	 * the appropriate case.
@@ -259,7 +264,7 @@ public class Engine {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Interpreter passes in a command type object. This method determines which
 	 * type of command it is and uses the appropriate methods using the switch
@@ -267,15 +272,48 @@ public class Engine {
 	 * 
 	 * @param userCommand
 	 *            is the command that the interpreter send in.
+	 * @throws IOException 
 	 */
-	public void executeCommand(CommandType userCommand) {
+	public void addTask(String taskDescription, Date dateFrom, Date dateTo, String projectName) throws IOException {
+		if (projectNames.contains(projectName)) {
+			// Existing project
+			int index = findIndex(projectName);
+			Project currProject = projectsList.get(index);
+			currProject.addTask(new Task(taskDescription, dateFrom, dateTo, projectName, false));
+			projectsList.set(index, currProject);
+		} else{
+			//default project
+			if(projectName.equals("default")){
+				int index = 0;
+				Project currProject = projectsList.get(index);
+				currProject.addTask(new Task(taskDescription, dateFrom, dateTo, projectName, false));
+				projectsList.set(index, currProject);
+			}
+			//create a new project
+			else{
+				projectNames.add(projectName);
+				ArrayList<Task> temp = new ArrayList<Task>();
+				temp.add(new Task(taskDescription, dateFrom, dateTo, projectName, false));
+				projectsList.add(new Project(projectName, temp));
+			}
+		}
+	}
+	private int findIndex(String projectName){
+		int index = 0;
+		for(Project p: projectsList){
+			if(!p.getProjectName().equals(projectName)){
+				index++;
+			}
+		}
+		return index;
+	}
+	public void executeCommand(CommandType userCommand) throws IOException {
 		CommandTypesEnum commandType = determineCommandType(userCommand);
 
 		switch (commandType) {
-		case ADD:
+		case ADD:// METHODDDDDD DONEEEEEE
 			AddCommandType addUserCommand = (AddCommandType) userCommand;
-			addTask(addUserCommand.getDescription(), addUserCommand.getDate(),
-					addUserCommand.getProjectName());
+			addTask(addUserCommand.getDescription(), addUserCommand.getDateFrom(), addUserCommand.getDateTo(), addUserCommand.getProjectName());// no inteface support at the moment
 			break;
 		case DISPLAY: // displays the entire ArrayList
 			DisplayCommandType displayUserCommand = (DisplayCommandType) userCommand;
@@ -299,10 +337,9 @@ public class Engine {
 			throw new Error(ERROR_WRONG_INPUT);
 		}
 	}
-	
-	
-	/*******************************OLDER METHODS*****************************************/
-	
+
+	/******************************* OLDER METHODS *****************************************/
+
 	private boolean checkContains(int i, String projectName) {
 		if (projectsList.get(i).getProjectName().equals(projectName)) {
 			return true;
@@ -452,11 +489,7 @@ public class Engine {
 		System.out.println("Task has been added!");
 	}
 
-	private void save(Project toBeUpdated) {
-	}
-
-	private void save() {
-	}
+	
 
 	private void deleteTask(String instruction, String projectName) {
 		if (!projectName.contains(projectName)) {
@@ -497,107 +530,7 @@ public class Engine {
 			projectNames.remove(count1);
 		}
 	}
-
-	// sorts by deadline. meaning the phrase with the earliest date will show
-	// first.
-	// date format is quite crude for now, can be polymorphised later.
-	// for now date is sorted according to DDMMYYYY
-	// will specify to include time as well. TTTT to settle the cases of tasks
-	// on the same day.
-
-	/**
-	 * This function helps to format the date.
-	 * 
-	 * @param dateStr
-	 *            String that contains the date
-	 * @return formatted date.
-	 */
-	public Date formatDate(String dateStr) {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-		try {
-			Date date = sdf.parse(dateStr);
-			return date;
-		} catch (ParseException e) {
-			return null;
-		}
-	}
-
-	/**
-	 * Sorts the date.
-	 * 
-	 * @param testDate
-	 *            An ArryList of date that needs to be sorted.
-	 */
-	public void sortDateInList(ArrayList<Date> testDate) {
-		Collections.sort(testDate, new customComparator());
-	}
-
-	/**
-	 * Helps to sort the tasks within a project
-	 * 
-	 * @param project
-	 *            The arrayList for a project that we update.
-	 * @return a project's taskList sorted by Date.
-	 */
-	private ArrayList<Task> sortDateInProject(ArrayList<Task> project) {
-		Collections.sort(project, new taskDateComparator());
-		return project;
-
-	}
-
-	/**
-	 * This method helps compare two tasks by basing it on their deadlines.
-	 * 
-	 * @author Moazzam
-	 *
-	 */
-	private class taskDateComparator implements Comparator<Task> {
-		public int compare(Task one, Task two) {
-			return one.getDeadline().compareTo(two.getDeadline());
-		}
-	}
-
-	/**
-	 * This method helps compare two dates.
-	 * 
-	 * @author Moazzam
-	 *
-	 */
-	private class customComparator implements Comparator<Date> {
-		public int compare(Date one, Date two) {
-			return one.compareTo(two);
-		}
-	}
-
-	/**
-	 * Helps to format the date and return the formatted date.
-	 * 
-	 * @param deadLine
-	 * @return the formatted date.
-	 */
-	public String toString(Date deadLine) {
-		String dateFormat = "dd-MM-yyyy";
-		SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
-		String stringDate = sdf.format(deadLine);
-		return stringDate;
-	}
-
-	
-
-	
-
-	private String getFirstWord(String userCommand) {
-		String commandTypeString = userCommand.trim().split("\\s+")[0];
-		return commandTypeString;
-	}
-
-	public String removeFirstWord(String userCommand) {
-		return userCommand.replace(getFirstWord(userCommand), "").trim();
-	}
-
-	public void printToUser(String text, String arg1, String arg2) {
-		String printText = String.format(text, arg1, arg2);
-		System.out.print(printText);
-	}
-
 }
+
+
+

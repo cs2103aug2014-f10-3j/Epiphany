@@ -1,6 +1,7 @@
 package Logic.Interpreter;
 
 import java.io.*; 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -32,7 +33,7 @@ public class EpiphanyInterpreter implements deleteObserver{
 	Scanner input; //This scanner will deal with all input from user.
 	UIHandler uiHandler; 
 	
-	public EpiphanyInterpreter() {
+	public EpiphanyInterpreter() throws IOException, ParseException {
 		engine = new Engine();
 		input = new Scanner( System.in );
 		uiHandler = UIHandler.getInstance();
