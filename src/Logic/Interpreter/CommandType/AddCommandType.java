@@ -14,24 +14,35 @@ import java.util.Date;
 public class AddCommandType implements CommandType {
 	
 	private String description;
-	private Date date;
+	private Date dateFrom;
+	private Date dateTo;
 	private String projectName;
 	
 	public AddCommandType(String _description) {
 		description = _description;
-		date = null;
+		dateFrom = null;
+		dateTo = null;
 		projectName = "default";
 	}
 	
-	public AddCommandType(String _description, Date _date) {
+	public AddCommandType(String _description, Date _dateTo) {
 		description = _description;
-		date = _date;
+		dateFrom = null;
+		dateTo = _dateTo;
 		projectName = "default";
 	}
 	
-	public AddCommandType(String _description, Date _date, String _projectName) {
+	public AddCommandType(String _description, Date _dateTo, String _projectName) {
 		description = _description;
-		date = _date;
+		dateFrom = null;
+		dateTo = _dateTo;
+		projectName = _projectName;
+	}
+	
+	public AddCommandType(String _description, Date _dateFrom, Date _dateTo, String _projectName) {
+		description = _description;
+		dateFrom = _dateFrom;
+		dateTo = _dateTo;
 		projectName = _projectName;
 	}
 	
@@ -44,8 +55,12 @@ public class AddCommandType implements CommandType {
 		return description;
 	}
 	
-	public Date getDate() {
-		return date;
+	public Date getDateTo() {
+		return dateTo;
+	}
+	
+	public Date getDateFrom() {
+		return dateFrom;
 	}
 	
 	public String getProjectName() {
