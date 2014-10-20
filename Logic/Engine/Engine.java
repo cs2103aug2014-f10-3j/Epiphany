@@ -1,8 +1,18 @@
 package Logic.Engine;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
 import Logic.Interpreter.CommandType.*;
 
 /**
@@ -26,9 +36,8 @@ import Logic.Interpreter.CommandType.*;
  */
 public class Engine {
 
-	public static ArrayList<String> projectNames;
-	public static ArrayList<Task> defaultProject;
-	public static ArrayList<Project> EpiphanyMain;
+	public static ArrayList<String> projectNames; // to give quick access to list of projects
+	public static ArrayList<Project> projectsList; 
 	public static ArrayList<Date> testDate1;
 	public static ArrayList<Task> testDateSort;
 	public static final String MESSAGE_WRONG_ENTRY = "Wrong entry, please re-enter input.";
@@ -58,33 +67,137 @@ public class Engine {
 		ADD, DISPLAY, DELETE, CLEAR, EXIT, INVALID, SEARCH
 	};
 
-	public Engine() {
+	public Engine() throws IOException, ParseException {
 		run();
 	}
 
 	/**
-	 * Performs the operations necessary for the execution of the Logic
-	 * component of the program.
+	 * Initializes the Engine to begin running.
+	 * Also, repopulates from existing text files.
+	 * @throws IOException 
+	 * @throws ParseException 
 	 */
-	private void run() {
-		EpiphanyMain = new ArrayList<Project>();
-		projectNames = new ArrayList<String>();
-		createDefault();
+	private void run() throws IOException, ParseException {
+		projectsList = new ArrayList<Project>(); 
+		projectNames = new ArrayList<String>();  
+
+		initializeEngine();
+		
 	}
 
-	/**
-	 * This function creates a default project which is then automaticlly
-	 * available for use.
-	 */
-	private void createDefault() {
-		ArrayList<Task> defaultInsertion = new ArrayList<Task>();
-		EpiphanyMain.add(new Project("default", defaultInsertion));
-		projectNames.add("default");
-
+	private void initializeEngine() throws IOException, FileNotFoundException,
+			ParseException {
+		//assume that projectNames exists.
+		int noOfProjects = countLines("projectNames.txt");
+		
+		if(noOfProjects == 0){
+			//default project does not exist. need to create.
+			
+			projectNames.add("default");
+			projectsList.add(new Project("default", new ArrayList<Task>()));
+		}else{
+			// there is atleast 1 project. Read in project names and populate tasks.
+			
+			populateProjectNames();
+			populateProjectsWithTasks();
+		}
 	}
+
+	private void populateProjectsWithTasks() throws FileNotFoundException,
+			IOException, ParseException {
+		for(String fileName : projectNames){
+			ArrayList<Task> temp = new ArrayList<Task>();
+			
+			BufferedReader reader = new BufferedReader(new FileReader(fileName + ".txt"));
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				String[] taskComponents = line.split("||");
+				
+				String type = taskComponents[0];
+				String description = taskComponents[1];
+				Date from = parseDate(taskComponents[2]);
+				Date to = parseDate(taskComponents[3]);
+				String projName = taskComponents[4];
+				boolean status = parseBool(taskComponents[5]);
+				
+				Task t = null;
+				
+				if(type.equals("deadline")){
+					t = new Task(description, null, to, projName, status);
+				}else if(type.equals("interval")){
+					t = new Task(description, from, to, projName, status);
+				}else if(type.equals("floating")){
+					t = new Task(description, null, null, projName, status);
+				}
+				
+				temp.add(t);
+			}
+			
+			reader.close();
+			
+			Project p = new Project(fileName, temp);
+			projectsList.add(p);
+		}
+	}
+
+	private Date parseDate(String input) throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy");
+		Date date = sdf.parse(input);
+		
+		return date;
+		/*
+		String[] components = input.split(" ");
+		String dow = components[0];
+		String month = components[1];
+		int date = Integer.parseInt(components[2]);
+
+		String[] time = components[3].split(":");
+		int hour = Integer.parseInt(time[0]);
+		int min = Integer.parseInt(time[1]);
+		int seconds = Integer.parseInt(time[2]);
+		
+		int year = Integer.parseInt(components[5]);
+		*/		
+	}
+
+	private void populateProjectNames() throws FileNotFoundException,
+			IOException {
+		BufferedReader reader = new BufferedReader(new FileReader("projectNames.txt"));
+		String line = null;
+		while ((line = reader.readLine()) != null) {
+			projectNames.add(line);
+		}
+		reader.close();
+	}
+	
+	private boolean parseBool(String input) {
+		return (input.equalsIgnoreCase("true")) ? true : false;
+	}
+
+	public static int countLines(String filename) throws IOException {
+	    InputStream is = new BufferedInputStream(new FileInputStream(filename));
+	    try {
+	        byte[] c = new byte[1024];
+	        int count = 0;
+	        int readChars = 0;
+	        boolean empty = true;
+	        while ((readChars = is.read(c)) != -1) {
+	            empty = false;
+	            for (int i = 0; i < readChars; ++i) {
+	                if (c[i] == '\n') {
+	                    ++count;
+	                }
+	            }
+	        }
+	        return (count == 0 && !empty) ? 1 : count;
+	    } finally {
+	        is.close();
+	    }
+	}
+	
 
 	private boolean checkContains(int i, String projectName) {
-		if (EpiphanyMain.get(i).getProjectName().equals(projectName)) {
+		if (projectsList.get(i).getProjectName().equals(projectName)) {
 			return true;
 		} else {
 			return false;
@@ -105,9 +218,9 @@ public class Engine {
 		ArrayList<Task> searchResult = new ArrayList<Task>();
 		ArrayList<Task> temp;
 
-		for (int i = 0; i < EpiphanyMain.size(); i++) {
+		for (int i = 0; i < projectsList.size(); i++) {
 			if (checkContains(i, projectName)) {
-				temp = EpiphanyMain.get(i).getTaskList();
+				temp = projectsList.get(i).getTaskList();
 				for (int j = 0; j < temp.size(); j++) {
 					if (temp.get(j).getInstruction().toLowerCase()
 							.contains(phrase.toLowerCase())) {
@@ -132,12 +245,12 @@ public class Engine {
 	 * stored within them.
 	 */
 	public void displayAll() {
-		if (EpiphanyMain.size() == 1
-				&& EpiphanyMain.get(0).getTaskList().isEmpty()) {
+		if (projectsList.size() == 1
+				&& projectsList.get(0).getTaskList().isEmpty()) {
 			System.out.println("Nothing to display.");// UI handler
 		} else {
-			for (int i = 0; i < EpiphanyMain.size(); i++) {
-				Project curr = EpiphanyMain.get(i);
+			for (int i = 0; i < projectsList.size(); i++) {
+				Project curr = projectsList.get(i);
 				System.out.println("Project: " + "\n" + (i + 1) + ". "
 						+ curr.getProjectName() + ":");
 				ArrayList<Task> currentArrayList = curr.getTaskList();
@@ -190,11 +303,11 @@ public class Engine {
 	 *            The name of the project that we wish to display.
 	 */
 	public void displayProject(Project tempName) {
-		for (int i = 0; i < EpiphanyMain.size(); i++) {
+		for (int i = 0; i < projectsList.size(); i++) {
 			String nameTempProject = tempName.getProjectName().toLowerCase();
-			String abc = EpiphanyMain.get(i).getProjectName().toLowerCase();
+			String abc = projectsList.get(i).getProjectName().toLowerCase();
 			if (abc.equals(nameTempProject)) {
-				ArrayList<Task> temporaryProjectList = EpiphanyMain.get(i)
+				ArrayList<Task> temporaryProjectList = projectsList.get(i)
 						.getTaskList();
 				displayArrayList(temporaryProjectList);
 			} else {
@@ -218,39 +331,7 @@ public class Engine {
 		}
 	}
 
-	/**
-	 * Adds a task into the program. Adds the task into it specified project and
-	 * sorts it according to its deadline.
-	 * 
-	 * @param instruction
-	 * @param date
-	 * @param projectName
-	 */
-	private void addTask(String instruction, Date date, String projectName) {
-		if (instruction == null) {
-			System.out.println("Please provide a task name"); // UI Handler
-		}
-		if (!projectNames.contains(projectName)) {
-			createNewProject(projectName, instruction, date);
-		} 
-		if (date == null) {
-				addTaskWithoutDate(projectName, instruction);
-			} else {
-				if (projectNames.contains(projectName)) {
-
-					for (int i = 0; i < EpiphanyMain.size(); i++) {
-						if (EpiphanyMain.get(i).getProjectName()
-								.equals(projectName)) {
-							ArrayList<Task> currentProjectList = EpiphanyMain
-									.get(i).getTaskList();
-							currentProjectList.add(new Task(instruction, date,
-									projectName));
-							sortDateInProject(EpiphanyMain.get(i).getTaskList());
-					}
-				}
-			}
-		}
-	}
+	
 
 	private void createNewProject(String projectName, String instruction,
 			Date date) {
@@ -261,21 +342,9 @@ public class Engine {
 		} else if (date != null) {
 			latest.add(new Task(instruction, date, projectName));
 		}
-		EpiphanyMain.add(new Project(projectName, latest));
+		projectsList.add(new Project(projectName, latest));
 		System.out.println("New project created");
 		System.out.println("Task has been added!");
-	}
-
-	private void addTaskWithoutDate(String projectName, String instruction) {
-		if (projectNames.contains(projectName.toLowerCase())) {
-			for (int i = 0; i < EpiphanyMain.size(); i++) {
-				if (EpiphanyMain.get(i).getProjectName().equals(projectName)) {
-					ArrayList<Task> currentProjectList = EpiphanyMain.get(i)
-							.getTaskList();
-					currentProjectList.add(new Task(instruction, projectName));
-				}
-			}
-		}
 	}
 
 	private void save(Project toBeUpdated) {
@@ -288,11 +357,11 @@ public class Engine {
 		if (!projectName.contains(projectName)) {
 			System.out.println("Such a project does not exist");
 		} else {
-			for (int i = 0; i < EpiphanyMain.size(); i++) {
-				String current = EpiphanyMain.get(i).getProjectName()
+			for (int i = 0; i < projectsList.size(); i++) {
+				String current = projectsList.get(i).getProjectName()
 						.toLowerCase();
 				if (current.contains(projectName.toLowerCase())) {
-					ArrayList<Task> currTaskList = EpiphanyMain.get(i)
+					ArrayList<Task> currTaskList = projectsList.get(i)
 							.getTaskList();
 
 					for (int j = 0; j < currTaskList.size(); j++) {
@@ -315,11 +384,11 @@ public class Engine {
 	 *            is the name of the project.
 	 */
 	public void deleteProject(ArrayList<Task> projectName) {
-		if (EpiphanyMain.contains(projectName)
+		if (projectsList.contains(projectName)
 				&& projectNames.contains(projectName)) {
-			int count = EpiphanyMain.lastIndexOf(projectName);
+			int count = projectsList.lastIndexOf(projectName);
 			int count1 = projectNames.lastIndexOf(projectName);
-			EpiphanyMain.remove(count);
+			projectsList.remove(count);
 			projectNames.remove(count1);
 		}
 	}

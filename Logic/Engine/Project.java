@@ -30,8 +30,10 @@ public class Project {
 			intervalList = new ArrayList<Task>();
 			floatingList = new ArrayList<Task>();
 			
-			populateLists(list);
-			createNewFile(projectName, deadLineList, intervalList, floatingList); //creates a new text file with relevant info. 
+			if(!list.isEmpty()){
+				populateLists(list);
+				createNewFile(projectName, deadLineList, intervalList, floatingList); //creates a new text file with relevant info. 
+			}
 		}
 
 		

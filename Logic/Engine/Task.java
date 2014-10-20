@@ -25,12 +25,12 @@ public class Task {
 		 * @param date			stores the deadline
 		 * @param ProjectName	stores the name of the project that the task belongs to
 		 */
-		public Task(String instruction, Date from, Date deadLine, String ProjectName) {
+		public Task(String instruction, Date from, Date deadLine, String ProjectName, boolean status) {
 			this.taskDescription = instruction;
 			this.from = from;
 			this.deadLine = deadLine;
 			this.projectName = ProjectName;
-			this.isCompleted = false; // Set as false as a default
+			this.isCompleted = status; // Set as false as a default
 		}
 
 /**********************Getters******************************/		
@@ -107,7 +107,7 @@ public class Task {
 
 		@Override
 		public String toString() {
-			return this.getType() + "||" + this.getTaskDescription() + "||" + this.getStartDate() + "||" + this.getDeadline() + "||" + this.getProjectName() + "||" + this.isCompleted();
+			return this.getType() + "||" + this.getTaskDescription() + "||" + this.getStartDate().toString() + "||" + this.getDeadline().toString() + "||" + this.getProjectName() + "||" + this.isCompleted();
 		}
 
 		
