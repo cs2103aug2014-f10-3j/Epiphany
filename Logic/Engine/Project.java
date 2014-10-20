@@ -1,6 +1,7 @@
 package Logic.Engine;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
@@ -32,8 +33,10 @@ public class Project {
 			
 			if(!list.isEmpty()){
 				populateLists(list);
-				createNewFile(projectName, deadLineList, intervalList, floatingList); //creates a new text file with relevant info. 
 			}
+			
+			createNewFile(projectName, deadLineList, intervalList, floatingList); //creates a new text file with relevant info. 
+			
 		}
 
 		
@@ -131,7 +134,8 @@ public class Project {
 		private void writeToFile(String fileName, ArrayList<Task> dLineList,
 				ArrayList<Task> interList, ArrayList<Task> floatList)
 				throws IOException {
-			FileWriter f = new FileWriter(fileName);
+			File file = new File("../Epiphany/src/Logic/Engine/Projects/" + fileName);
+			FileWriter f = new FileWriter(file);
 			BufferedWriter writer = new BufferedWriter(f);
 			
 				// for deadline
@@ -150,6 +154,7 @@ public class Project {
 				
 				//for floating
 				for(Task t : floatList){
+					System.out.print(t.toString());
 					writer.write(t.toString());
 					writer.newLine();
 					writer.flush();

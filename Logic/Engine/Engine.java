@@ -2,12 +2,15 @@ package Logic.Engine;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.LineNumberReader;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -35,6 +38,26 @@ import Logic.Interpreter.CommandType.*;
  *
  */
 public class Engine {
+	public static void main(String[] args) throws IOException, ParseException{
+		ArrayList<String> projectNames; // to give quick access to list of projects
+		ArrayList<Project> projectsList; 
+		
+		Engine e = new Engine();
+		Date test = new Date();
+		
+		test.setDate(11);
+		test.setHours(22);
+		test.setMinutes(21);
+		test.setMonth(2);
+		test.setSeconds(21);
+		test.setYear(92);
+		
+		Task t = new Task("RULE THE WORLD", null, test, "default", false);
+		
+		e.projectsList.get(0).addTask(t);
+
+	}
+	
 
 	public static ArrayList<String> projectNames; // to give quick access to list of projects
 	public static ArrayList<Project> projectsList; 
@@ -88,19 +111,31 @@ public class Engine {
 	private void initializeEngine() throws IOException, FileNotFoundException,
 			ParseException {
 		//assume that projectNames exists.
-		int noOfProjects = countLines("projectNames.txt");
+		int noOfProjects = countLines("projectMasterList");
 		
 		if(noOfProjects == 0){
-			//default project does not exist. need to create.
 			
-			projectNames.add("default");
-			projectsList.add(new Project("default", new ArrayList<Task>()));
+			createDefault(); 	//default project does not exist. need to create.
+			
 		}else{
 			// there is atleast 1 project. Read in project names and populate tasks.
-			
+		
 			populateProjectNames();
 			populateProjectsWithTasks();
 		}
+	}
+
+	private void createDefault() throws IOException {
+		projectNames.add("default");
+		projectsList.add(new Project("default", new ArrayList<Task>()));
+		
+		File file = new File("../Epiphany/src/Logic/Engine/projectMasterList.txt");
+		FileWriter f = new FileWriter(file, true);
+		BufferedWriter writer = new BufferedWriter(f);
+		
+		writer.write("default");
+		writer.flush();
+		writer.close();
 	}
 
 	private void populateProjectsWithTasks() throws FileNotFoundException,
@@ -108,7 +143,8 @@ public class Engine {
 		for(String fileName : projectNames){
 			ArrayList<Task> temp = new ArrayList<Task>();
 			
-			BufferedReader reader = new BufferedReader(new FileReader(fileName + ".txt"));
+			File f = new File("../Epiphany/src/Logic/Engine/Projects/" + fileName);
+			BufferedReader reader = new BufferedReader(new FileReader(f));
 			String line = null;
 			while ((line = reader.readLine()) != null) {
 				String[] taskComponents = line.split("||");
@@ -141,10 +177,17 @@ public class Engine {
 	}
 
 	private Date parseDate(String input) throws ParseException {
-		SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy");
-		Date date = sdf.parse(input);
+		Date date = new Date();
+		
+		if(!input.equals("null")){
+			SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+			date = sdf.parse(input);
+		}else{
+			return null;
+		}
 		
 		return date;
+
 		/*
 		String[] components = input.split(" ");
 		String dow = components[0];
@@ -162,12 +205,11 @@ public class Engine {
 
 	private void populateProjectNames() throws FileNotFoundException,
 			IOException {
-		BufferedReader reader = new BufferedReader(new FileReader("projectNames.txt"));
-		String line = null;
-		while ((line = reader.readLine()) != null) {
-			projectNames.add(line);
+		Scanner sc = new Scanner(new File("../Epiphany/src/Logic/Engine/projectMasterList.txt"));
+		while(sc.hasNextLine()){
+			projectNames.add(sc.nextLine());
+
 		}
-		reader.close();
 	}
 	
 	private boolean parseBool(String input) {
@@ -175,24 +217,23 @@ public class Engine {
 	}
 
 	public static int countLines(String filename) throws IOException {
-	    InputStream is = new BufferedInputStream(new FileInputStream(filename));
-	    try {
-	        byte[] c = new byte[1024];
-	        int count = 0;
-	        int readChars = 0;
-	        boolean empty = true;
-	        while ((readChars = is.read(c)) != -1) {
-	            empty = false;
-	            for (int i = 0; i < readChars; ++i) {
-	                if (c[i] == '\n') {
-	                    ++count;
-	                }
-	            }
+		File file =new File("../Epiphany/src/Logic/Engine/" + filename + ".txt");
+	    int lineNumber = 0;
+ 
+		if(file.exists()){
+
+		    FileReader fr = new FileReader(file);
+		    LineNumberReader lnr = new LineNumberReader(fr);
+
+
+	        while (lnr.readLine() != null){
+	        	lineNumber++;
 	        }
-	        return (count == 0 && !empty) ? 1 : count;
-	    } finally {
-	        is.close();
-	    }
+
+	        lnr.close();
+		}
+		
+        return lineNumber;
 	}
 	
 

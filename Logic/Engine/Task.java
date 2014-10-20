@@ -107,7 +107,17 @@ public class Task {
 
 		@Override
 		public String toString() {
-			return this.getType() + "||" + this.getTaskDescription() + "||" + this.getStartDate().toString() + "||" + this.getDeadline().toString() + "||" + this.getProjectName() + "||" + this.isCompleted();
+			String s = null;
+			
+			if(this.from == null && this.deadLine != null){
+				s = this.getType() + "||" + this.getTaskDescription() + "||" + "null" + "||" + this.getDeadline().toString() + "||" + this.getProjectName() + "||" + this.isCompleted();
+			}else if(this.from == null && this.deadLine == null){
+				s = this.getType() + "||" + this.getTaskDescription() + "||" + "null" + "||" + "null" + "||" + this.getProjectName() + "||" + this.isCompleted();
+			}else if(this.from != null && this.deadLine != null){
+				s = this.getType() + "||" + this.getTaskDescription() + "||" + this.getStartDate().toString() + "||" + this.getDeadline().toString() + "||" + this.getProjectName() + "||" + this.isCompleted();
+			}
+			
+			return s;
 		}
 
 		
