@@ -110,11 +110,11 @@ public class Task {
 			String s = null;
 			
 			if(this.from == null && this.deadLine != null){
-				s = this.getType() + "||" + this.getTaskDescription() + "||" + "null" + "||" + this.getDeadline().toString() + "||" + this.getProjectName() + "||" + this.isCompleted();
+				s = this.getType() + "~" + this.getTaskDescription() + "~" + "null" + "~" + this.getDeadline().toString() + "~" + this.getProjectName() + "~" + this.isCompleted();
 			}else if(this.from == null && this.deadLine == null){
-				s = this.getType() + "||" + this.getTaskDescription() + "||" + "null" + "||" + "null" + "||" + this.getProjectName() + "||" + this.isCompleted();
+				s = this.getType() + "~" + this.getTaskDescription() + "~" + "null" + "~" + "null" + "~" + this.getProjectName() + "~" + this.isCompleted();
 			}else if(this.from != null && this.deadLine != null){
-				s = this.getType() + "||" + this.getTaskDescription() + "||" + this.getStartDate().toString() + "||" + this.getDeadline().toString() + "||" + this.getProjectName() + "||" + this.isCompleted();
+				s = this.getType() + "~" + this.getTaskDescription() + "~" + this.getStartDate().toString() + "~" + this.getDeadline().toString() + "~" + this.getProjectName() + "~" + this.isCompleted();
 			}
 			
 			return s;

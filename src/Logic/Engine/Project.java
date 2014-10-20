@@ -35,9 +35,12 @@ public class Project {
 				populateLists(list);
 			}
 			
-			createNewFile(projectName, deadLineList, intervalList, floatingList); //creates a new text file with relevant info. 
 			
+			createNewFile(projectName, deadLineList, intervalList, floatingList); //creates a new text file with relevant info. 
+		
 		}
+		
+		
 
 		
 		private void populateLists(ArrayList<Task> list) {
@@ -134,9 +137,12 @@ public class Project {
 		private void writeToFile(String fileName, ArrayList<Task> dLineList,
 				ArrayList<Task> interList, ArrayList<Task> floatList)
 				throws IOException {
+
 			File file = new File("../Epiphany/src/Logic/Engine/Projects/" + fileName);
 			FileWriter f = new FileWriter(file);
 			BufferedWriter writer = new BufferedWriter(f);
+			
+			writer.write("");
 			
 				// for deadline
 				for(Task t : dLineList){
