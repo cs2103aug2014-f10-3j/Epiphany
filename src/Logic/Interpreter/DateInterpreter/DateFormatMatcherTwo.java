@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 
-class DateFormatMatcherTwo implements strtotime.Matcher {
+class DateFormatMatcherTwo implements Matcher {
 
     private final DateFormat dateFormat;
 

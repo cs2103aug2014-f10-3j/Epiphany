@@ -4,10 +4,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Pattern;
 
-class SoonMatcher implements strtotime.Matcher {
+class SoonMatcher implements Matcher {
 
-    private final Pattern tomorrow = Pattern.compile("\\W*tomorrow\\W*");
-    private final Pattern today = Pattern.compile("\\W*(today|tonight)\\W*");
+    private final Pattern tomorrow = Pattern.compile(".*tomorrow\\W*");
+    private final Pattern today = Pattern.compile(".*(today|tonight)\\W*");
 
     @Override
     public Date tryConvert(String input) {

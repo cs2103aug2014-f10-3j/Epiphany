@@ -4,9 +4,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Pattern;
 
-import Logic.Interpreter.DateInterpreter.strtotime.Matcher;
+import Logic.Interpreter.DateInterpreter.Matcher;
 
-class ExtendedDayMatcher implements strtotime.Matcher {
+class ExtendedDayMatcher implements Matcher {
 
 	private final Pattern next = Pattern.compile("(next|the coming|coming).*");
 	private final Pattern following = Pattern.compile("(following|the following).*");

@@ -4,7 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Pattern;
 
-class DaysMatcher implements strtotime.Matcher {
+class DaysMatcher implements Matcher {
 
     private final Pattern days = Pattern.compile("[\\-\\+]?\\d+ days");
 

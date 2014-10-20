@@ -4,7 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Pattern;
 
-class DayMatcher implements strtotime.Matcher {
+class DayMatcher implements Matcher {
 
 	private final Pattern saturday = Pattern.compile("(this |)saturday");
 	private final Pattern sunday = Pattern.compile("(this |)sunday");

@@ -2,20 +2,21 @@ package Logic.Interpreter.DateInterpreter;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class OnlyDateMatcher implements strtotime.Matcher {
 
+public class OnlyDateMatcher implements Matcher{
+	
 	private final Pattern datewletters = Pattern.compile("(the |)(\\d\\d|\\d)(st|nd|rd|th)");
 	private final Pattern datewoletters = Pattern.compile("(the |)(\\d\\d|\\d)");
 	private final Pattern extractDatePattern = Pattern.compile("\\d+");
+	
 	@Override
 	public Date tryConvert(String input) {
 
 		if (datewoletters.matcher(input).matches() || datewletters.matcher(input).matches()) {
 
-			Matcher m = extractDatePattern.matcher(input);
+			java.util.regex.Matcher m = extractDatePattern.matcher(input);
 			//m.matches();
 			if(m.find()){
 				Calendar cal = Calendar.getInstance();

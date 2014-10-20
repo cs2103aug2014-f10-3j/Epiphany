@@ -4,7 +4,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
 
-class DateFormatMatcherThree implements strtotime.Matcher {
+class DateFormatMatcherThree implements Matcher {
 
     private final DateFormat dateFormat;
 

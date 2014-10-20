@@ -1,6 +1,7 @@
 package Logic.Interpreter;
 
 import java.io.*; 
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.Date; 
@@ -97,7 +98,14 @@ public class EpiphanyInterpreter implements deleteObserver{
 		if(commandTokens.length == 1){
 			return new DisplayCommandType();
 		}else if(commandTokens.length == 2){
-			return new DisplayCommandType(commandTokens[1]);
+			if(commandTokens[1].startsWith("#")){
+				if(commandTokens[1].substring(1).contains("#")){
+					return null;
+				}
+				return new DisplayCommandType(commandTokens[1].substring(1));
+			} else if(commandTokens[1].equalsIgnoreCase("all")){
+				return new DisplayCommandType(commandTokens[1]);
+			}
 		}
 		return null;
 	}
@@ -117,12 +125,18 @@ public class EpiphanyInterpreter implements deleteObserver{
 	 * @return SearchCommandType
 	 */
 	private CommandType interpretSearchCommand(String userInput) {
-		String findMe = userInput.substring(userInput.indexOf(' ') + 1);   
+		String findMe = userInput.substring(userInput.indexOf(' ') + 1);
+		if(findMe.contains("#")){
+			return new SearchCommandType(findMe.substring(0,findMe.indexOf('#')-1),findMe.substring(findMe.indexOf('#')+1));
+		}
 		return new SearchCommandType(findMe);
 	}
 	
 	private CommandType interpretDeleteCommand(String userInput) {
-		String toDelete = userInput.substring(userInput.indexOf(' ') + 1);   
+		String toDelete = userInput.substring(userInput.indexOf(' ') + 1); 
+		if(toDelete.contains("#")){
+			return new SearchCommandType(toDelete.substring(0,toDelete.indexOf('#')-1),toDelete.substring(toDelete.indexOf('#')+1));
+		}
 		return new DeleteCommandType(toDelete);
 	}
 
@@ -132,18 +146,30 @@ public class EpiphanyInterpreter implements deleteObserver{
 	 * @return AddCommandType
 	 */
 	private CommandType interpretAddCommand(String userInput) {
-		if(userInput.matches(REGEX_ADD_COMMAND)){
-			String[] tokens = userInput.split(REGEX_SPLIT_ADD_COMMAND);
-			if(isValidTask(tokens[0])){
-				Date date = parseDate(tokens[1]);
-				return (date != null) ? new AddCommandType(tokens[0], date) : null;
+		String projectName = "";
+		if(userInput.contains("#")){
+			projectName = userInput.substring(userInput.indexOf('#')+1);
+			userInput = userInput.substring(0,userInput.indexOf('#')-1);
+		}
+		ArrayList<Date> dates = new ArrayList<Date>();
+		String taskDescription = parseDate(userInput, dates);
+		if(taskDescription!=null && isValidTask(taskDescription)){
+			if(dates.size()==0){
+				if(projectName.equals("")){
+					return new AddCommandType(taskDescription);
+				} else{
+					return new AddCommandType(taskDescription, null, projectName);
+				}
+			} else {
+				if(projectName.equals("")){
+					return new AddCommandType(taskDescription, dates.get(0));
+				} else{
+					return new AddCommandType(taskDescription, dates.get(0), projectName);
+				}
+				
 			}
-
+		} else{
 			return null;
-
-		} else {
-			//floating task
-			return (isValidTask(userInput)) ? new AddCommandType(userInput) : null;
 		}
 	}
 
@@ -160,8 +186,8 @@ public class EpiphanyInterpreter implements deleteObserver{
 	 * @param string
 	 * @return Date
 	 */
-	private Date parseDate(String string) {
-		return strtotime.convert(string);
+	private String parseDate(String string, ArrayList<Date> d) {
+		return strtotime.convert(string, d);
 	}
 
 	/**

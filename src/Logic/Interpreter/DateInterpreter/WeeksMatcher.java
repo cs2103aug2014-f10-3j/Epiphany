@@ -4,7 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Pattern;
 
-class WeeksMatcher implements strtotime.Matcher {
+class WeeksMatcher implements Matcher {
 
     private final Pattern weeks = Pattern.compile("[\\-\\+]?\\d+ weeks");
     private final Pattern inAWeek = Pattern.compile("a week");
