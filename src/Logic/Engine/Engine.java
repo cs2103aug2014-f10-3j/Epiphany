@@ -37,27 +37,7 @@ import Logic.Interpreter.CommandType.*;
  * @author Moazzam and Wei Yang
  *
  */
-public class Engine {
-	public static void main(String[] args) throws IOException, ParseException{
-		ArrayList<String> projectNames; // to give quick access to list of projects
-		ArrayList<Project> projectsList; 
-		
-		Engine e = new Engine();
-		Date test = new Date();
-		
-		test.setDate(11);
-		test.setHours(22);
-		test.setMinutes(21);
-		test.setMonth(2);
-		test.setSeconds(21);
-		test.setYear(92);
-		
-		Task t = new Task("RULE THE WORLD", null, test, "default", false);
-		
-		e.projectsList.get(0).addTask(t);
-
-	}
-	
+public class Engine {	
 
 	public static ArrayList<String> projectNames; // to give quick access to list of projects
 	public static ArrayList<Project> projectsList; 
@@ -89,6 +69,25 @@ public class Engine {
 	enum CommandTypesEnum {
 		ADD, DISPLAY, DELETE, CLEAR, EXIT, INVALID, SEARCH
 	};
+		
+	public static void main(String[] args) throws IOException, ParseException{
+		//TEST METHOD
+		
+		Engine e = new Engine();
+		Date test = new Date();
+		
+		test.setDate(11);
+		test.setHours(22);
+		test.setMinutes(21);
+		test.setMonth(2);
+		test.setSeconds(21);
+		test.setYear(92);
+		
+		Task t = new Task("RULE THE WORLD", null, test, "default", false);
+		
+		e.projectsList.get(0).addTask(t);
+
+	}
 
 	public Engine() throws IOException, ParseException {
 		run();
@@ -147,7 +146,7 @@ public class Engine {
 			BufferedReader reader = new BufferedReader(new FileReader(f));
 			String line = null;
 			while ((line = reader.readLine()) != null) {
-				String[] taskComponents = line.split("||");
+				String[] taskComponents = line.split("~");
 				
 				String type = taskComponents[0];
 				String description = taskComponents[1];
@@ -236,7 +235,74 @@ public class Engine {
         return lineNumber;
 	}
 	
+	/**
+	 * Takes a command type input, as is given by the interpreter and returns
+	 * the appropriate case.
+	 * 
+	 * @param Input
+	 *            from the interpreter that needs to be filtered.
+	 * @return the type of command
+	 */
+	private CommandTypesEnum determineCommandType(CommandType commandType) {
+		if (commandType == null)
+			throw new Error(ERROR_COMMAND_TYPE_NULL);
 
+		if (commandType.getType().equalsIgnoreCase("add")) {
+			return CommandTypesEnum.ADD;
+		} else if (commandType.getType().equalsIgnoreCase("display")) {
+			return CommandTypesEnum.DISPLAY;
+		} else if (commandType.getType().equalsIgnoreCase("delete")) {
+			return CommandTypesEnum.DELETE;
+		} else if (commandType.getType().equalsIgnoreCase("search")) {
+			return CommandTypesEnum.SEARCH;
+		} else {
+			return null;
+		}
+	}
+	
+	/**
+	 * Interpreter passes in a command type object. This method determines which
+	 * type of command it is and uses the appropriate methods using the switch
+	 * statements.
+	 * 
+	 * @param userCommand
+	 *            is the command that the interpreter send in.
+	 */
+	public void executeCommand(CommandType userCommand) {
+		CommandTypesEnum commandType = determineCommandType(userCommand);
+
+		switch (commandType) {
+		case ADD:
+			AddCommandType addUserCommand = (AddCommandType) userCommand;
+			addTask(addUserCommand.getDescription(), addUserCommand.getDate(),
+					addUserCommand.getProjectName());
+			break;
+		case DISPLAY: // displays the entire ArrayList
+			DisplayCommandType displayUserCommand = (DisplayCommandType) userCommand;
+			// display(displayUserCommand.getModifiers()); I dont know what this
+			// is???
+			displayAll();
+			break;
+		case DELETE:
+			DeleteCommandType deleteUserCommand = (DeleteCommandType) userCommand;
+			deleteTask(deleteUserCommand.getTaskDescription(),
+					deleteUserCommand.getProjectName());
+			break;
+		case SEARCH:
+			SearchCommandType searchUserCommand = (SearchCommandType) userCommand;
+			search(searchUserCommand.getTaskDescription(),
+					searchUserCommand.getProjectName());
+			break;
+
+		default:
+			// throw an error if the command is not recognized
+			throw new Error(ERROR_WRONG_INPUT);
+		}
+	}
+	
+	
+	/*******************************OLDER METHODS*****************************************/
+	
 	private boolean checkContains(int i, String projectName) {
 		if (projectsList.get(i).getProjectName().equals(projectName)) {
 			return true;
@@ -371,8 +437,6 @@ public class Engine {
 			}
 		}
 	}
-
-	
 
 	private void createNewProject(String projectName, String instruction,
 			Date date) {
@@ -518,71 +582,9 @@ public class Engine {
 		return stringDate;
 	}
 
-	/**
-	 * Interpreter passes in a command type object. This method determines which
-	 * type of command it is and uses the appropriate methods using the switch
-	 * statements.
-	 * 
-	 * @param userCommand
-	 *            is the command that the interpreter send in.
-	 */
+	
 
-	public void executeCommand(CommandType userCommand) {
-		CommandTypesEnum commandType = determineCommandType(userCommand);
-
-		switch (commandType) {
-		case ADD:
-			AddCommandType addUserCommand = (AddCommandType) userCommand;
-			addTask(addUserCommand.getDescription(), addUserCommand.getDate(),
-					addUserCommand.getProjectName());
-			break;
-		case DISPLAY: // displays the entire ArrayList
-			DisplayCommandType displayUserCommand = (DisplayCommandType) userCommand;
-			// display(displayUserCommand.getModifiers()); I dont know what this
-			// is???
-			displayAll();
-			break;
-		case DELETE:
-			DeleteCommandType deleteUserCommand = (DeleteCommandType) userCommand;
-			deleteTask(deleteUserCommand.getTaskDescription(),
-					deleteUserCommand.getProjectName());
-			break;
-		case SEARCH:
-			SearchCommandType searchUserCommand = (SearchCommandType) userCommand;
-			search(searchUserCommand.getTaskDescription(),
-					searchUserCommand.getProjectName());
-			break;
-
-		default:
-			// throw an error if the command is not recognized
-			throw new Error(ERROR_WRONG_INPUT);
-		}
-	}
-
-	/**
-	 * Takes a command type input, as is given by the interpreter and returns
-	 * the appropriate case.
-	 * 
-	 * @param Input
-	 *            from the interpreter that needs to be filtered.
-	 * @return the type of command
-	 */
-	private CommandTypesEnum determineCommandType(CommandType commandType) {
-		if (commandType == null)
-			throw new Error(ERROR_COMMAND_TYPE_NULL);
-
-		if (commandType.getType().equalsIgnoreCase("add")) {
-			return CommandTypesEnum.ADD;
-		} else if (commandType.getType().equalsIgnoreCase("display")) {
-			return CommandTypesEnum.DISPLAY;
-		} else if (commandType.getType().equalsIgnoreCase("delete")) {
-			return CommandTypesEnum.DELETE;
-		} else if (commandType.getType().equalsIgnoreCase("search")) {
-			return CommandTypesEnum.SEARCH;
-		} else {
-			return null;
-		}
-	}
+	
 
 	private String getFirstWord(String userCommand) {
 		String commandTypeString = userCommand.trim().split("\\s+")[0];
@@ -599,8 +601,3 @@ public class Engine {
 	}
 
 }
-/*
- * if(currTask.getDeadline().equals(null)) { System.out.println("\t" + (k + 1) +
- * ". " + currTask.getInstruction()); } else{ System.out.println("\t" + (k + 1)
- * + ". " + currTask.getInstruction() + "\t" + currTask.getDeadline()); }
- */
