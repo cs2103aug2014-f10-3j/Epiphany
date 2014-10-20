@@ -16,6 +16,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import Logic.Interpreter.UIHandler;
 import Logic.Interpreter.CommandType.*;
 
 /**
@@ -87,7 +88,8 @@ public class Engine {
 		Task t = new Task("RULE THE WORLD", null, test, "default", false);
 
 		e.projectsList.get(0).addTask(t);
-
+		
+		e.executeCommand(); 
 	}
 
 	public Engine() throws IOException, ParseException {
@@ -274,7 +276,7 @@ public class Engine {
 	 *            is the command that the interpreter send in.
 	 * @throws IOException 
 	 */
-	public void addTask(String taskDescription, Date dateFrom, Date dateTo, String projectName) throws IOException {
+	private void addTask(String taskDescription, Date dateFrom, Date dateTo, String projectName) throws IOException {
 		if (projectNames.contains(projectName)) {
 			// Existing project
 			int index = findIndex(projectName);
@@ -307,19 +309,61 @@ public class Engine {
 		}
 		return index;
 	}
+	
+	private void display(String input){
+		if(input.equals("all")){
+			//display everything
+			
+			for(int i = 0; i < projectsList.size(); i++){
+				UIHandler.getInstance().printToDisplay("Project: " + projectNames.get(i));
+				Project currProj = projectsList.get(i);
+				
+				ArrayList<Task> deadLineList = currProj.getDeadlineList();
+				ArrayList<Task> intervalList = currProj.getIntervalList();
+				ArrayList<Task> floatList = currProj.getFloatingList();
+
+				int counter = 0;
+				
+				// for deadline tasks
+				for(int j = 0; j < deadLineList.size(); j++){
+					UIHandler.getInstance().printToDisplay(counter + ". " + deadLineList.get(j).toString());
+					counter++;
+				}
+				
+				counter = 0; //reset counter
+				
+				// for interval tasks
+				for(int k = 0; k < intervalList.size(); k++){
+					UIHandler.getInstance().printToDisplay(counter + ". " + intervalList.get(k).toString());
+					counter++;
+				}
+				
+				counter = 0;
+				
+				// for floating tasks
+				for(int r = 0; r < floatList.size(); r++){
+					UIHandler.getInstance().printToDisplay(counter + ". " + floatList.get(r).toString());
+					counter++;
+				}				
+			}
+			
+			
+		}else{
+			//display specific project
+			
+		}
+	}
 	public void executeCommand(CommandType userCommand) throws IOException {
 		CommandTypesEnum commandType = determineCommandType(userCommand);
 
 		switch (commandType) {
-		case ADD:// METHODDDDDD DONEEEEEE
+		case ADD:// METHOD DONE
 			AddCommandType addUserCommand = (AddCommandType) userCommand;
-			addTask(addUserCommand.getDescription(), addUserCommand.getDateFrom(), addUserCommand.getDateTo(), addUserCommand.getProjectName());// no inteface support at the moment
+			addTask(addUserCommand.getDescription(), addUserCommand.getDateFrom(), addUserCommand.getDateTo(), addUserCommand.getProjectName());
 			break;
-		case DISPLAY: // displays the entire ArrayList
+		case DISPLAY: 
 			DisplayCommandType displayUserCommand = (DisplayCommandType) userCommand;
-			// display(displayUserCommand.getModifiers()); I dont know what this
-			// is???
-			displayAll();
+			display(displayUserCommand.getModifiers());
 			break;
 		case DELETE:
 			DeleteCommandType deleteUserCommand = (DeleteCommandType) userCommand;
