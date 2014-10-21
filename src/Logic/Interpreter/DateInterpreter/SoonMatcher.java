@@ -6,8 +6,8 @@ import java.util.regex.Pattern;
 
 class SoonMatcher implements Matcher {
 
-    private final Pattern tomorrow = Pattern.compile(".*tomorrow\\W*");
-    private final Pattern today = Pattern.compile(".*(today|tonight)\\W*");
+    private final Pattern tomorrow = Pattern.compile(".*tomorrow.*");
+    private final Pattern today = Pattern.compile(".*(today|tonight).*");
 
     @Override
     public Date tryConvert(String input) {

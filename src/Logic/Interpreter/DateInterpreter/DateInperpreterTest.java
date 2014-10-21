@@ -61,39 +61,6 @@ public class DateInperpreterTest {
 	}
 	
 	@Test
-	public void SomeDaysLaterTest() {
-		Calendar cal = Calendar.getInstance();
-		Calendar now = Calendar.getInstance();
-		ArrayList<Date> dates = new ArrayList<Date>();
-		strtotime.convert(COMMAND_PREFIX_IN+"3 days",dates);
-		cal.setTime(dates.get(0));
-		now.add(Calendar.DAY_OF_MONTH, 3);
-		assertEquals(now.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.DAY_OF_MONTH));
-		assertEquals(now.get(Calendar.MONTH), cal.get(Calendar.MONTH));
-		assertEquals(now.get(Calendar.YEAR), cal.get(Calendar.YEAR));
-	}
-
-	@Test
-	public void SomeWeeksLaterTest() {
-		Calendar cal = Calendar.getInstance();
-		Calendar now = Calendar.getInstance();
-		ArrayList<Date> dates = new ArrayList<Date>();
-		strtotime.convert(COMMAND_PREFIX_IN+"2 weeks",dates);
-		cal.setTime(dates.get(0));
-		now.add(Calendar.DAY_OF_MONTH, 14);
-		assertEquals(now.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.DAY_OF_MONTH));
-		assertEquals(now.get(Calendar.MONTH), cal.get(Calendar.MONTH));
-		assertEquals(now.get(Calendar.YEAR), cal.get(Calendar.YEAR));
-		strtotime.convert(COMMAND_PREFIX_IN+"a week",dates);
-		cal.setTime(dates.get(0));
-		now.setTime(Calendar.getInstance().getTime());
-		now.add(Calendar.DAY_OF_MONTH, 7);
-		assertEquals(now.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.DAY_OF_MONTH));
-		assertEquals(now.get(Calendar.MONTH), cal.get(Calendar.MONTH));
-		assertEquals(now.get(Calendar.YEAR), cal.get(Calendar.YEAR));
-	}
-	
-	@Test
 	public void DateFormatThreeTest() {
 		Calendar cal = Calendar.getInstance();
 		ArrayList<Date> dates = new ArrayList<Date>();

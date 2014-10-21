@@ -13,18 +13,38 @@ import java.util.TreeSet;
 public final class DeadlineDateConverter {
 
     private static final List<Matcher> matchers;
-    private static final String REGEX_ADD_DEADLINE_COMMAND = ".*\\s(by|in)\\s.*";
-	private static final String REGEX_SPLIT_ADD_DEADLINE_COMMAND = "\\s(by|in)\\s(?!.*\\s(by|in)\\s)";
-	private static final TreeSet<String> actionWords = new TreeSet<String>(); //dictionary
 	
     static {
-        matchers = new LinkedList<Matcher>();
+    	matchers = new LinkedList<Matcher>();
+
+        //WITH TIME SPECIFICATIONS
+        matchers.add(new SoonMatcherWithTime());
+        matchers.add(new DayMatcherWithTime());
+        matchers.add(new ExtendedDayMatcherWithTime());
+        matchers.add(new OnlyDateMatcherWithTime());
+        //Matchers which follow default java date formats
+        matchers.add(new DateFormatMatcherThree(new SimpleDateFormat("dd.MM.yyyy HH:mm")));
+        matchers.add(new DateFormatMatcherThree(new SimpleDateFormat("dd/MM/yyyy HH:mm")));
+        matchers.add(new DateFormatMatcherThree(new SimpleDateFormat("dd-MM-yyyy HH:mm")));
+        matchers.add(new DateFormatMatcherThree(new SimpleDateFormat("dd MM yyyy HH:mm")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd MMM HH:mm")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd/MM HH:mm")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd'st' MMM HH:mm")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd'nd' MMM HH:mm")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd'rd' MMM HH:mm")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd'th' MMM HH:mm")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("MMM dd HH:mm")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("MMM dd'st' HH:mm")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("MMM dd'nd' HH:mm")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("MMM dd'rd' HH:mm")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("MMM dd'th' HH:mm")));
+        
+    	//WITHOUT TIME SPECIFICATIONS
         matchers.add(new SoonMatcher());
-        matchers.add(new DaysMatcher());
-        matchers.add(new WeeksMatcher());
-        matchers.add(new ExtendedDayMatcher());
         matchers.add(new DayMatcher());
+        matchers.add(new ExtendedDayMatcher());
         matchers.add(new OnlyDateMatcher());
+        //Matchers which follow default java date formats
         matchers.add(new DateFormatMatcherThree(new SimpleDateFormat("dd.MM.yyyy")));
         matchers.add(new DateFormatMatcherThree(new SimpleDateFormat("dd/MM/yyyy")));
         matchers.add(new DateFormatMatcherThree(new SimpleDateFormat("dd-MM-yyyy")));
@@ -47,31 +67,15 @@ public final class DeadlineDateConverter {
     }
 
 
-    public static String convert(String input, ArrayList<Date> d) {
-    	try {
-			populateDictionary();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} // adds an english dictionary
+    public static void convert(String input, ArrayList<Date> d) {
     	d.clear();
     	String toInterpret = input;
-		String[] tokens = input.split(REGEX_SPLIT_ADD_DEADLINE_COMMAND);
-		toInterpret = tokens[1];
         for (Matcher matcher : matchers) {
             Date date = matcher.tryConvert(toInterpret);
             if (date != null) {
     			d.add(date);
-            	if(input.matches(REGEX_ADD_DEADLINE_COMMAND)){
-        			return tokens[0];
-            	} else {
-            		return input.substring(0, input.lastIndexOf(' '));
-            	}
+    			return;
             }
-        }
-        if(isValidEnglish(toInterpret)){
-        	return input;
-        } else {
-        	return null;
         }
     }
     
@@ -79,25 +83,4 @@ public final class DeadlineDateConverter {
     private DeadlineDateConverter() {
         throw new UnsupportedOperationException("cannot instantiate");
     }
-    
-    private static boolean isValidEnglish(String toCheck) {
-    	String[] tokensToCheck = toCheck.split(" ");
-    	for (String wordToCheck : tokensToCheck) {
-			if(!actionWords.contains(wordToCheck)){
-				return false;
-			}
-		}
-		return true;
-	}
-    
-    /**
-	 * This function draws on an English Dictionary to check if the action words of the user are legitimate.
-	 */
-	private static void populateDictionary() throws FileNotFoundException{
-		File dict = new File("dictionary.txt");
-		Scanner dictScan = new Scanner(dict);
-		while(dictScan.hasNextLine()){
-			actionWords.add(dictScan.nextLine());
-		}
-	}
 }

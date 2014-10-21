@@ -8,8 +8,8 @@ import Logic.Interpreter.DateInterpreter.Matcher;
 
 class ExtendedDayMatcher implements Matcher {
 
-	private final Pattern next = Pattern.compile("(next|the coming|coming).*");
-	private final Pattern following = Pattern.compile("(following|the following).*");
+	private final Pattern next = Pattern.compile("(next|the coming|coming).*day");
+	private final Pattern following = Pattern.compile("(following|the following).*day");
 
 
 	@Override

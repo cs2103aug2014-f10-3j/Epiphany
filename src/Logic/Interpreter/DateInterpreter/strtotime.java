@@ -12,44 +12,11 @@ import java.util.TreeSet;
 
 public final class strtotime {
 
-    private static final List<Matcher> matchers;
-    private static final String REGEX_ADD_COMMAND = ".*\\s(by|on|in)\\s.*";
-	private static final String REGEX_SPLIT_ADD_COMMAND = "\\s(by|on|in)\\s(?!.*\\s(by|on|in)\\s)";
+    private static final String REGEX_ADD_DEADLINE_COMMAND = ".*\\s(by)\\s.*";
+	private static final String REGEX_SPLIT_ADD_DEADLINE_COMMAND = "\\s(by)\\s(?!.*\\s(by)\\s)";
+    private static final String REGEX_ADD_INTERVAL_COMMAND = ".*\\s(on|from)\\s.*";
+	//private static final String REGEX_SPLIT_ADD_COMMAND = "\\s(by|on|in)\\s(?!.*\\s(by|on|in)\\s)";
 	private static final TreeSet<String> actionWords = new TreeSet<String>(); //dictionary
-	
-    static {
-        matchers = new LinkedList<Matcher>();
-        matchers.add(new SoonMatcher());
-        matchers.add(new DaysMatcher());
-        matchers.add(new WeeksMatcher());
-        matchers.add(new ExtendedDayMatcher());
-        matchers.add(new DayMatcher());
-        matchers.add(new OnlyDateMatcher());
-        matchers.add(new DateFormatMatcherThree(new SimpleDateFormat("dd.MM.yyyy")));
-        matchers.add(new DateFormatMatcherThree(new SimpleDateFormat("dd/MM/yyyy")));
-        matchers.add(new DateFormatMatcherThree(new SimpleDateFormat("dd-MM-yyyy")));
-        matchers.add(new DateFormatMatcherThree(new SimpleDateFormat("dd MM yyyy")));
-        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd MMM")));
-        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd/MM")));
-        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd'st' MMM")));
-        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd'nd' MMM")));
-        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd'rd' MMM")));
-        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd'th' MMM")));
-        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("MMM dd")));
-        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("MMM dd'st'")));
-        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("MMM dd'nd'")));
-        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("MMM dd'rd'")));
-        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("MMM dd'th'")));
-    }
-
-    public static void registerMatcher(Matcher matcher) {
-        matchers.add(0, matcher);
-    }
-
-    /*public static interface Matcher {
-
-        public Date tryConvert(String input);
-    }*/
 
     public static String convert(String input, ArrayList<Date> d) {
     	try {
@@ -59,22 +26,16 @@ public final class strtotime {
 		} // adds an english dictionary
     	d.clear();
     	String toInterpret = input;
-    	if(input.matches(REGEX_ADD_COMMAND)){
-			String[] tokens = input.split(REGEX_SPLIT_ADD_COMMAND);
-			toInterpret = tokens[1];
+    	if(input.matches(REGEX_ADD_DEADLINE_COMMAND)){
+    		String[] tokens = input.split(REGEX_SPLIT_ADD_DEADLINE_COMMAND);
+    		toInterpret = tokens[1];
+    		DeadlineDateConverter.convert(toInterpret, d);
+    		if(!d.isEmpty()){
+    			return tokens[0];
+    		}
+    	} else if(input.matches(REGEX_ADD_INTERVAL_COMMAND)){
+    		
     	}
-        for (Matcher matcher : matchers) {
-            Date date = matcher.tryConvert(toInterpret);
-            if (date != null) {
-    			d.add(date);
-            	if(input.matches(REGEX_ADD_COMMAND)){
-        			String[] tokens = input.split(REGEX_SPLIT_ADD_COMMAND);
-        			return tokens[0];
-            	} else {
-            		return input.substring(0, input.lastIndexOf(' '));
-            	}
-            }
-        }
         if(isValidEnglish(toInterpret)){
         	return input;
         } else {
