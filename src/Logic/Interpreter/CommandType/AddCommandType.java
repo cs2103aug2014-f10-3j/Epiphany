@@ -38,6 +38,13 @@ public class AddCommandType implements CommandType {
 		dateTo = _dateTo;
 		projectName = _projectName;
 	}
+
+	public AddCommandType(String _description, Date _dateFrom, Date _dateTo) {
+		description = _description;
+		dateFrom = _dateFrom;
+		dateTo = _dateTo;
+		projectName = "default";
+	}
 	
 	public AddCommandType(String _description, Date _dateFrom, Date _dateTo, String _projectName) {
 		description = _description;
@@ -46,6 +53,7 @@ public class AddCommandType implements CommandType {
 		projectName = _projectName;
 	}
 	
+	@Override
 	public String getType() {
 		return "add";
 	}

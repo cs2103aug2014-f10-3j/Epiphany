@@ -14,7 +14,9 @@ public final class strtotime {
 
     private static final String REGEX_ADD_DEADLINE_COMMAND = ".*\\s(by)\\s.*";
 	private static final String REGEX_SPLIT_ADD_DEADLINE_COMMAND = "\\s(by)\\s(?!.*\\s(by)\\s)";
-    private static final String REGEX_ADD_INTERVAL_COMMAND = ".*\\s(on|from)\\s.*";
+    private static final String REGEX_ADD_SHORT_INTERVAL_COMMAND = ".*\\s(on)\\s.*";
+	private static final String REGEX_SPLIT_ADD_SHORT_INTERVAL_COMMAND = "\\s(on)\\s(?!.*\\s(on)\\s)";
+    private static final String REGEX_ADD_LONG_INTERVAL_COMMAND = ".*\\s(from)\\s.*";
 	//private static final String REGEX_SPLIT_ADD_COMMAND = "\\s(by|on|in)\\s(?!.*\\s(by|on|in)\\s)";
 	private static final TreeSet<String> actionWords = new TreeSet<String>(); //dictionary
 
@@ -33,7 +35,14 @@ public final class strtotime {
     		if(!d.isEmpty()){
     			return tokens[0];
     		}
-    	} else if(input.matches(REGEX_ADD_INTERVAL_COMMAND)){
+    	} else if(input.matches(REGEX_ADD_SHORT_INTERVAL_COMMAND)){
+    		String[] tokens = input.split(REGEX_SPLIT_ADD_SHORT_INTERVAL_COMMAND);
+    		toInterpret = tokens[1];
+    		ShortIntervalDateConverter.convert(toInterpret, d);
+    		if(d.size()==2){
+    			return tokens[0];
+    		}
+    	} else if(input.matches(REGEX_ADD_LONG_INTERVAL_COMMAND)){
     		
     	}
         if(isValidEnglish(toInterpret)){
