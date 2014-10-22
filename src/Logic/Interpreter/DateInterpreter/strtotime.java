@@ -17,6 +17,7 @@ public final class strtotime {
     private static final String REGEX_ADD_SHORT_INTERVAL_COMMAND = ".*\\s(on)\\s.*";
 	private static final String REGEX_SPLIT_ADD_SHORT_INTERVAL_COMMAND = "\\s(on)\\s(?!.*\\s(on)\\s)";
     private static final String REGEX_ADD_LONG_INTERVAL_COMMAND = ".*\\s(from)\\s.*";
+	private static final String REGEX_SPLIT_ADD_LONG_INTERVAL_COMMAND = "\\s(from)\\s(?!.*\\s(from)\\s)";
 	//private static final String REGEX_SPLIT_ADD_COMMAND = "\\s(by|on|in)\\s(?!.*\\s(by|on|in)\\s)";
 	private static final TreeSet<String> actionWords = new TreeSet<String>(); //dictionary
 
@@ -43,7 +44,12 @@ public final class strtotime {
     			return tokens[0];
     		}
     	} else if(input.matches(REGEX_ADD_LONG_INTERVAL_COMMAND)){
-    		
+    		String[] tokens = input.split(REGEX_SPLIT_ADD_LONG_INTERVAL_COMMAND);
+    		toInterpret = tokens[1];
+    		LongIntervalDateConverter.convert(toInterpret, d);
+    		if(d.size()==2){
+    			return tokens[0];
+    		}
     	}
         if(isValidEnglish(toInterpret)){
         	return input;

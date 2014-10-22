@@ -59,6 +59,7 @@ private static final List<Matcher> fromMatchers;
     	            cal.set(Calendar.MINUTE, toDate.getMinutes());
     	            d.add(cal.getTime());
     	        } catch (ParseException ex) {
+    	        	d.clear();
     	            return;
     	        }
     			return;
