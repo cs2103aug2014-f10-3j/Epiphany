@@ -3,7 +3,6 @@ package Logic.Interpreter;
 import java.io.*; 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.Date; 
 import java.util.TreeSet;
@@ -11,6 +10,7 @@ import java.util.TreeSet;
 import Logic.Interpreter.DateInterpreter.*;
 import Logic.Interpreter.CommandType.*; 
 import Logic.Engine.*;
+import Logic.Exceptions.*;
 
 /**
  * This class parses the input from the user. The intepreter draws on several helper classes to accept simple
@@ -26,15 +26,13 @@ public class EpiphanyInterpreter implements deleteObserver{
 	///all the string constants that are involved in displaying things to the user.
 	private static final String MESSAGE_COMMAND_PROMPT = "command: ";
 	private static final String MESSAGE_INVALID_COMMAND = "Invalid command!";
-	private static final String REGEX_ADD_COMMAND = ".*\\s(by|on|in)\\s.*";
-	private static final String REGEX_SPLIT_ADD_COMMAND = "\\s(by|on|in)\\s(?!.*\\s(by|on|in)\\s)";
 	private static final TreeSet<String> actionWords = new TreeSet<String>(); //dictionary
 	Engine engine;
 	Scanner input; //This scanner will deal with all input from user.
 	UIHandler uiHandler; 
 	
 	public EpiphanyInterpreter() throws IOException, ParseException {
-		engine = new Engine();
+		//engine = new Engine();
 		input = new Scanner( System.in );
 		uiHandler = UIHandler.getInstance();
 	}
@@ -43,10 +41,12 @@ public class EpiphanyInterpreter implements deleteObserver{
 	 * This is the main function which dictates the flow of the program. All the functionality is
 	 * abstracted out to other methods.
 	 * @param args which contains the file name (at index 0) entered by the user.
+	 * @throws ParseException 
+	 * @throws IOException 
 	 */
-	public static void main(String[] args) throws FileNotFoundException {
+	public static void main(String[] args) throws IOException, ParseException {
 		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();	
-		interpreter.populateDictionary(); // adds an english dictionary
+		interpreter.populateDictionary(); // adds an English dictionary
 		interpreter.acceptUserInputUntilExit();
 	}
 
@@ -59,10 +59,12 @@ public class EpiphanyInterpreter implements deleteObserver{
 		do{
 			uiHandler.printToTerminal(MESSAGE_COMMAND_PROMPT, "inline");
 			userInput = input.nextLine();
-			CommandType toPassToEngine = interpretCommand(userInput);
-			if(toPassToEngine != null){
-				engine.executeCommand(toPassToEngine);
-			} else{
+			CommandType toPassToEngine;
+			try {
+				toPassToEngine = interpretCommand(userInput);
+				assert(toPassToEngine != null);
+				//engine.executeCommand(toPassToEngine);
+			} catch (InvalidCommandException e) {
 				uiHandler.printToTerminal(MESSAGE_INVALID_COMMAND);
 			}
 		} while(!userInput.equalsIgnoreCase("exit"));
@@ -73,8 +75,9 @@ public class EpiphanyInterpreter implements deleteObserver{
 	 * This function recognizes the type of input by user.
 	 * @param userInput
 	 * @return CommandType of the input.
+	 * @throws InvalidCommandException 
 	 */
-	private CommandType interpretCommand(String userInput) {
+	private CommandType interpretCommand(String userInput) throws InvalidCommandException {
 		if(userInput.matches("(display|view).*")){
 			return interpretDisplayCommand(userInput);
 		} else if(userInput.equals("exit")) {
@@ -92,8 +95,9 @@ public class EpiphanyInterpreter implements deleteObserver{
 	 * This function returns the standardized display command according to CommandType Interface. 
 	 * @param userInput
 	 * @return DisplayCommandType
+	 * @throws InvalidCommandException 
 	 */
-	private CommandType interpretDisplayCommand(String userInput) {
+	private CommandType interpretDisplayCommand(String userInput) throws InvalidCommandException {
 		String[] commandTokens = userInput.split(" ");
 
 		if(commandTokens.length == 1){
@@ -101,14 +105,14 @@ public class EpiphanyInterpreter implements deleteObserver{
 		}else if(commandTokens.length == 2){
 			if(commandTokens[1].startsWith("#")){
 				if(commandTokens[1].substring(1).contains("#")){
-					return null;
+					throw new InvalidCommandException();
 				}
 				return new DisplayCommandType(commandTokens[1].substring(1));
 			} else if(commandTokens[1].equalsIgnoreCase("all")){
 				return new DisplayCommandType(commandTokens[1]);
 			}
 		}
-		return null;
+		throw new InvalidCommandException();
 	}
 
 	/**
@@ -145,8 +149,9 @@ public class EpiphanyInterpreter implements deleteObserver{
 	 * This function returns the standardized add command according to CommandType Interface. 
 	 * @param userInput
 	 * @return AddCommandType
+	 * @throws InvalidCommandException 
 	 */
-	private CommandType interpretAddCommand(String userInput) {
+	private CommandType interpretAddCommand(String userInput) throws InvalidCommandException {
 		String projectName = "";
 		if(userInput.contains("#")){
 			projectName = userInput.substring(userInput.indexOf('#')+1);
@@ -154,23 +159,30 @@ public class EpiphanyInterpreter implements deleteObserver{
 		}
 		ArrayList<Date> dates = new ArrayList<Date>();
 		String taskDescription = parseDate(userInput, dates);
-		if(taskDescription!=null && isValidTask(taskDescription)){
+		assert(taskDescription!=null);
+		if(isValidTask(taskDescription)){
 			if(dates.size()==0){
 				if(projectName.equals("")){
 					return new AddCommandType(taskDescription);
 				} else{
 					return new AddCommandType(taskDescription, null, projectName);
 				}
-			} else {
+			} else if(dates.size()==1){
 				if(projectName.equals("")){
 					return new AddCommandType(taskDescription, dates.get(0));
 				} else{
 					return new AddCommandType(taskDescription, dates.get(0), projectName);
 				}
 				
+			} else{
+				if(projectName.equals("")){
+					return new AddCommandType(taskDescription, dates.get(0), dates.get(1));
+				} else{
+					return new AddCommandType(taskDescription, dates.get(0), dates.get(1), projectName);
+				}		
 			}
 		} else{
-			return null;
+			throw new InvalidCommandException();
 		}
 	}
 
@@ -186,8 +198,9 @@ public class EpiphanyInterpreter implements deleteObserver{
 	 * Parses the dates.  
 	 * @param string
 	 * @return Date
+	 * @throws InvalidCommandException 
 	 */
-	private String parseDate(String string, ArrayList<Date> d) {
+	private String parseDate(String string, ArrayList<Date> d) throws InvalidCommandException {
 		return strtotime.convert(string, d);
 	}
 
@@ -200,6 +213,7 @@ public class EpiphanyInterpreter implements deleteObserver{
 		while(dictScan.hasNextLine()){
 			actionWords.add(dictScan.nextLine());
 		}
+		dictScan.close();
 	}
 	
 	@Override
@@ -208,10 +222,13 @@ public class EpiphanyInterpreter implements deleteObserver{
 	 * key will be enumerated to the user.
 	 * This function asks the user for the index of the task to be deleted (from the enumerated list)
 	 */
-	public int askForAdditionalInformation() {
+	public int askForAdditionalInformation() throws CancelDeleteException {
 		String inputFromUser = input.nextLine();
 		try{
 			int indexFromUser = Integer.parseInt(inputFromUser);
+			if(indexFromUser<1){
+				throw new NumberFormatException("Invalid input : Negative index");
+			}
 			return indexFromUser;
 		} catch (NumberFormatException e){
 			uiHandler.printToTerminal("You have entered an invalid number. Press y to try again, press n to cancel delete.");
@@ -219,7 +236,7 @@ public class EpiphanyInterpreter implements deleteObserver{
 			if(userResponse.equalsIgnoreCase("y")){
 				return askForAdditionalInformation();
 			} else{
-				return -1;
+				throw new CancelDeleteException();
 			}
 		}
 	}

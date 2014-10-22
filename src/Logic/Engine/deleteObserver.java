@@ -1,5 +1,7 @@
 package Logic.Engine;
 
+import Logic.Exceptions.CancelDeleteException;
+
 public interface deleteObserver {
-	int askForAdditionalInformation();
+	int askForAdditionalInformation() throws CancelDeleteException;
 }

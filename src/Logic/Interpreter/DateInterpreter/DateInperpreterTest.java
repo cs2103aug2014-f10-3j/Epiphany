@@ -8,17 +8,17 @@ import java.util.Date;
 
 import org.junit.Test;
 
+import Logic.Exceptions.*;
+
 public class DateInperpreterTest {
 	
 	private static final String COMMAND_PREFIX_BY = "Complete something by ";
-	private static final String COMMAND_PREFIX_ON = "Do something on ";
-	private static final String COMMAND_PREFIX_IN = "Do something in ";
 	//private static final String COMMAND_PREFIX_BY = "";
 	//private static final String COMMAND_PREFIX_ON = "";
 	//private static final String COMMAND_PREFIX_IN = "";
 	
 	@Test
-	public void DateAndMonthMatcherTest() {
+	public void DateAndMonthMatcherTest() throws InvalidCommandException {
 		Calendar cal = Calendar.getInstance();
 		ArrayList<Date> dates = new ArrayList<Date>();
 		strtotime.convert(COMMAND_PREFIX_BY+"26th July", dates);
@@ -32,7 +32,7 @@ public class DateInperpreterTest {
 	}
 	
 	@Test
-	public void SoonMatcherTest() {
+	public void SoonMatcherTest() throws InvalidCommandException {
 		Calendar cal = Calendar.getInstance();
 		Calendar now = Calendar.getInstance();
 		ArrayList<Date> dates = new ArrayList<Date>();
@@ -50,7 +50,7 @@ public class DateInperpreterTest {
 	}
 	
 	@Test
-	public void SingleDateTest() {
+	public void SingleDateTest() throws InvalidCommandException {
 		Calendar cal = Calendar.getInstance();
 		Calendar now = Calendar.getInstance();
 		ArrayList<Date> dates = new ArrayList<Date>();
@@ -61,7 +61,7 @@ public class DateInperpreterTest {
 	}
 	
 	@Test
-	public void DateFormatThreeTest() {
+	public void DateFormatThreeTest() throws InvalidCommandException {
 		Calendar cal = Calendar.getInstance();
 		ArrayList<Date> dates = new ArrayList<Date>();
 		strtotime.convert(COMMAND_PREFIX_BY+"26/7/2020",dates);
@@ -87,7 +87,7 @@ public class DateInperpreterTest {
 	}
 	
 	@Test
-	public void DateFormatTwoTest() {
+	public void DateFormatTwoTest() throws InvalidCommandException {
 		Calendar cal = Calendar.getInstance();
 		ArrayList<Date> dates = new ArrayList<Date>();
 		strtotime.convert(COMMAND_PREFIX_BY+"26/7",dates);

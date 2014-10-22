@@ -2,13 +2,12 @@ package Logic.Interpreter.DateInterpreter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Scanner;
 import java.util.TreeSet;
+
+import Logic.Exceptions.*;
 
 public final class strtotime {
 
@@ -21,7 +20,7 @@ public final class strtotime {
 	//private static final String REGEX_SPLIT_ADD_COMMAND = "\\s(by|on|in)\\s(?!.*\\s(by|on|in)\\s)";
 	private static final TreeSet<String> actionWords = new TreeSet<String>(); //dictionary
 
-    public static String convert(String input, ArrayList<Date> d) {
+    public static String convert(String input, ArrayList<Date> d) throws InvalidCommandException {
     	try {
 			populateDictionary();
 		} catch (FileNotFoundException e) {
@@ -54,7 +53,7 @@ public final class strtotime {
         if(isValidEnglish(toInterpret)){
         	return input;
         } else {
-        	return null;
+        	throw new InvalidCommandException();
         }
     }
     
@@ -82,5 +81,6 @@ public final class strtotime {
 		while(dictScan.hasNextLine()){
 			actionWords.add(dictScan.nextLine());
 		}
+		dictScan.close();
 	}
 }
