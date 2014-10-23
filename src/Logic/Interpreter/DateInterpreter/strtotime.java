@@ -17,7 +17,7 @@ public final class strtotime {
 	private static final String REGEX_SPLIT_ADD_SHORT_INTERVAL_COMMAND = "\\s(on)\\s(?!.*\\s(on)\\s)";
     private static final String REGEX_ADD_LONG_INTERVAL_COMMAND = ".*\\s(from)\\s.*";
 	private static final String REGEX_SPLIT_ADD_LONG_INTERVAL_COMMAND = "\\s(from)\\s(?!.*\\s(from)\\s)";
-    private static final String REGEX_ADD_EDGE_CASE_COMMAND = ".*\\s(this|next|tomorrow|today)\\s.*";
+    private static final String REGEX_ADD_EDGE_CASE_COMMAND = ".*(this|next|tomorrow|today).*";
 	private static final TreeSet<String> actionWords = new TreeSet<String>(); //dictionary
 
     public static String convert(String input, ArrayList<Date> d) throws InvalidCommandException {

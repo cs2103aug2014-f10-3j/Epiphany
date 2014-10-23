@@ -89,6 +89,15 @@ public class Project {
 			// Task added. Repopulate txt file.
 			writeToFile(this.projectName, deadLineList, intervalList, floatingList);
 			
+			//Update Master List
+			File file = new File("../Epiphany/src/Logic/Engine/projectMasterList.txt");
+			FileWriter f = new FileWriter(file);
+			BufferedWriter writer = new BufferedWriter(f);
+			
+			writer.write(t.getProjectName());
+			writer.newLine();
+			writer.close();
+			
 		} 
 		
 		/**
