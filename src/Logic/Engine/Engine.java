@@ -16,9 +16,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import sun.org.mozilla.javascript.internal.Interpreter;
+import Logic.Exceptions.CancelDeleteException;
+import Logic.Interpreter.EpiphanyInterpreter;
 import Logic.Interpreter.UIHandler;
 import Logic.Interpreter.CommandType.*;
-
 
 /**
  * This class can be instantiated to perform all the operations that the program
@@ -38,10 +40,10 @@ import Logic.Interpreter.CommandType.*;
  *
  */
 public class Engine {
-	
-	/********************** Declaration of constants and variables ***********************************/	
 
-	public static ArrayList<String> projectNames; 
+	/********************** Declaration of constants and variables ***********************************/
+
+	public static ArrayList<String> projectNames;
 	public static ArrayList<Project> projectsList;
 	public static final String MESSAGE_WRONG_ENTRY = "Wrong entry, please re-enter input.";
 	public static final String MESSAGE_SORTED = "Tasks sorted alphabetically!";
@@ -59,6 +61,7 @@ public class Engine {
 	public static final String MESSAGE_PROVIDE_ARGUMENT = "Argument missing, please re-enter command.";
 	private static final String ERROR_WRONG_INPUT = null;
 	private static final String ERROR_COMMAND_TYPE_NULL = null;
+	private static EpiphanyInterpreter interp;
 
 	/**
 	 * Enums are used for type safety.
@@ -74,8 +77,7 @@ public class Engine {
 		run();
 	}
 
-	/********************** Run and Engine Initialization Methods ***********************************/	
-	
+	/********************** Run and Engine Initialization Methods ***********************************/
 
 	/**
 	 * Initializes the Engine to begin running. Also, repopulates from existing
@@ -88,8 +90,8 @@ public class Engine {
 		projectsList = new ArrayList<Project>();
 		projectNames = new ArrayList<String>();
 		initializeEngine();
+		interp = new EpiphanyInterpreter();
 	}
-
 
 	private void initializeEngine() throws IOException, FileNotFoundException,
 			ParseException {
@@ -221,8 +223,8 @@ public class Engine {
 
 		return lineNumber;
 	}
-	
-	/********************** Command Type Filter ***********************************/	
+
+	/********************** Command Type Filter ***********************************/
 
 	/**
 	 * Takes a command type input, as is given by the interpreter and returns
@@ -248,16 +250,18 @@ public class Engine {
 			return null;
 		}
 	}
-	
+
 	public void executeCommand(CommandType userCommand) throws IOException {
 		CommandTypesEnum commandType = determineCommandType(userCommand);
 
 		switch (commandType) {
 		case ADD:// METHOD DONE
 			AddCommandType addUserCommand = (AddCommandType) userCommand;
-			addTask(addUserCommand.getDescription(), addUserCommand.getDateFrom(), addUserCommand.getDateTo(), addUserCommand.getProjectName());
+			addTask(addUserCommand.getDescription(),
+					addUserCommand.getDateFrom(), addUserCommand.getDateTo(),
+					addUserCommand.getProjectName());
 			break;
-		case DISPLAY: 
+		case DISPLAY:
 			DisplayCommandType displayUserCommand = (DisplayCommandType) userCommand;
 			display(displayUserCommand.getModifiers());
 			break;
@@ -271,11 +275,11 @@ public class Engine {
 			search(searchUserCommand.getTaskDescription(),
 					searchUserCommand.getProjectName());
 			break;
-			
+
 		case EDIT: // WY WORKING ON THIS
 			EditCommandType editUserCommand = (EditCommandType) userCommand;
-			edit(); 
-			break; 
+			edit();
+			break;
 
 		default:
 			// throw an error if the command is not recognized
@@ -283,8 +287,7 @@ public class Engine {
 		}
 	}
 
-
-	/********************** Add Methods ***********************************/		
+	/********************** Add Methods ***********************************/
 
 	/**
 	 * Interpreter passes in a command type object. This method determines which
@@ -293,114 +296,223 @@ public class Engine {
 	 * 
 	 * @param userCommand
 	 *            is the command that the interpreter send in.
-	 * @throws IOException 
+	 * @throws IOException
 	 */
-	private void addTask(String taskDescription, Date dateFrom, Date dateTo, String projectName) throws IOException {
+	private void addTask(String taskDescription, Date dateFrom, Date dateTo,
+			String projectName) throws IOException {
 		if (projectNames.contains(projectName)) {
 			// Existing project
 			int index = findIndex(projectName);
 			Project currProject = projectsList.get(index);
-			currProject.addTask(new Task(taskDescription, dateFrom, dateTo, projectName, false));
+			currProject.addTask(new Task(taskDescription, dateFrom, dateTo,
+					projectName, false));
 			projectsList.set(index, currProject);
-		} else{
-			//default project
-			if(projectName.equals("default")){
+		} else {
+			// default project
+			if (projectName.equals("default")) {
 				int index = 0;
 				Project currProject = projectsList.get(index);
-				currProject.addTask(new Task(taskDescription, dateFrom, dateTo, projectName, false));
+				currProject.addTask(new Task(taskDescription, dateFrom, dateTo,
+						projectName, false));
 				projectsList.set(index, currProject);
 			}
-			//create a new project
-			else{
+			// create a new project
+			else {
 				projectNames.add(projectName);
 				ArrayList<Task> temp = new ArrayList<Task>();
-				temp.add(new Task(taskDescription, dateFrom, dateTo, projectName, false));
+				temp.add(new Task(taskDescription, dateFrom, dateTo,
+						projectName, false));
 				projectsList.add(new Project(projectName, temp));
 			}
 		}
 	}
-	
-	private int findIndex(String projectName){
+
+	private int findIndex(String projectName) {
 		int index = 0;
-		for(Project p: projectsList){
-			if(!p.getProjectName().equals(projectName)){
+		for (Project p : projectsList) {
+			if (!p.getProjectName().equals(projectName)) {
 				index++;
 			}
 		}
 		return index;
 	}
-	
+
 	/********************** Delete Methods ********************************/
-	
 
 	private void deleteTask(String taskDescription, String projectName) {
-		
-		
-		
-	}	
 
-	/********************** Edit Methods ***********************************/	
-	
-	private void edit() {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	/********************** Search Methods ***********************************/	
+		if (projectNames.contains(projectName)) {
+			search(taskDescription);
+		}
 
-
-	private void search(String taskDescription, String projectName) {
-		// TODO Auto-generated method stub
-		
 	}
 
-	
-	
-	/********************** Display Methods ***********************************/	
-	
-	//display project and display all
-	private void display(String input){
-		if(input.equals("all")){
-			//display everything
-			
-			for(int i = 0; i < projectsList.size(); i++){
-				UIHandler.getInstance().printToDisplay("Project: " + projectNames.get(i));
+	private void deleteTask(String taskDescription)
+			throws CancelDeleteException, IOException {
+
+		ArrayList<Task> temp = search(taskDescription);
+		if (!temp.isEmpty()) {
+			// displayArrayList(temp);
+			// }
+			int counter = 1;
+			for (Task t : temp) {
+				UIHandler.getInstance().printToDisplay(
+						counter + ". " + t.printTaskForDisplay());
+				counter++;
+			}
+			// Interpreter inter = new Interpreter();
+			UIHandler.getInstance().printToDisplay(
+					"Please enter the index number");
+			int input = interp.askForAdditionalInformation();
+			// Looks for the index and removes it
+			Task taskToBeDeleted = temp.get(input - 1);
+			String projectName = taskToBeDeleted.getProjectName();
+			int indexProject = findIndex(projectName);
+
+			Project currProject = projectsList.get(indexProject);
+			currProject.deleteTask(taskToBeDeleted);
+			ArrayList<Task> currList = currProject.displayAllTasks();
+			if (currList.isEmpty()) {
+				UIHandler.getInstance().printToDisplay(
+						currProject.getProjectName() + "has been removed. ");
+				projectsList.remove(indexProject);
+			} else {
+				UIHandler.getInstance().printToDisplay(
+						taskToBeDeleted.getTaskDescription()
+								+ "has been removed. ");
+			}
+		} else {
+			UIHandler.getInstance().printToDisplay("No such task exists!");
+		}
+	}
+
+	/**********************
+	 * Edit Methods
+	 * 
+	 * @throws IOException
+	 ***********************************/
+	// convert to a task
+	private void edit(String old, String edited) throws IOException {
+		for (Project p : projectsList) {
+			for (Task t : p.displayAllTasks()) {
+				if (t.getTaskDescription().equals(old)) {
+					Task updated = new Task(edited, t.getStartDate(),
+							t.getDeadline(), t.getProjectName(),
+							t.isCompleted());
+					p.editTask(t, updated);
+				}
+
+			}
+		}
+	}
+
+	/********************** Search Methods ***********************************/
+
+	/**
+	 * This function returns an ArrayList of tasks that matches the search
+	 * phrase
+	 * 
+	 * @param taskDescription
+	 *            is the search phrase
+	 * @param projectName
+	 *            is the name of the project that we wish to search in
+	 */
+	private void search(String searchPhrase, String projectName) {
+		int index = findIndex(projectName);
+		Project curr = projectsList.get(index);
+		ArrayList<Task> currList = curr.searchForTask(searchPhrase);
+		displayArrayList(currList);
+
+	}
+
+	/**
+	 * THis function helps to search for a given phrase from all the projects
+	 * 
+	 * @param searchPhrase
+	 *            is the phrase that the user wishes to search
+	 */
+	private ArrayList<Task> search(String searchPhrase) {
+		ArrayList<Task> tempResultsForProject = new ArrayList<Task>();
+		ArrayList<Task> allInclusive = new ArrayList<Task>();
+		for (Project p : projectsList) {
+			tempResultsForProject = (p.searchForTask(searchPhrase));
+			if (!tempResultsForProject.isEmpty()) {
+				allInclusive.addAll(tempResultsForProject);
+			}
+		}
+		displayArrayList(allInclusive);
+		return allInclusive;
+	}
+
+	/********************** Display Methods ***********************************/
+	/**
+	 * This function is a helper function that outputs the ArrayList that we
+	 * wish to display
+	 * 
+	 * @param projectList
+	 *            is the ArrayList that we wish to display
+	 */
+	private void displayArrayList(ArrayList<Task> projectList) {
+		for (Task t : projectList) {
+			UIHandler.getInstance().printToDisplay(t.printTaskForDisplay());
+		}
+	}
+
+	/**
+	 * Displays all the Tasks within the project
+	 * 
+	 * @param projectName
+	 *            is the name of the project that the user wishes to display
+	 */
+	private void displayProject(String projectName) {
+		int index = findIndex(projectName);
+		Project curr = projectsList.get(index);
+		displayArrayList(curr.displayAllTasks());
+	}
+
+	// display project and display all
+	private void display(String input) {
+		if (input.equals("all")) {
+			// display everything
+
+			for (int i = 0; i < projectsList.size(); i++) {
+				UIHandler.getInstance().printToDisplay(
+						"Project: " + projectNames.get(i));
 				Project currProj = projectsList.get(i);
-				
+
 				ArrayList<Task> deadLineList = currProj.getDeadlineList();
 				ArrayList<Task> intervalList = currProj.getIntervalList();
 				ArrayList<Task> floatList = currProj.getFloatingList();
 
 				int counter = 0;
-				
+
 				// for deadline tasks
-				for(int j = 0; j < deadLineList.size(); j++){
-					UIHandler.getInstance().printToDisplay(counter + ". " + deadLineList.get(j).toString());
+				for (int j = 0; j < deadLineList.size(); j++) {
+					UIHandler.getInstance().printToDisplay(
+							counter + ". " + deadLineList.get(j).toString());
 					counter++;
 				}
-				
-				counter = 0; //reset counter
-				
+
+				counter = 0; // reset counter
+
 				// for interval tasks
-				for(int k = 0; k < intervalList.size(); k++){
-					UIHandler.getInstance().printToDisplay(counter + ". " + intervalList.get(k).toString());
+				for (int k = 0; k < intervalList.size(); k++) {
+					UIHandler.getInstance().printToDisplay(
+							counter + ". " + intervalList.get(k).toString());
 					counter++;
 				}
-				
+
 				counter = 0;
-				
+
 				// for floating tasks
-				for(int r = 0; r < floatList.size(); r++){
-					UIHandler.getInstance().printToDisplay(counter + ". " + floatList.get(r).toString());
+				for (int r = 0; r < floatList.size(); r++) {
+					UIHandler.getInstance().printToDisplay(
+							counter + ". " + floatList.get(r).toString());
 					counter++;
-				}				
+				}
 			}
-			
-			
-		}else{
-			//display specific project
-			
+
 		}
 	}
-	
+
 }

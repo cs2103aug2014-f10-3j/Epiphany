@@ -118,6 +118,18 @@ public class Task {
 			
 			return s;
 		}
+		public String printTaskForDisplay(){
+			String s = null;
+			if(this.from == null && this.deadLine != null){
+				s =  this.getTaskDescription() + "\t" + this.getDeadline().toString() + "\t" + this.getProjectName() + "\t" + this.isCompleted();
+			}else if(this.from == null && this.deadLine == null){
+				s =  this.getTaskDescription() +"\t" + this.getProjectName() + "\t" + this.isCompleted();
+			}else if(this.from != null && this.deadLine != null){
+				s = this.getTaskDescription() + "\t" + this.getStartDate().toString() + "\t" + this.getDeadline().toString() + "\t" + this.getProjectName() + "\t" + this.isCompleted();
+			}
+			
+			return s;
+		}
 
 		
 	}

@@ -294,7 +294,6 @@ public class Project {
 		 *
 		 */
 		private class dateComparator implements Comparator<Task>{
-			@Override
 			public int compare(Task task1, Task task2) {
 				if(task1.getDeadline().before(task2.getStartDate())){
 					return 1;
