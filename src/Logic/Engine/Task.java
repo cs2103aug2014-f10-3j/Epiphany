@@ -125,12 +125,23 @@ public class Task {
 		public String printTaskForDisplay(){
 			String s = null;
 			
-			if(this.hasInterval()){
-				s =  "You have to " + this.getTaskDescription() + " from " + this.getStartDate().toString() + " to " + this.getDeadline().toString() + "\t\t #" + this.getProjectName();
-			}else if(this.isFloating()){
-				s =  "You have to " + this.getTaskDescription() + "\t\t #" + this.getProjectName();
-			}else if(this.hasDeadLine()){
-				s = "You have to " + this.getTaskDescription() + " by " + this.getDeadline() +  "\t\t #" + this.getProjectName();
+			if(this.getProjectName().equals("default")){
+				if(this.hasInterval()){
+					s =  this.getTaskDescription() + " from " + this.getStartDate().toString() + " to " + this.getDeadline().toString();
+				}else if(this.isFloating()){
+					s =  this.getTaskDescription();
+				}else if(this.hasDeadLine()){
+					s = this.getTaskDescription() + " by " + this.getDeadline();
+				}
+			}else{
+				if(this.hasInterval()){
+					s =  this.getTaskDescription() + " from " + this.getStartDate().toString() + " to " + this.getDeadline().toString() + "\t\t #" + this.getProjectName();
+				}else if(this.isFloating()){
+					s =  this.getTaskDescription() + "\t\t #" + this.getProjectName();
+				}else if(this.hasDeadLine()){
+					s = this.getTaskDescription() + " by " + this.getDeadline() +  "\t\t #" + this.getProjectName();
+				}
+				
 			}
 			
 			return s;

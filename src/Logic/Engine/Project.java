@@ -35,7 +35,6 @@ public class Project {
 			}
 			
 			createNewFile(projectName, deadLineList, intervalList, floatingList); //creates a new text file with relevant info. 
-		
 		}
 
 /**********************Getters***********************************/		
@@ -89,14 +88,7 @@ public class Project {
 			// Task added. Repopulate txt file.
 			writeToFile(this.projectName, deadLineList, intervalList, floatingList);
 			
-			//Update Master List
-			File file = new File("../Epiphany/src/Logic/Engine/projectMasterList.txt");
-			FileWriter f = new FileWriter(file);
-			BufferedWriter writer = new BufferedWriter(f);
 			
-			writer.write(t.getProjectName());
-			writer.newLine();
-			writer.close();
 			
 		} 
 		
@@ -238,7 +230,6 @@ public class Project {
 				
 				//for floating
 				for(Task t : floatList){
-					System.out.print(t.toString());
 					writer.write(t.toString());
 					writer.newLine();
 					writer.flush();
@@ -304,23 +295,23 @@ public class Project {
 		 * @author amit
 		 *
 		 */
-		private class dateComparator implements Comparator<Task>{
-			public int compare(Task task1, Task task2) {
-				if(task1.getDeadline() == null && task2.getDeadline() == null){
-					return 0;
-				}else if(task1.getDeadline() != null && task2.getDeadline() == null){
-					return 1;
-				}else if(task1.getDeadline() == null && task2.getDeadline() !=null){
-					return -1;
-				}else if(task1.getDeadline().before(task2.getStartDate())){
-					return 1;
-				}else if(task1.getDeadline().equals(task2.getStartDate())){
-					return 0;
-				}else{
-					return -1;
-				}
+	private class dateComparator implements Comparator<Task> {
+		public int compare(Task task1, Task task2) {
+			if (task1.getDeadline() == null && task2.getDeadline() == null) {
+				return 0;
+			} else if (task1.getDeadline() != null
+					&& task2.getDeadline() == null) {
+				return 1;
+			} else if (task1.getDeadline() == null
+					&& task2.getDeadline() != null) {
+				return -1;
+			} else if (task1.getDeadline() != null && task2.getDeadline() != null) {
+				return task1.getDeadline().compareTo(task2.getDeadline());
 			}
 			
+			return 0;
 		}
+
+	} 
 }
 

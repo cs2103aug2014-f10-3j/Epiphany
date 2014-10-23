@@ -77,7 +77,7 @@ public class Engine {
 		engine=this;
 		run();
 	}
-	
+
 	/**
 	 * Singleton implementation of Engine
 	 * @return
@@ -88,7 +88,7 @@ public class Engine {
 		if(engine == null){
 			return new Engine();
 		}
-		
+
 		return engine;
 	}
 
@@ -109,7 +109,7 @@ public class Engine {
 	}
 
 	private void initializeEngine() throws IOException, FileNotFoundException,
-			ParseException {
+	ParseException {
 		// assume that projectNames exists.
 		int noOfProjects = countLines("projectMasterList");
 
@@ -140,7 +140,7 @@ public class Engine {
 	}
 
 	private void populateProjectsWithTasks() throws FileNotFoundException,
-			IOException, ParseException {
+	IOException, ParseException {
 		for (String fileName : projectNames) {
 			ArrayList<Task> temp = new ArrayList<Task>();
 
@@ -204,7 +204,7 @@ public class Engine {
 	}
 
 	private void populateProjectNames() throws FileNotFoundException,
-			IOException {
+	IOException {
 		Scanner sc = new Scanner(new File(
 				"../Epiphany/src/Logic/Engine/projectMasterList.txt"));
 		while (sc.hasNextLine()) {
@@ -261,7 +261,7 @@ public class Engine {
 			return CommandTypesEnum.SEARCH;
 		} else if (commandType.getType().equalsIgnoreCase("edit")) {
 			return CommandTypesEnum.EDIT;
-			
+
 		} else {
 			return null;
 		}
@@ -296,7 +296,7 @@ public class Engine {
 			EditCommandType editUserCommand = (EditCommandType) userCommand;
 			// edit(editUserCommand.getTaskDescription(),
 			//      editUserCommand.getNewTaskDescription())
-			
+
 			break;
 
 		default:
@@ -341,65 +341,79 @@ public class Engine {
 				temp.add(new Task(taskDescription, dateFrom, dateTo,
 						projectName));
 				projectsList.add(new Project(projectName, temp));
+
+
+				File file = new File("../Epiphany/src/Logic/Engine/projectMasterList.txt");
+				FileWriter f = new FileWriter(file, true);
+				BufferedWriter writer = new BufferedWriter(f);
+				writer.newLine();
+				writer.write(projectName);
+				writer.close();
 			}
 		}
 	}
 
 	private int findIndex(String projectName) {
-		int index = 0;
-		
-		for (String s : projectNames) {
-			if(s.equals(projectName)){
-				index++;
+		for(int i = 0; i < projectNames.size(); i++){
+			if(projectNames.get(i).equals(projectName)){
+				return i;
 			}
 		}
-		return index - 1;
+
+		return -1;
 	}
 
 	/********************** Delete Methods 
-	 * @throws IOException ********************************/
+	 * @throws IOException 
+	 * @throws CancelDeleteException ********************************/
+
+	//private void deleteTask(String taskDescription, String projectName) throws IOException, CancelDeleteException {
+
+	//if (projectNames.contains(projectName)) {
+	//search(taskDescription);
+	//deleteTaskProperly(taskDescription);
+	//	}
+
+	//}
 
 	private void deleteTask(String taskDescription, String projectName) throws IOException {
-
-		if (projectNames.contains(projectName)) {
-			search(taskDescription);
-		}
-
-	}
-
-	private void deleteTask(String taskDescription) throws IOException, CancelDeleteException {
 
 		ArrayList<Task> temp = search(taskDescription);
 		if (!temp.isEmpty()) {
 			// displayArrayList(temp);
 			// }
-			int counter = 1;
+			/*int counter = 1;
 			for (Task t : temp) {
 				UIHandler.getInstance().printToDisplay(
 						counter + ". " + t.printTaskForDisplay());
 				counter++;
-			}
+			}*/
 			// Interpreter inter = new Interpreter();
 			UIHandler.getInstance().printToDisplay(
 					"Please enter the index number");
-			int input = interp.askForAdditionalInformation();
-			// Looks for the index and removes it
-			Task taskToBeDeleted = temp.get(input - 1);
-			String projectName = taskToBeDeleted.getProjectName();
-			int indexProject = findIndex(projectName);
+			int input;
+			try {
+				input = interp.askForAdditionalInformation();
+				Task taskToBeDeleted = temp.get(input - 1);
+				projectName = taskToBeDeleted.getProjectName();
+				int indexProject = findIndex(projectName);
 
-			Project currProject = projectsList.get(indexProject);
-			currProject.deleteTask(taskToBeDeleted);
-			ArrayList<Task> currList = currProject.displayAllTasks();
-			if (currList.isEmpty()) {
-				UIHandler.getInstance().printToDisplay(
-						currProject.getProjectName() + "has been removed. ");
-				projectsList.remove(indexProject);
-			} else {
-				UIHandler.getInstance().printToDisplay(
-						taskToBeDeleted.getTaskDescription()
-								+ "has been removed. ");
+				Project currProject = projectsList.get(indexProject);
+				currProject.deleteTask(taskToBeDeleted);
+				ArrayList<Task> currList = currProject.displayAllTasks();
+				if (currList.isEmpty()) {
+					UIHandler.getInstance().printToDisplay(
+							currProject.getProjectName() + " has been removed. ");
+					projectsList.remove(indexProject);
+				} else {
+					UIHandler.getInstance().printToDisplay(
+							taskToBeDeleted.getTaskDescription()
+							+ " has been removed. ");
+				}
+			} catch (CancelDeleteException e) {
+				return ;
 			}
+			// Looks for the index and removes it
 		} else {
 			UIHandler.getInstance().printToDisplay("No such task exists!");
 		}
@@ -410,7 +424,7 @@ public class Engine {
 	 * 
 	 * @throws IOException
 	 ***********************************/
-	
+
 	// convert to a task
 	private void edit(String old, String edited) throws IOException {
 		for (Project p : projectsList) {
@@ -475,8 +489,11 @@ public class Engine {
 	 *            is the ArrayList that we wish to display
 	 */
 	private void displayArrayList(ArrayList<Task> projectList) {
+		int counter = 1;
 		for (Task t : projectList) {
-			UIHandler.getInstance().printToDisplay(t.printTaskForDisplay());
+			UIHandler.getInstance().printToDisplay(
+					counter + ". " + t.printTaskForDisplay());
+			counter++;
 		}
 	}
 
@@ -498,54 +515,25 @@ public class Engine {
 			// display everything
 
 			for (int i = 0; i < projectsList.size(); i++) {
-								
-			//	UIHandler.getInstance().printToDisplay("Project: " + projectNames.get(i));
+
 				Project currProj = projectsList.get(i);
-				
 				ArrayList<Task> taskList = currProj.displayAllTasks();
 				
-				for(Task t : taskList){
-					UIHandler.getInstance().printToDisplay(t.printTaskForDisplay());
-				}
-
-				/*
-				ArrayList<Task> deadLineList = currProj.getDeadlineList();
-				ArrayList<Task> intervalList = currProj.getIntervalList();
-				ArrayList<Task> floatList = currProj.getFloatingList();
-
-				int counter = 0;
-
-				// for deadline tasks
-				for (int j = 0; j < deadLineList.size(); j++) {					
-					
-					UIHandler.getInstance().printToDisplay(counter + ". " + deadLineList.get(j).toString());
-					counter++;
-				}
-
-				counter = 0; // reset counter
-
-				// for interval tasks
-				for (int k = 0; k < intervalList.size(); k++) {
-					// System.out.println("work work work work work");
-					
+				int counter = 1;
+				for (Task t : taskList) {
 					UIHandler.getInstance().printToDisplay(
-							counter + ". " + intervalList.get(k).toString());
+							counter + ". " + t.printTaskForDisplay());
 					counter++;
 				}
-
-				counter = 0;
-
-				// for floating tasks
-				for (int r = 0; r < floatList.size(); r++) {
-					
-					UIHandler.getInstance().printToDisplay(
-							counter + ". " + floatList.get(r).toString());
-					counter++;
-				}
-				*/
 			}
 
+		}else if(projectNames.contains(input)){
+			displayProject(input);
+		}else{
+			//ERROR
+			//TO-DO
 		}
+
 	}
 
 }
