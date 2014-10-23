@@ -72,6 +72,10 @@ public class Task {
 		public boolean hasDeadLine() {
 			return (this.deadLine == null) ? false : true;
 		}
+		
+		public boolean isFloating(){
+			return (this.from == null && this.deadLine == null);
+		}
 
 /**********************Mutators******************************/	
 		
@@ -120,12 +124,13 @@ public class Task {
 		}
 		public String printTaskForDisplay(){
 			String s = null;
-			if(this.from == null && this.deadLine != null){
-				s =  this.getTaskDescription() + "\t" + this.getDeadline().toString() + "\t" + this.getProjectName() + "\t" + this.isCompleted();
-			}else if(this.from == null && this.deadLine == null){
-				s =  this.getTaskDescription() +"\t" + this.getProjectName() + "\t" + this.isCompleted();
-			}else if(this.from != null && this.deadLine != null){
-				s = this.getTaskDescription() + "\t" + this.getStartDate().toString() + "\t" + this.getDeadline().toString() + "\t" + this.getProjectName() + "\t" + this.isCompleted();
+			
+			if(this.hasInterval()){
+				s =  "You have to " + this.getTaskDescription() + " from " + this.getStartDate().toString() + " to " + this.getDeadline().toString() + "\t\t #" + this.getProjectName();
+			}else if(this.isFloating()){
+				s =  "You have to " + this.getTaskDescription() + "\t\t #" + this.getProjectName();
+			}else if(this.hasDeadLine()){
+				s = "You have to " + this.getTaskDescription() + " by " + this.getDeadline() +  "\t\t #" + this.getProjectName();
 			}
 			
 			return s;

@@ -74,6 +74,7 @@ public class Engine {
 	};
 
 	private Engine() throws IOException, ParseException {
+		engine=this;
 		run();
 	}
 	
@@ -85,7 +86,7 @@ public class Engine {
 	 */
 	public static Engine getInstance() throws IOException, ParseException{
 		if(engine == null){
-			engine = new Engine();
+			return new Engine();
 		}
 		
 		return engine;
@@ -346,12 +347,13 @@ public class Engine {
 
 	private int findIndex(String projectName) {
 		int index = 0;
-		for (Project p : projectsList) {
-			if (!p.getProjectName().equals(projectName)) {
+		
+		for (String s : projectNames) {
+			if(s.equals(projectName)){
 				index++;
 			}
 		}
-		return index;
+		return index - 1;
 	}
 
 	/********************** Delete Methods 
@@ -434,11 +436,15 @@ public class Engine {
 	 * @param projectName
 	 *            is the name of the project that we wish to search in
 	 */
-	private void search(String searchPhrase, String projectName) throws IOException {
-		int index = findIndex(projectName);
-		Project curr = projectsList.get(index);
-		ArrayList<Task> currList = curr.searchForTask(searchPhrase);
-		displayArrayList(currList);
+	private void search(String searchPhrase, String projectName) throws IOException {		
+		if(projectName.equals("")){
+			search(searchPhrase);
+		}else{
+			int index = findIndex(projectName);
+			Project curr = projectsList.get(index);
+			ArrayList<Task> currList = curr.searchForTask(searchPhrase);
+			displayArrayList(currList);
+		}
 	}
 
 	/**
@@ -492,13 +498,17 @@ public class Engine {
 			// display everything
 
 			for (int i = 0; i < projectsList.size(); i++) {
-				
-				System.out.println("Project: " + projectNames.get(i));
-				
-				UIHandler.getInstance().printToDisplay(
-						"Project: " + projectNames.get(i));
+								
+			//	UIHandler.getInstance().printToDisplay("Project: " + projectNames.get(i));
 				Project currProj = projectsList.get(i);
+				
+				ArrayList<Task> taskList = currProj.displayAllTasks();
+				
+				for(Task t : taskList){
+					UIHandler.getInstance().printToDisplay(t.printTaskForDisplay());
+				}
 
+				/*
 				ArrayList<Task> deadLineList = currProj.getDeadlineList();
 				ArrayList<Task> intervalList = currProj.getIntervalList();
 				ArrayList<Task> floatList = currProj.getFloatingList();
@@ -506,13 +516,9 @@ public class Engine {
 				int counter = 0;
 
 				// for deadline tasks
-				for (int j = 0; j < deadLineList.size(); j++) {
+				for (int j = 0; j < deadLineList.size(); j++) {					
 					
-					System.out.println("work work work work work");
-					
-					
-					UIHandler.getInstance().printToDisplay(
-							counter + ". " + deadLineList.get(j).toString());
+					UIHandler.getInstance().printToDisplay(counter + ". " + deadLineList.get(j).toString());
 					counter++;
 				}
 
@@ -536,6 +542,7 @@ public class Engine {
 							counter + ". " + floatList.get(r).toString());
 					counter++;
 				}
+				*/
 			}
 
 		}
