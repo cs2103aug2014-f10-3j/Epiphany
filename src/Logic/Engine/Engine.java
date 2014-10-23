@@ -16,7 +16,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import sun.org.mozilla.javascript.internal.Interpreter;
 import Logic.Exceptions.CancelDeleteException;
 import Logic.Interpreter.EpiphanyInterpreter;
 import Logic.Interpreter.UIHandler;
@@ -99,7 +98,6 @@ public class Engine {
 		int noOfProjects = countLines("projectMasterList");
 
 		if (noOfProjects == 0) {
-
 			createDefault(); // default project does not exist. need to create.
 
 		} else {
@@ -142,16 +140,15 @@ public class Engine {
 				Date from = parseDate(taskComponents[2]);
 				Date to = parseDate(taskComponents[3]);
 				String projName = taskComponents[4];
-				boolean status = parseBool(taskComponents[5]);
 
 				Task t = null;
 
 				if (type.equals("deadline")) {
-					t = new Task(description, null, to, projName, status);
+					t = new Task(description, null, to, projName);
 				} else if (type.equals("interval")) {
-					t = new Task(description, from, to, projName, status);
+					t = new Task(description, from, to, projName);
 				} else if (type.equals("floating")) {
-					t = new Task(description, null, null, projName, status);
+					t = new Task(description, null, null, projName);
 				}
 
 				temp.add(t);
@@ -246,6 +243,9 @@ public class Engine {
 			return CommandTypesEnum.DELETE;
 		} else if (commandType.getType().equalsIgnoreCase("search")) {
 			return CommandTypesEnum.SEARCH;
+		} else if (commandType.getType().equalsIgnoreCase("edit")) {
+			return CommandTypesEnum.EDIT;
+			
 		} else {
 			return null;
 		}
@@ -278,7 +278,9 @@ public class Engine {
 
 		case EDIT: // WY WORKING ON THIS
 			EditCommandType editUserCommand = (EditCommandType) userCommand;
-			edit();
+			// edit(editUserCommand.getTaskDescription(),
+			//      editUserCommand.getNewTaskDescription())
+			
 			break;
 
 		default:
@@ -305,7 +307,7 @@ public class Engine {
 			int index = findIndex(projectName);
 			Project currProject = projectsList.get(index);
 			currProject.addTask(new Task(taskDescription, dateFrom, dateTo,
-					projectName, false));
+					projectName));
 			projectsList.set(index, currProject);
 		} else {
 			// default project
@@ -313,7 +315,7 @@ public class Engine {
 				int index = 0;
 				Project currProject = projectsList.get(index);
 				currProject.addTask(new Task(taskDescription, dateFrom, dateTo,
-						projectName, false));
+						projectName));
 				projectsList.set(index, currProject);
 			}
 			// create a new project
@@ -321,7 +323,7 @@ public class Engine {
 				projectNames.add(projectName);
 				ArrayList<Task> temp = new ArrayList<Task>();
 				temp.add(new Task(taskDescription, dateFrom, dateTo,
-						projectName, false));
+						projectName));
 				projectsList.add(new Project(projectName, temp));
 			}
 		}
@@ -337,9 +339,10 @@ public class Engine {
 		return index;
 	}
 
-	/********************** Delete Methods ********************************/
+	/********************** Delete Methods 
+	 * @throws IOException ********************************/
 
-	private void deleteTask(String taskDescription, String projectName) {
+	private void deleteTask(String taskDescription, String projectName) throws IOException {
 
 		if (projectNames.contains(projectName)) {
 			search(taskDescription);
@@ -347,8 +350,7 @@ public class Engine {
 
 	}
 
-	private void deleteTask(String taskDescription)
-			throws CancelDeleteException, IOException {
+	private void deleteTask(String taskDescription) throws IOException, CancelDeleteException {
 
 		ArrayList<Task> temp = search(taskDescription);
 		if (!temp.isEmpty()) {
@@ -391,14 +393,14 @@ public class Engine {
 	 * 
 	 * @throws IOException
 	 ***********************************/
+	
 	// convert to a task
 	private void edit(String old, String edited) throws IOException {
 		for (Project p : projectsList) {
 			for (Task t : p.displayAllTasks()) {
 				if (t.getTaskDescription().equals(old)) {
 					Task updated = new Task(edited, t.getStartDate(),
-							t.getDeadline(), t.getProjectName(),
-							t.isCompleted());
+							t.getDeadline(), t.getProjectName());
 					p.editTask(t, updated);
 				}
 
@@ -417,12 +419,11 @@ public class Engine {
 	 * @param projectName
 	 *            is the name of the project that we wish to search in
 	 */
-	private void search(String searchPhrase, String projectName) {
+	private void search(String searchPhrase, String projectName) throws IOException {
 		int index = findIndex(projectName);
 		Project curr = projectsList.get(index);
 		ArrayList<Task> currList = curr.searchForTask(searchPhrase);
 		displayArrayList(currList);
-
 	}
 
 	/**
@@ -431,7 +432,7 @@ public class Engine {
 	 * @param searchPhrase
 	 *            is the phrase that the user wishes to search
 	 */
-	private ArrayList<Task> search(String searchPhrase) {
+	private ArrayList<Task> search(String searchPhrase) throws IOException {
 		ArrayList<Task> tempResultsForProject = new ArrayList<Task>();
 		ArrayList<Task> allInclusive = new ArrayList<Task>();
 		for (Project p : projectsList) {
@@ -471,11 +472,14 @@ public class Engine {
 	}
 
 	// display project and display all
-	private void display(String input) {
+	private void display(String input) throws IOException {
 		if (input.equals("all")) {
 			// display everything
 
 			for (int i = 0; i < projectsList.size(); i++) {
+				
+				System.out.println("Project: " + projectNames.get(i));
+				
 				UIHandler.getInstance().printToDisplay(
 						"Project: " + projectNames.get(i));
 				Project currProj = projectsList.get(i);
@@ -488,6 +492,10 @@ public class Engine {
 
 				// for deadline tasks
 				for (int j = 0; j < deadLineList.size(); j++) {
+					
+					System.out.println("work work work work work");
+					
+					
 					UIHandler.getInstance().printToDisplay(
 							counter + ". " + deadLineList.get(j).toString());
 					counter++;
@@ -497,6 +505,8 @@ public class Engine {
 
 				// for interval tasks
 				for (int k = 0; k < intervalList.size(); k++) {
+					// System.out.println("work work work work work");
+					
 					UIHandler.getInstance().printToDisplay(
 							counter + ". " + intervalList.get(k).toString());
 					counter++;
@@ -506,6 +516,7 @@ public class Engine {
 
 				// for floating tasks
 				for (int r = 0; r < floatList.size(); r++) {
+					
 					UIHandler.getInstance().printToDisplay(
 							counter + ". " + floatList.get(r).toString());
 					counter++;

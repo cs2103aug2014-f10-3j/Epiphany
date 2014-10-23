@@ -32,7 +32,7 @@ public class EpiphanyInterpreter implements deleteObserver{
 	UIHandler uiHandler; 
 
 	public EpiphanyInterpreter() throws IOException, ParseException {
-		//engine = new Engine();
+		engine = new Engine();
 		input = new Scanner( System.in );
 		uiHandler = UIHandler.getInstance();
 		this.populateDictionary(); //adds an English dictionary
@@ -53,8 +53,9 @@ public class EpiphanyInterpreter implements deleteObserver{
 	/**
 	 * This method accepts the user inputs until the 'exit' command is entered. None of the actual
 	 * operations are carried out in this function - all the operations are left to the 'route' function.
+	 * @throws IOException 
 	 */
-	void acceptUserInputUntilExit() {
+	void acceptUserInputUntilExit() throws IOException {
 		String userInput;
 		do{
 			uiHandler.printToTerminal(MESSAGE_COMMAND_PROMPT, "inline");
@@ -63,7 +64,7 @@ public class EpiphanyInterpreter implements deleteObserver{
 			try {
 				toPassToEngine = interpretCommand(userInput);
 				assert(toPassToEngine != null);
-				//engine.executeCommand(toPassToEngine);
+				engine.executeCommand(toPassToEngine);
 			} catch (InvalidCommandException e) {
 				uiHandler.printToTerminal(MESSAGE_INVALID_COMMAND);
 			}

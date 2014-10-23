@@ -158,7 +158,7 @@ public class Project {
 		 * @return ArrayList<Task>
 		 * @author amit
 		 */
-		public ArrayList<Task> displayAllTasks(){
+		public ArrayList<Task>displayAllTasks(){
 			ArrayList<Task> results = new ArrayList<Task>();
 			
 			results.addAll(deadLineList);
