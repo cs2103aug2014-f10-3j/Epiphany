@@ -20,8 +20,6 @@ import Logic.Interpreter.UIHandler;
 import Logic.Interpreter.CommandType.*;
 
 
-
-
 /**
  * This class can be instantiated to perform all the operations that the program
  * needs to perform.
@@ -35,8 +33,6 @@ import Logic.Interpreter.CommandType.*;
  * 
  * It currently has the ability to add, delete, search and display.
  * Additionally, it has complete project management.
- * 
- * Missing: Storing projects in separate files (save).
  * 
  * @author Moazzam and Wei Yang
  *
@@ -289,8 +285,7 @@ public class Engine {
 
 
 	/********************** Add Methods ***********************************/		
-	
-	
+
 	/**
 	 * Interpreter passes in a command type object. This method determines which
 	 * type of command it is and uses the appropriate methods using the switch
@@ -335,15 +330,14 @@ public class Engine {
 		return index;
 	}
 	
-	/********************** Delete Methods ***********************************/
+	/********************** Delete Methods ********************************/
 	
 
 	private void deleteTask(String taskDescription, String projectName) {
-		// TODO Auto-generated method stub
 		
-	}
-	
-	
+		
+		
+	}	
 
 	/********************** Edit Methods ***********************************/	
 	
