@@ -33,10 +33,28 @@ public class Project {
 			if(!list.isEmpty()){
 				populateLists(list);
 			}
+<<<<<<< HEAD
 			
+=======
+>>>>>>> FETCH_HEAD
 			createNewFile(projectName, deadLineList, intervalList, floatingList); //creates a new text file with relevant info. 
-		
 		}
+<<<<<<< HEAD
+=======
+		
+		private void populateLists(ArrayList<Task> list) {
+			for(Task t : list){
+				String type = t.getType();
+				if(type.equals("interval")){
+					intervalList.add(t);
+				}else if(type.equals("deadline")){
+					deadLineList.add(t);
+				}else if(type.equals("floating")){
+					floatingList.add(t);
+				}
+			}
+		}
+>>>>>>> FETCH_HEAD
 
 /**********************Getters***********************************/		
 		

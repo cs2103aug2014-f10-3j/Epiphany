@@ -19,6 +19,9 @@ import java.util.*;
 import Logic.Interpreter.UIHandler;
 import Logic.Interpreter.CommandType.*;
 
+
+
+
 /**
  * This class can be instantiated to perform all the operations that the program
  * needs to perform.
@@ -39,12 +42,11 @@ import Logic.Interpreter.CommandType.*;
  *
  */
 public class Engine {
+	
+	/********************** Declaration of constants and variables ***********************************/	
 
-	public static ArrayList<String> projectNames; // to give quick access to
-													// list of projects
+	public static ArrayList<String> projectNames; 
 	public static ArrayList<Project> projectsList;
-	public static ArrayList<Date> testDate1;
-	public static ArrayList<Task> testDateSort;
 	public static final String MESSAGE_WRONG_ENTRY = "Wrong entry, please re-enter input.";
 	public static final String MESSAGE_SORTED = "Tasks sorted alphabetically!";
 	public static final String MESSAGE_DELETE_INVALID = " %s, is already empty, please re-enter command.";
@@ -69,32 +71,15 @@ public class Engine {
 	 *
 	 */
 	enum CommandTypesEnum {
-		ADD, DISPLAY, DELETE, CLEAR, EXIT, INVALID, SEARCH
+		ADD, DISPLAY, DELETE, CLEAR, EXIT, INVALID, SEARCH, EDIT
 	};
-
-	public static void main(String[] args) throws IOException, ParseException {
-		// TEST METHOD
-
-		Engine e = new Engine();
-		Date test = new Date();
-
-		test.setDate(11);
-		test.setHours(22);
-		test.setMinutes(21);
-		test.setMonth(2);
-		test.setSeconds(21);
-		test.setYear(92);
-
-		Task t = new Task("RULE THE WORLD", null, test, "default", false);
-
-		e.projectsList.get(0).addTask(t);
-		
-		e.executeCommand(); 
-	}
 
 	public Engine() throws IOException, ParseException {
 		run();
 	}
+
+	/********************** Run and Engine Initialization Methods ***********************************/	
+	
 
 	/**
 	 * Initializes the Engine to begin running. Also, repopulates from existing
@@ -106,10 +91,9 @@ public class Engine {
 	private void run() throws IOException, ParseException {
 		projectsList = new ArrayList<Project>();
 		projectNames = new ArrayList<String>();
-
 		initializeEngine();
-
 	}
+
 
 	private void initializeEngine() throws IOException, FileNotFoundException,
 			ParseException {
@@ -241,6 +225,8 @@ public class Engine {
 
 		return lineNumber;
 	}
+	
+	/********************** Command Type Filter ***********************************/	
 
 	/**
 	 * Takes a command type input, as is given by the interpreter and returns
@@ -266,7 +252,45 @@ public class Engine {
 			return null;
 		}
 	}
+	
+	public void executeCommand(CommandType userCommand) throws IOException {
+		CommandTypesEnum commandType = determineCommandType(userCommand);
 
+		switch (commandType) {
+		case ADD:// METHOD DONE
+			AddCommandType addUserCommand = (AddCommandType) userCommand;
+			addTask(addUserCommand.getDescription(), addUserCommand.getDateFrom(), addUserCommand.getDateTo(), addUserCommand.getProjectName());
+			break;
+		case DISPLAY: 
+			DisplayCommandType displayUserCommand = (DisplayCommandType) userCommand;
+			display(displayUserCommand.getModifiers());
+			break;
+		case DELETE:
+			DeleteCommandType deleteUserCommand = (DeleteCommandType) userCommand;
+			deleteTask(deleteUserCommand.getTaskDescription(),
+					deleteUserCommand.getProjectName());
+			break;
+		case SEARCH:
+			SearchCommandType searchUserCommand = (SearchCommandType) userCommand;
+			search(searchUserCommand.getTaskDescription(),
+					searchUserCommand.getProjectName());
+			break;
+			
+		case EDIT: // WY WORKING ON THIS
+			EditCommandType editUserCommand = (EditCommandType) userCommand;
+			edit(); 
+			break; 
+
+		default:
+			// throw an error if the command is not recognized
+			throw new Error(ERROR_WRONG_INPUT);
+		}
+	}
+
+
+	/********************** Add Methods ***********************************/		
+	
+	
 	/**
 	 * Interpreter passes in a command type object. This method determines which
 	 * type of command it is and uses the appropriate methods using the switch
@@ -300,6 +324,7 @@ public class Engine {
 			}
 		}
 	}
+	
 	private int findIndex(String projectName){
 		int index = 0;
 		for(Project p: projectsList){
@@ -310,6 +335,36 @@ public class Engine {
 		return index;
 	}
 	
+	/********************** Delete Methods ***********************************/
+	
+
+	private void deleteTask(String taskDescription, String projectName) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
+
+	/********************** Edit Methods ***********************************/	
+	
+	private void edit() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	/********************** Search Methods ***********************************/	
+
+
+	private void search(String taskDescription, String projectName) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	
+	/********************** Display Methods ***********************************/	
+	
+	//display project and display all
 	private void display(String input){
 		if(input.equals("all")){
 			//display everything
@@ -353,228 +408,5 @@ public class Engine {
 			
 		}
 	}
-	public void executeCommand(CommandType userCommand) throws IOException {
-		CommandTypesEnum commandType = determineCommandType(userCommand);
-
-		switch (commandType) {
-		case ADD:// METHOD DONE
-			AddCommandType addUserCommand = (AddCommandType) userCommand;
-			addTask(addUserCommand.getDescription(), addUserCommand.getDateFrom(), addUserCommand.getDateTo(), addUserCommand.getProjectName());
-			break;
-		case DISPLAY: 
-			DisplayCommandType displayUserCommand = (DisplayCommandType) userCommand;
-			display(displayUserCommand.getModifiers());
-			break;
-		case DELETE:
-			DeleteCommandType deleteUserCommand = (DeleteCommandType) userCommand;
-			deleteTask(deleteUserCommand.getTaskDescription(),
-					deleteUserCommand.getProjectName());
-			break;
-		case SEARCH:
-			SearchCommandType searchUserCommand = (SearchCommandType) userCommand;
-			search(searchUserCommand.getTaskDescription(),
-					searchUserCommand.getProjectName());
-			break;
-
-		default:
-			// throw an error if the command is not recognized
-			throw new Error(ERROR_WRONG_INPUT);
-		}
-	}
-
-	/******************************* OLDER METHODS *****************************************/
-
-	private boolean checkContains(int i, String projectName) {
-		if (projectsList.get(i).getProjectName().equals(projectName)) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	/**
-	 * This function helps to search through a project to return all the Task's
-	 * that positively match the given phrase.
-	 * 
-	 * @param phrase
-	 *            Is a phrase that the user intends to search for
-	 * @param projectName
-	 *            is the name of the project that the user specifies
-	 * @return an ArrayList of the Tasks that matched the search phrase.
-	 */
-	private ArrayList<Task> search(String phrase, String projectName) {
-		ArrayList<Task> searchResult = new ArrayList<Task>();
-		ArrayList<Task> temp;
-
-		for (int i = 0; i < projectsList.size(); i++) {
-			if (checkContains(i, projectName)) {
-				temp = projectsList.get(i).getTaskList();
-				for (int j = 0; j < temp.size(); j++) {
-					if (temp.get(j).getInstruction().toLowerCase()
-							.contains(phrase.toLowerCase())) {
-						searchResult.add(temp.get(j));
-					} else {
-						continue;
-					}
-				}
-				if (searchResult.isEmpty()) {
-					System.out.println(MESSAGE_INVALID_SEARCH);
-
-				}
-				System.out.println("Search result:"); // UI handler
-				displayArrayList(searchResult);
-			}
-		}
-		return searchResult;
-	}
-
-	/**
-	 * A function that helps to display all the projects including all the tasks
-	 * stored within them.
-	 */
-	public void displayAll() {
-		if (projectsList.size() == 1
-				&& projectsList.get(0).getTaskList().isEmpty()) {
-			System.out.println("Nothing to display.");// UI handler
-		} else {
-			for (int i = 0; i < projectsList.size(); i++) {
-				Project curr = projectsList.get(i);
-				System.out.println("Project: " + "\n" + (i + 1) + ". "
-						+ curr.getProjectName() + ":");
-				ArrayList<Task> currentArrayList = curr.getTaskList();
-
-				if (currentArrayList.isEmpty()) {
-					System.out.println("IT IS EMPTY"); // UI handler
-				} else {
-					for (int k = 0; k < currentArrayList.size(); k++) {
-						Task currTask = currentArrayList.get(k);
-						// should i try a try-catch block
-
-						Date currDate = currTask.getDeadline();
-						// Stem.out.println(currDate);
-						System.out.println("\t" + (k + 1) + ". "
-								+ currTask.getInstruction() + "\t" + currDate);
-
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * This function helps to output an ArrayList of tasks. It is currently
-	 * being used by the search function to print out the tasks that contain the
-	 * search phrase.
-	 * 
-	 * @param expected
-	 *            an ArrayList to be displayed to the user.
-	 */
-	private void displayArrayList(ArrayList<Task> expected) {
-
-		if (expected.isEmpty()) {
-			System.out.println(String.format(MESSAGE_DISPLAY_ERROR));
-		} else {
-
-			int counter = 1;
-			for (Task s : expected) {
-				System.out.println(String.format(MESSAGE_DISPLAY, counter,
-						s.getInstruction()));
-				counter++;
-			}
-		}
-	}
-
-	/**
-	 * Displays all the tasks within any one of the projects.
-	 * 
-	 * @param name
-	 *            The name of the project that we wish to display.
-	 */
-	public void displayProject(Project tempName) {
-		for (int i = 0; i < projectsList.size(); i++) {
-			String nameTempProject = tempName.getProjectName().toLowerCase();
-			String abc = projectsList.get(i).getProjectName().toLowerCase();
-			if (abc.equals(nameTempProject)) {
-				ArrayList<Task> temporaryProjectList = projectsList.get(i)
-						.getTaskList();
-				displayArrayList(temporaryProjectList);
-			} else {
-				System.out.println("No such project exists."); // UI handler
-			}
-		}
-	}
-
-	/**
-	 * Displays the names and indices of all the projects that exist.
-	 */
-	public void displayProjects() {
-		int count = 1;
-		if (projectNames.isEmpty()) {
-			System.out.println("There are currently no projects.");
-		} else {
-			for (String s : projectNames) {
-				System.out.println(count + ". " + s + ".");
-				count++;
-			}
-		}
-	}
-
-	private void createNewProject(String projectName, String instruction,
-			Date date) {
-		projectNames.add(projectName);
-		ArrayList<Task> latest = new ArrayList<Task>();
-		if (date == null) {
-			latest.add(new Task(instruction, projectName));
-		} else if (date != null) {
-			latest.add(new Task(instruction, date, projectName));
-		}
-		projectsList.add(new Project(projectName, latest));
-		System.out.println("New project created");
-		System.out.println("Task has been added!");
-	}
-
 	
-
-	private void deleteTask(String instruction, String projectName) {
-		if (!projectName.contains(projectName)) {
-			System.out.println("Such a project does not exist");
-		} else {
-			for (int i = 0; i < projectsList.size(); i++) {
-				String current = projectsList.get(i).getProjectName()
-						.toLowerCase();
-				if (current.contains(projectName.toLowerCase())) {
-					ArrayList<Task> currTaskList = projectsList.get(i)
-							.getTaskList();
-
-					for (int j = 0; j < currTaskList.size(); j++) {
-						if (currTaskList.contains(instruction)) {
-							currTaskList.remove(j);
-							System.out.print("Removed successfully");
-						}
-					}
-				}
-
-			}
-
-		}
-	}
-
-	/**
-	 * Finds the project are removes it entirely.
-	 * 
-	 * @param projectName
-	 *            is the name of the project.
-	 */
-	public void deleteProject(ArrayList<Task> projectName) {
-		if (projectsList.contains(projectName)
-				&& projectNames.contains(projectName)) {
-			int count = projectsList.lastIndexOf(projectName);
-			int count1 = projectNames.lastIndexOf(projectName);
-			projectsList.remove(count);
-			projectNames.remove(count1);
-		}
-	}
 }
-
-
-

@@ -15,7 +15,7 @@ private static final List<Matcher> fromMatchers;
     	fromMatchers = new LinkedList<Matcher>();
 
         //WITH TIME SPECIFICATIONS
-        //matchers.add(new SoonMatcherWithTime());
+    	fromMatchers.add(new SoonMatcherWithTime());
         fromMatchers.add(new DayMatcherWithTime());
         //matchers.add(new ExtendedDayMatcherWithTime());
         fromMatchers.add(new OnlyDateMatcherWithTime());
@@ -39,9 +39,9 @@ private static final List<Matcher> fromMatchers;
     	
     }
 
-    public static void registerMatcher(Matcher matcher) {
+    /*public static void registerMatcher(Matcher matcher) {
         fromMatchers.add(0, matcher);
-    }
+    }*/
 
 
     public static void convert(String input, ArrayList<Date> d) {
@@ -80,7 +80,7 @@ private static final List<Matcher> fromMatchers;
     }
     
 
-    private ShortIntervalDateConverter() {
+    public ShortIntervalDateConverter() throws UnsupportedOperationException{
         throw new UnsupportedOperationException("cannot instantiate");
     }
 }

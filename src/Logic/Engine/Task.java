@@ -8,7 +8,12 @@ import java.util.*;
  * Each task contains a task description, a deadline of class Date, a projectName and
  * a boolean variable to check if the task has been completed.
  * 
+<<<<<<< HEAD
  * @author amit
+=======
+ * @author Moazzam and Wei Yang
+ * edited by @author amit
+>>>>>>> FETCH_HEAD
  */
 public class Task {
 		private String taskDescription;

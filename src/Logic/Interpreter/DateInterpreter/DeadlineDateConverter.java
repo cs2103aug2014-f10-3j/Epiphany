@@ -62,9 +62,9 @@ public final class DeadlineDateConverter {
         matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("MMM dd'th'")));
     }
 
-    public static void registerMatcher(Matcher matcher) {
+    /*public static void registerMatcher(Matcher matcher) {
         matchers.add(0, matcher);
-    }
+    }*/
 
 
     public static void convert(String input, ArrayList<Date> d) {
@@ -80,7 +80,7 @@ public final class DeadlineDateConverter {
     }
     
 
-    private DeadlineDateConverter() {
+    public DeadlineDateConverter() throws UnsupportedOperationException{
         throw new UnsupportedOperationException("cannot instantiate");
     }
 }
