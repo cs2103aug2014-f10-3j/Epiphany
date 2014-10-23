@@ -102,6 +102,7 @@ public class Engine {
 	 * @throws ParseException
 	 */
 	private void run() throws IOException, ParseException {
+		UIHandler.getInstance().printToDisplay("Welcome to Epiphany!");
 		projectsList = new ArrayList<Project>();
 		projectNames = new ArrayList<String>();
 		initializeEngine();
@@ -401,7 +402,7 @@ public class Engine {
 				Project currProject = projectsList.get(indexProject);
 				currProject.deleteTask(taskToBeDeleted);
 				ArrayList<Task> currList = currProject.displayAllTasks();
-				if (currList.isEmpty()) {
+				if (currList.isEmpty() && !currProject.getProjectName().equals("default")) {
 					UIHandler.getInstance().printToDisplay(
 							currProject.getProjectName() + " has been removed. ");
 					projectsList.remove(indexProject);
@@ -514,12 +515,12 @@ public class Engine {
 		if (input.equals("all")) {
 			// display everything
 
+			int counter = 1;
 			for (int i = 0; i < projectsList.size(); i++) {
 
 				Project currProj = projectsList.get(i);
 				ArrayList<Task> taskList = currProj.displayAllTasks();
 				
-				int counter = 1;
 				for (Task t : taskList) {
 					UIHandler.getInstance().printToDisplay(
 							counter + ". " + t.printTaskForDisplay());
