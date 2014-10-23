@@ -6,13 +6,13 @@ import java.util.regex.Pattern;
 
 class DayMatcherWithTime implements Matcher {
 
-	private final Pattern saturday = Pattern.compile("(this |)saturday(|from)\\d+:\\d\\d");
-	private final Pattern sunday = Pattern.compile("(this |)sunday(|from)\\d+:\\d\\d");
-	private final Pattern monday = Pattern.compile("(this |)monday(|from)\\d+:\\d\\d");
-	private final Pattern tuesday = Pattern.compile("(this |)tuesday(|from)\\d+:\\d\\d");
-	private final Pattern wednesday = Pattern.compile("(this |)wednesday(|from)\\d+:\\d\\d");
-	private final Pattern thursday = Pattern.compile("(this |)thursday(|from)\\d+:\\d\\d");
-	private final Pattern friday = Pattern.compile("(this |)friday(|from)\\d+:\\d\\d");
+	private final Pattern saturday = Pattern.compile("(this |)saturday( | from )\\d+:\\d\\d");
+	private final Pattern sunday = Pattern.compile("(this |)sunday( | from )\\d+:\\d\\d");
+	private final Pattern monday = Pattern.compile("(this |)monday( | from )\\d+:\\d\\d");
+	private final Pattern tuesday = Pattern.compile("(this |)tuesday( | from )\\d+:\\d\\d");
+	private final Pattern wednesday = Pattern.compile("(this |)wednesday( | from )\\d+:\\d\\d");
+	private final Pattern thursday = Pattern.compile("(this |)thursday( | from )\\d+:\\d\\d");
+	private final Pattern friday = Pattern.compile("(this |)friday( | from )\\d+:\\d\\d");
 
 	@Override
 	public Date tryConvert(String input) {

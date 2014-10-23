@@ -6,8 +6,8 @@ import java.util.regex.Pattern;
 
 class SoonMatcherWithTime implements Matcher {
 
-    private final Pattern tomorrow = Pattern.compile("tomorrow \\d+:\\d\\d");
-    private final Pattern today = Pattern.compile("(today|tonight) \\d+:\\d\\d");
+    private final Pattern tomorrow = Pattern.compile("tomorrow( | from )\\d+:\\d\\d");
+    private final Pattern today = Pattern.compile("(today|tonight)( | from )\\d+:\\d\\d");
 
     @Override
     public Date tryConvert(String input) {

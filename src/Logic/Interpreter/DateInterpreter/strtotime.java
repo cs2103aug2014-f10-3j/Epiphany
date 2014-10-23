@@ -17,7 +17,7 @@ public final class strtotime {
 	private static final String REGEX_SPLIT_ADD_SHORT_INTERVAL_COMMAND = "\\s(on)\\s(?!.*\\s(on)\\s)";
     private static final String REGEX_ADD_LONG_INTERVAL_COMMAND = ".*\\s(from)\\s.*";
 	private static final String REGEX_SPLIT_ADD_LONG_INTERVAL_COMMAND = "\\s(from)\\s(?!.*\\s(from)\\s)";
-	//private static final String REGEX_SPLIT_ADD_COMMAND = "\\s(by|on|in)\\s(?!.*\\s(by|on|in)\\s)";
+    private static final String REGEX_ADD_EDGE_CASE_COMMAND = ".*\\s(this|next|tomorrow|today)\\s.*";
 	private static final TreeSet<String> actionWords = new TreeSet<String>(); //dictionary
 
     public static String convert(String input, ArrayList<Date> d) throws InvalidCommandException {
@@ -41,6 +41,25 @@ public final class strtotime {
     		ShortIntervalDateConverter.convert(toInterpret, d);
     		if(d.size()==2){
     			return tokens[0];
+    		}
+    	} else if(input.matches(REGEX_ADD_EDGE_CASE_COMMAND)){
+    		String taskDescription;
+    		if(input.contains("this")){
+    			toInterpret = input.substring(input.lastIndexOf("this"));
+    			taskDescription = input.substring(0, input.lastIndexOf("this")-1);
+    		} else if(input.contains("next")){
+    			toInterpret = input.substring(input.lastIndexOf("next"));
+    			taskDescription = input.substring(0, input.lastIndexOf("next")-1);
+    		} else if(input.contains("tomorrow")){
+    			toInterpret = input.substring(input.lastIndexOf("tomorrow"));
+    			taskDescription = input.substring(0, input.lastIndexOf("tomorrow")-1);
+    		} else{
+    			toInterpret = input.substring(input.lastIndexOf("today"));
+    			taskDescription = input.substring(0, input.lastIndexOf("today")-1);
+    		}
+    		ShortIntervalDateConverter.convert(toInterpret, d);
+    		if(d.size()==2||d.size()==1){
+    			return taskDescription;
     		}
     	} else if(input.matches(REGEX_ADD_LONG_INTERVAL_COMMAND)){
     		String[] tokens = input.split(REGEX_SPLIT_ADD_LONG_INTERVAL_COMMAND);

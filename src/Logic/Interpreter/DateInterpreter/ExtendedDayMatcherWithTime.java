@@ -29,7 +29,7 @@ class ExtendedDayMatcherWithTime implements Matcher {
 		
 		if (following.matcher(input).matches()) {
 			String extractedDay = input.split("(following|the following) ")[1];
-			Matcher nextMatcher = new DayMatcher();
+			Matcher nextMatcher = new DayMatcherWithTime();
 			Date date = nextMatcher.tryConvert(extractedDay);
             if (date != null) {
     			Calendar cal = Calendar.getInstance();

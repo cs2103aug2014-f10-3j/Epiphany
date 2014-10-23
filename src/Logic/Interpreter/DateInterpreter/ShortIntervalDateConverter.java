@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import Logic.Exceptions.InvalidCommandException;
+
 public class ShortIntervalDateConverter {
 private static final List<Matcher> fromMatchers;
 	
@@ -17,7 +19,7 @@ private static final List<Matcher> fromMatchers;
         //WITH TIME SPECIFICATIONS
     	fromMatchers.add(new SoonMatcherWithTime());
         fromMatchers.add(new DayMatcherWithTime());
-        //matchers.add(new ExtendedDayMatcherWithTime());
+        fromMatchers.add(new ExtendedDayMatcherWithTime());
         fromMatchers.add(new OnlyDateMatcherWithTime());
         //Matchers which follow default java date formats
         fromMatchers.add(new DateFormatMatcherThree(new SimpleDateFormat("dd.MM.yyyy' from 'HH:mm")));
@@ -35,8 +37,6 @@ private static final List<Matcher> fromMatchers;
         fromMatchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("MMM dd'nd'' from 'HH:mm")));
         fromMatchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("MMM dd'rd'' from 'HH:mm")));
         fromMatchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("MMM dd'th'' from 'HH:mm")));
-        
-    	
     }
 
     /*public static void registerMatcher(Matcher matcher) {
@@ -44,16 +44,20 @@ private static final List<Matcher> fromMatchers;
     }*/
 
 
-    public static void convert(String input, ArrayList<Date> d) {
+    public static void convert(String input, ArrayList<Date> d) throws InvalidCommandException {
     	d.clear();
     	String toInterpret = input;
+    	if(toInterpret.matches("(.*)\\d+:\\d\\d")&& !(toInterpret.contains(" to "))){
+    		throw new InvalidCommandException();
+    	}
         for (Matcher matcher : fromMatchers) {
-            Date date = matcher.tryConvert(toInterpret);
+            Date date = matcher.tryConvert(input.split(" to ")[0]);
             if (date != null) {
     			d.add(date);
-    			String toTimeString = input.split("to ")[1];
+    			String toTimeString = input.split(" to ")[1];
     			try {
     				Calendar cal = Calendar.getInstance();
+    				cal.setTime(d.get(0));
     	            Date toDate = (new SimpleDateFormat("HH:mm")).parse(toTimeString);
     	            cal.set(Calendar.HOUR_OF_DAY, toDate.getHours());
     	            cal.set(Calendar.MINUTE, toDate.getMinutes());

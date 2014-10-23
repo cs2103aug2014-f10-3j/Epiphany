@@ -1,6 +1,7 @@
 package Logic.Interpreter.DateInterpreter;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 public class LongIntervalDateConverter {
@@ -15,8 +16,16 @@ public class LongIntervalDateConverter {
 			DeadlineDateConverter.convert(tokens[1], dTo);
 		}
 		if(dFrom.size()==1 && dTo.size()==1){
-			d.add(dFrom.get(0));
-			d.add(dTo.get(0));
+			if(dTo.get(0).before(dFrom.get(0))){
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(dTo.get(0));
+				cal.add(Calendar.MONTH, 1);
+				d.add(dFrom.get(0));
+				d.add(cal.getTime());
+			} else {
+				d.add(dFrom.get(0));
+				d.add(dTo.get(0));
+			}
 		}
 	}
 

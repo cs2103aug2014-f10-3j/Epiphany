@@ -7,8 +7,8 @@ import java.util.regex.Pattern;
 
 public class OnlyDateMatcherWithTime implements Matcher{
 	
-	private final Pattern datewletters = Pattern.compile("(the |)(\\d\\d|\\d)(st|nd|rd|th)( |from)\\d+:\\d\\d");
-	private final Pattern datewoletters = Pattern.compile("(the |)(\\d\\d|\\d)( |from)\\d+:\\d\\d");
+	private final Pattern datewletters = Pattern.compile("(the |)(\\d\\d|\\d)(st|nd|rd|th)( | from )\\d+:\\d\\d");
+	private final Pattern datewoletters = Pattern.compile("(the |)(\\d\\d|\\d)( | from )\\d+:\\d\\d");
 	private final Pattern extractDatePattern = Pattern.compile("\\d+");
 	
 	@Override
@@ -25,10 +25,8 @@ public class OnlyDateMatcherWithTime implements Matcher{
 					// in within same month.
 					cal.set(Calendar.DAY_OF_MONTH, date);
 				} else{
-
 					cal.set(Calendar.DAY_OF_MONTH, date);
 					cal.add(Calendar.MONTH, 1);
-
 				}
 
 	            int hour = Integer.parseInt(input.substring(input.lastIndexOf(' ')+1, input.indexOf(':')));
