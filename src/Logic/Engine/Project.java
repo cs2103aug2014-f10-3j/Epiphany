@@ -33,7 +33,9 @@ public class Project {
 			if(!list.isEmpty()){
 				populateLists(list);
 			}
+			
 			createNewFile(projectName, deadLineList, intervalList, floatingList); //creates a new text file with relevant info. 
+		
 		}
 
 /**********************Getters***********************************/		
@@ -295,7 +297,13 @@ public class Project {
 		 */
 		private class dateComparator implements Comparator<Task>{
 			public int compare(Task task1, Task task2) {
-				if(task1.getDeadline().before(task2.getStartDate())){
+				if(task1.getDeadline() == null && task2.getDeadline() == null){
+					return 0;
+				}else if(task1.getDeadline() != null && task2.getDeadline() == null){
+					return 1;
+				}else if(task1.getDeadline() == null && task2.getDeadline() !=null){
+					return -1;
+				}else if(task1.getDeadline().before(task2.getStartDate())){
 					return 1;
 				}else if(task1.getDeadline().equals(task2.getStartDate())){
 					return 0;

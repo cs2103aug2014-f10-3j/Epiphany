@@ -24,12 +24,12 @@ public class Task {
 		 * @param date			stores the deadline
 		 * @param ProjectName	stores the name of the project that the task belongs to
 		 */
-		public Task(String instruction, Date from, Date deadLine, String ProjectName, boolean status) {
+		public Task(String instruction, Date from, Date deadLine, String ProjectName) {
 			this.taskDescription = instruction;
 			this.from = from;
 			this.deadLine = deadLine;
 			this.projectName = ProjectName;
-			this.isCompleted = status; // Set as false as a default
+			
 		}
 
 /**********************Getters******************************/		
