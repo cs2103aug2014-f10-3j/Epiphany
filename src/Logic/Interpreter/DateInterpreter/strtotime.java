@@ -50,7 +50,7 @@ public final class strtotime {
     			return tokens[0];
     		}
     	}
-        if(isValidEnglish(toInterpret)){
+    	if(isValidEnglish(toInterpret) || toInterpret.equals(input)){
         	return input;
         } else {
         	throw new InvalidCommandException();
@@ -58,7 +58,7 @@ public final class strtotime {
     }
     
 
-    private strtotime() {
+    public strtotime() throws UnsupportedOperationException{
         throw new UnsupportedOperationException("cannot instantiate");
     }
     

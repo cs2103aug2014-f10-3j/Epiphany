@@ -30,11 +30,12 @@ public class EpiphanyInterpreter implements deleteObserver{
 	Engine engine;
 	Scanner input; //This scanner will deal with all input from user.
 	UIHandler uiHandler; 
-	
+
 	public EpiphanyInterpreter() throws IOException, ParseException {
 		//engine = new Engine();
 		input = new Scanner( System.in );
 		uiHandler = UIHandler.getInstance();
+		this.populateDictionary(); //adds an English dictionary
 	}
 
 	/**
@@ -45,8 +46,7 @@ public class EpiphanyInterpreter implements deleteObserver{
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) throws IOException, ParseException {
-		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();	
-		interpreter.populateDictionary(); // adds an English dictionary
+		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
 		interpreter.acceptUserInputUntilExit();
 	}
 
@@ -67,6 +67,9 @@ public class EpiphanyInterpreter implements deleteObserver{
 			} catch (InvalidCommandException e) {
 				uiHandler.printToTerminal(MESSAGE_INVALID_COMMAND);
 			}
+			catch (ExitException e) {
+				System.exit(0);
+			}
 		} while(!userInput.equalsIgnoreCase("exit"));
 		input.close();
 	}
@@ -76,8 +79,9 @@ public class EpiphanyInterpreter implements deleteObserver{
 	 * @param userInput
 	 * @return CommandType of the input.
 	 * @throws InvalidCommandException 
+	 * @throws ExitExeption 
 	 */
-	private CommandType interpretCommand(String userInput) throws InvalidCommandException {
+	public CommandType interpretCommand(String userInput) throws InvalidCommandException, ExitException {
 		if(userInput.matches("(display|view).*")){
 			return interpretDisplayCommand(userInput);
 		} else if(userInput.equals("exit")) {
@@ -102,12 +106,12 @@ public class EpiphanyInterpreter implements deleteObserver{
 
 		if(commandTokens.length == 1){
 			return new DisplayCommandType();
-		}else if(commandTokens.length == 2){
+		}else if(commandTokens.length >= 2){
 			if(commandTokens[1].startsWith("#")){
 				if(commandTokens[1].substring(1).contains("#")){
 					throw new InvalidCommandException();
 				}
-				return new DisplayCommandType(commandTokens[1].substring(1));
+				return new DisplayCommandType(userInput.split("#")[1]);
 			} else if(commandTokens[1].equalsIgnoreCase("all")){
 				return new DisplayCommandType(commandTokens[1]);
 			}
@@ -118,29 +122,36 @@ public class EpiphanyInterpreter implements deleteObserver{
 	/**
 	 * Exits program. Duh
 	 * @return CommandType(matters it does not, hmm)
+	 * @throws ExitException 
 	 */
-	private CommandType exitProgram() {
-		System.exit(0);
-		return null;
+	private CommandType exitProgram() throws ExitException {
+		throw new ExitException();
 	}
 
 	/**
 	 * This function returns the standardized search command according to CommandType Interface. 
 	 * @param userInput
 	 * @return SearchCommandType
+	 * @throws InvalidCommandException 
 	 */
-	private CommandType interpretSearchCommand(String userInput) {
+	private CommandType interpretSearchCommand(String userInput) throws InvalidCommandException {
+		if(userInput.indexOf(' ')==-1){
+			throw new InvalidCommandException();
+		}
 		String findMe = userInput.substring(userInput.indexOf(' ') + 1);
 		if(findMe.contains("#")){
 			return new SearchCommandType(findMe.substring(0,findMe.indexOf('#')-1),findMe.substring(findMe.indexOf('#')+1));
 		}
 		return new SearchCommandType(findMe);
 	}
-	
-	private CommandType interpretDeleteCommand(String userInput) {
+
+	private CommandType interpretDeleteCommand(String userInput) throws InvalidCommandException {
+		if(userInput.indexOf(' ')==-1){
+			throw new InvalidCommandException();
+		}
 		String toDelete = userInput.substring(userInput.indexOf(' ') + 1); 
 		if(toDelete.contains("#")){
-			return new SearchCommandType(toDelete.substring(0,toDelete.indexOf('#')-1),toDelete.substring(toDelete.indexOf('#')+1));
+			return new DeleteCommandType(toDelete.substring(0,toDelete.indexOf('#')-1),toDelete.substring(toDelete.indexOf('#')+1));
 		}
 		return new DeleteCommandType(toDelete);
 	}
@@ -152,6 +163,9 @@ public class EpiphanyInterpreter implements deleteObserver{
 	 * @throws InvalidCommandException 
 	 */
 	private CommandType interpretAddCommand(String userInput) throws InvalidCommandException {
+		if(!isValidTask(userInput)){
+			throw new InvalidCommandException();
+		}
 		String projectName = "";
 		if(userInput.contains("#")){
 			projectName = userInput.substring(userInput.indexOf('#')+1);
@@ -160,29 +174,25 @@ public class EpiphanyInterpreter implements deleteObserver{
 		ArrayList<Date> dates = new ArrayList<Date>();
 		String taskDescription = parseDate(userInput, dates);
 		assert(taskDescription!=null);
-		if(isValidTask(taskDescription)){
-			if(dates.size()==0){
-				if(projectName.equals("")){
-					return new AddCommandType(taskDescription);
-				} else{
-					return new AddCommandType(taskDescription, null, projectName);
-				}
-			} else if(dates.size()==1){
-				if(projectName.equals("")){
-					return new AddCommandType(taskDescription, dates.get(0));
-				} else{
-					return new AddCommandType(taskDescription, dates.get(0), projectName);
-				}
-				
+		if(dates.size()==0){
+			if(projectName.equals("")){
+				return new AddCommandType(taskDescription);
 			} else{
-				if(projectName.equals("")){
-					return new AddCommandType(taskDescription, dates.get(0), dates.get(1));
-				} else{
-					return new AddCommandType(taskDescription, dates.get(0), dates.get(1), projectName);
-				}		
+				return new AddCommandType(taskDescription, null, projectName);
 			}
+		} else if(dates.size()==1){
+			if(projectName.equals("")){
+				return new AddCommandType(taskDescription, dates.get(0));
+			} else{
+				return new AddCommandType(taskDescription, dates.get(0), projectName);
+			}
+
 		} else{
-			throw new InvalidCommandException();
+			if(projectName.equals("")){
+				return new AddCommandType(taskDescription, dates.get(0), dates.get(1));
+			} else{
+				return new AddCommandType(taskDescription, dates.get(0), dates.get(1), projectName);
+			}		
 		}
 	}
 
@@ -191,7 +201,7 @@ public class EpiphanyInterpreter implements deleteObserver{
 	 * @param string
 	 */
 	private boolean isValidTask(String taskDescription) {
-		return actionWords.contains(taskDescription.split(" ")[0]);
+		return actionWords.contains(taskDescription.split(" ")[0].toLowerCase());
 	}
 
 	/**
@@ -215,7 +225,7 @@ public class EpiphanyInterpreter implements deleteObserver{
 		}
 		dictScan.close();
 	}
-	
+
 	@Override
 	/**
 	 * When delete is called we will perform a search for the given key, tasks that contain this

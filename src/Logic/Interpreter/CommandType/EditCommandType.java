@@ -7,7 +7,7 @@ package Logic.Interpreter.CommandType;
  * @author abdulla contractor and amit gamane
  */
 
-public class EditCommandType {
+public class EditCommandType implements CommandType{
 	String originalTask;
 	String newTask;
 	
@@ -22,5 +22,9 @@ public class EditCommandType {
 	
 	public String getNewTask(){
 		return newTask; 
+	}
+
+	public String getType() {
+		return "edit";
 	}
 }
