@@ -34,14 +34,8 @@ public class Project {
 			if(!list.isEmpty()){
 				populateLists(list);
 			}
-			
-			
 			createNewFile(projectName, deadLineList, intervalList, floatingList); //creates a new text file with relevant info. 
-		
 		}
-		
-		
-
 		
 		private void populateLists(ArrayList<Task> list) {
 			for(Task t : list){
