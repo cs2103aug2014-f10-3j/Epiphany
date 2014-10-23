@@ -32,7 +32,7 @@ public class EpiphanyInterpreter implements deleteObserver{
 	UIHandler uiHandler; 
 
 	public EpiphanyInterpreter() throws IOException, ParseException {
-		engine = new Engine();
+		engine = Engine.getInstance();
 		input = new Scanner( System.in );
 		uiHandler = UIHandler.getInstance();
 		this.populateDictionary(); //adds an English dictionary

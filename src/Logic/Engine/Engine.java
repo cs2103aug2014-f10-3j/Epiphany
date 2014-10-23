@@ -61,6 +61,7 @@ public class Engine {
 	private static final String ERROR_WRONG_INPUT = null;
 	private static final String ERROR_COMMAND_TYPE_NULL = null;
 	private static EpiphanyInterpreter interp;
+	private static Engine engine;
 
 	/**
 	 * Enums are used for type safety.
@@ -72,8 +73,22 @@ public class Engine {
 		ADD, DISPLAY, DELETE, CLEAR, EXIT, INVALID, SEARCH, EDIT
 	};
 
-	public Engine() throws IOException, ParseException {
+	private Engine() throws IOException, ParseException {
 		run();
+	}
+	
+	/**
+	 * Singleton implementation of Engine
+	 * @return
+	 * @throws IOException
+	 * @throws ParseException
+	 */
+	public static Engine getInstance() throws IOException, ParseException{
+		if(engine == null){
+			engine = new Engine();
+		}
+		
+		return engine;
 	}
 
 	/********************** Run and Engine Initialization Methods ***********************************/
