@@ -42,6 +42,11 @@ public class Main extends Application {
 
 			// set epiphany overview into the centre of the root layout
 			rootLayout.setCenter(epiphanyOverview);
+			
+			GUIController controller = loader.getController();
+			controller.setMain(this);
+			
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
