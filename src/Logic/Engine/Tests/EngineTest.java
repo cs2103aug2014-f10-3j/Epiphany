@@ -39,4 +39,24 @@ public class EngineTest{
 		assertEquals("This is a test task", saved1);
 		assertEquals("This is a test task part 2", saved2);
 	}
+	
+	@Test
+	public void engineAddFloatingTest() throws IOException, ParseException {
+		Engine e = Engine.getInstance();
+		// add floating tasks into default project
+		AddCommandType add1 = new AddCommandType("This is a test task, ");
+		AddCommandType add2 = new AddCommandType("This is a test task part 2");
+		e.executeCommand(add1);
+		e.executeCommand(add2);
+
+		String saved1 = e.projectsList.get(0).displayAllTasks().get(0).getTaskDescription();
+		String testing1 = "This is a test task";
+
+		String saved2 = e.projectsList.get(0).displayAllTasks().get(1).getTaskDescription();
+		String testing2 = "This is a test task part 2";
+
+		assertEquals("This is a test task", saved1);
+		assertEquals("This is a test task part 2", saved2);
+	}
+	
 }
