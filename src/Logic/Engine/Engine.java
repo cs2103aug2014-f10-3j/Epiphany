@@ -58,10 +58,12 @@ public class Engine {
 	public static final String MESSAGE_SORT = "All lines are now sorted.";
 	public static final String MESSAGE_INVALID_SEARCH = "No results to display.";
 	public static final String MESSAGE_PROVIDE_ARGUMENT = "Argument missing, please re-enter command.";
+	public static final String MESSAGE_UNDO_ERROR = "Nothing to undo";
 	private static final String ERROR_WRONG_INPUT = null;
 	private static final String ERROR_COMMAND_TYPE_NULL = null;
 	private static EpiphanyInterpreter interp;
 	private static Engine engine;
+	private static Stack<PastCommands> commandHistory;
 
 	/**
 	 * Enums are used for type safety.
@@ -70,22 +72,23 @@ public class Engine {
 	 *
 	 */
 	enum CommandTypesEnum {
-		ADD, DISPLAY, DELETE, CLEAR, EXIT, INVALID, SEARCH, EDIT
+		ADD, DISPLAY, DELETE, CLEAR, EXIT, INVALID, SEARCH, EDIT, UNDO
 	};
 
 	private Engine() throws IOException, ParseException {
-		engine=this;
+		engine = this;
 		run();
 	}
 
 	/**
 	 * Singleton implementation of Engine
+	 * 
 	 * @return
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	public static Engine getInstance() throws IOException, ParseException{
-		if(engine == null){
+	public static Engine getInstance() throws IOException, ParseException {
+		if (engine == null) {
 			return new Engine();
 		}
 
@@ -107,10 +110,11 @@ public class Engine {
 		projectNames = new ArrayList<String>();
 		initializeEngine();
 		interp = new EpiphanyInterpreter();
+		commandHistory = new Stack<PastCommands>();
 	}
 
 	private void initializeEngine() throws IOException, FileNotFoundException,
-	ParseException {
+			ParseException {
 		// assume that projectNames exists.
 		int noOfProjects = countLines("projectMasterList");
 
@@ -141,7 +145,7 @@ public class Engine {
 	}
 
 	private void populateProjectsWithTasks() throws FileNotFoundException,
-	IOException, ParseException {
+			IOException, ParseException {
 		for (String fileName : projectNames) {
 			ArrayList<Task> temp = new ArrayList<Task>();
 
@@ -205,7 +209,7 @@ public class Engine {
 	}
 
 	private void populateProjectNames() throws FileNotFoundException,
-	IOException {
+			IOException {
 		Scanner sc = new Scanner(new File(
 				"../Epiphany/src/Logic/Engine/projectMasterList.txt"));
 		while (sc.hasNextLine()) {
@@ -262,7 +266,8 @@ public class Engine {
 			return CommandTypesEnum.SEARCH;
 		} else if (commandType.getType().equalsIgnoreCase("edit")) {
 			return CommandTypesEnum.EDIT;
-
+		} else if (commandType.getType().equalsIgnoreCase("undo")) {
+			return CommandTypesEnum.UNDO;
 		} else {
 			return null;
 		}
@@ -274,9 +279,8 @@ public class Engine {
 		switch (commandType) {
 		case ADD:// METHOD DONE
 			AddCommandType addUserCommand = (AddCommandType) userCommand;
-			addTask(addUserCommand.getDescription(),
-					addUserCommand.getDateFrom(), addUserCommand.getDateTo(),
-					addUserCommand.getProjectName());
+			add(addUserCommand.getDescription(), addUserCommand.getDateFrom(),
+					addUserCommand.getDateTo(), addUserCommand.getProjectName());
 			break;
 		case DISPLAY:
 			DisplayCommandType displayUserCommand = (DisplayCommandType) userCommand;
@@ -284,7 +288,7 @@ public class Engine {
 			break;
 		case DELETE:
 			DeleteCommandType deleteUserCommand = (DeleteCommandType) userCommand;
-			deleteTask(deleteUserCommand.getTaskDescription(),
+			delete(deleteUserCommand.getTaskDescription(),
 					deleteUserCommand.getProjectName());
 			break;
 		case SEARCH:
@@ -293,11 +297,16 @@ public class Engine {
 					searchUserCommand.getProjectName());
 			break;
 
-		case EDIT: // WY WORKING ON THIS
+		case EDIT: // TODO
 			EditCommandType editUserCommand = (EditCommandType) userCommand;
 			// edit(editUserCommand.getTaskDescription(),
-			//      editUserCommand.getNewTaskDescription())
+			// editUserCommand.getNewTaskDescription())
 
+			break;
+
+		case UNDO: // TODO
+			UndoCommandType undoUserCommand = (UndoCommandType) userCommand;
+			undo();
 			break;
 
 		default:
@@ -317,8 +326,7 @@ public class Engine {
 	 *            is the command that the interpreter send in.
 	 * @throws IOException
 	 */
-	private void addTask(String taskDescription, Date dateFrom, Date dateTo,
-			String projectName) throws IOException {
+	private void add(String taskDescription, Date dateFrom, Date dateTo, String projectName) throws IOException {
 		if (projectNames.contains(projectName)) {
 			// Existing project
 			int index = findIndex(projectName);
@@ -343,8 +351,8 @@ public class Engine {
 						projectName));
 				projectsList.add(new Project(projectName, temp));
 
-
-				File file = new File("../Epiphany/src/Logic/Engine/projectMasterList.txt");
+				File file = new File(
+						"../Epiphany/src/Logic/Engine/projectMasterList.txt");
 				FileWriter f = new FileWriter(file, true);
 				BufferedWriter writer = new BufferedWriter(f);
 				writer.newLine();
@@ -352,11 +360,12 @@ public class Engine {
 				writer.close();
 			}
 		}
+		commandHistory.push(new PastCommands("add", new Task(taskDescription, dateFrom, dateTo, projectName)));
 	}
 
 	private int findIndex(String projectName) {
-		for(int i = 0; i < projectNames.size(); i++){
-			if(projectNames.get(i).equals(projectName)){
+		for (int i = 0; i < projectNames.size(); i++) {
+			if (projectNames.get(i).equals(projectName)) {
 				return i;
 			}
 		}
@@ -364,38 +373,41 @@ public class Engine {
 		return -1;
 	}
 
-	/********************** Delete Methods 
-	 * @throws IOException 
-	 * @throws CancelDeleteException ********************************/
+	/**********************
+	 * Delete Methods
+	 * 
+	 * @throws IOException
+	 * @throws CancelDeleteException
+	 ********************************/
 
-	//private void deleteTask(String taskDescription, String projectName) throws IOException, CancelDeleteException {
+	// private void deleteTask(String taskDescription, String projectName)
+	// throws IOException, CancelDeleteException {
 
-	//if (projectNames.contains(projectName)) {
-	//search(taskDescription);
-	//deleteTaskProperly(taskDescription);
-	//	}
+	// if (projectNames.contains(projectName)) {
+	// search(taskDescription);
+	// deleteTaskProperly(taskDescription);
+	// }
 
-	//}
+	// }
 
-	private void deleteTask(String taskDescription, String projectName) throws IOException {
+	private void delete(String taskDescription, String projectName)
+			throws IOException {
+		
+		Task historyTask = new Task();
 
 		ArrayList<Task> temp = search(taskDescription);
 		if (!temp.isEmpty()) {
-			// displayArrayList(temp);
-			// }
-			/*int counter = 1;
-			for (Task t : temp) {
-				UIHandler.getInstance().printToDisplay(
-						counter + ". " + t.printTaskForDisplay());
-				counter++;
-			}*/
-			// Interpreter inter = new Interpreter();
+			
 			UIHandler.getInstance().printToDisplay(
 					"Please enter the index number");
 			int input;
+			
 			try {
 				input = interp.askForAdditionalInformation();
 				Task taskToBeDeleted = temp.get(input - 1);
+				
+				historyTask = taskToBeDeleted; // to keep track for undo purposes
+				
 				projectName = taskToBeDeleted.getProjectName();
 				int indexProject = findIndex(projectName);
 
@@ -403,21 +415,21 @@ public class Engine {
 				currProject.deleteTask(taskToBeDeleted);
 				ArrayList<Task> currList = currProject.displayAllTasks();
 				if (currList.isEmpty() && !currProject.getProjectName().equals("default")) {
-					UIHandler.getInstance().printToDisplay(
-							currProject.getProjectName() + " has been removed. ");
+					UIHandler.getInstance().printToDisplay(currProject.getProjectName() + " has been removed. ");
 					projectsList.remove(indexProject);
 				} else {
-					UIHandler.getInstance().printToDisplay(
-							taskToBeDeleted.getTaskDescription()
-							+ " has been removed. ");
+					UIHandler.getInstance().printToDisplay(taskToBeDeleted.getTaskDescription() + " has been removed. ");
 				}
 			} catch (CancelDeleteException e) {
-				return ;
+				return;
 			}
 			// Looks for the index and removes it
 		} else {
 			UIHandler.getInstance().printToDisplay("No such task exists!");
 		}
+		
+		commandHistory.push(new PastCommands("delete", historyTask));
+
 	}
 
 	/**********************
@@ -451,10 +463,11 @@ public class Engine {
 	 * @param projectName
 	 *            is the name of the project that we wish to search in
 	 */
-	private void search(String searchPhrase, String projectName) throws IOException {		
-		if(projectName.equals("")){
+	private void search(String searchPhrase, String projectName)
+			throws IOException {
+		if (projectName.equals("")) {
 			search(searchPhrase);
-		}else{
+		} else {
 			int index = findIndex(projectName);
 			Project curr = projectsList.get(index);
 			ArrayList<Task> currList = curr.searchForTask(searchPhrase);
@@ -520,7 +533,7 @@ public class Engine {
 
 				Project currProj = projectsList.get(i);
 				ArrayList<Task> taskList = currProj.displayAllTasks();
-				
+
 				for (Task t : taskList) {
 					UIHandler.getInstance().printToDisplay(
 							counter + ". " + t.printTaskForDisplay());
@@ -528,13 +541,22 @@ public class Engine {
 				}
 			}
 
-		}else if(projectNames.contains(input)){
+		} else if (projectNames.contains(input)) {
 			displayProject(input);
-		}else{
-			//ERROR
-			//TO-DO
+		} else {
+			// ERROR
+			// TO-DO
 		}
 
+	}
+
+	/********************** Undo Method ***********************************/
+	private void undo() {
+		if(commandHistory.isEmpty()){
+			UIHandler.getInstance().printToTerminal(MESSAGE_UNDO_ERROR);
+		}else{
+			PastCommands mostRecent = commandHistory.pop();
+		}
 	}
 
 }

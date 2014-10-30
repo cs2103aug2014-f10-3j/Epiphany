@@ -31,6 +31,10 @@ public class Task {
 			this.projectName = ProjectName;
 			
 		}
+		
+		public Task(){
+			
+		}
 
 /**********************Getters******************************/		
 		public String getTaskDescription() {

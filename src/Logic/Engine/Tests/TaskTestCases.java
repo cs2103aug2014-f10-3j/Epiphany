@@ -62,6 +62,7 @@ public class TaskTestCases {
 	 * Checks if this task has an interval, i.e a start and end date.
 	 * @return
 	 */
+	/*
 	public boolean hasInterval(){
 		if(this.startDate() != null && this.hasDeadLine() != null){
 			return true;
@@ -69,7 +70,7 @@ public class TaskTestCases {
 			return false;
 		}
 	}
-	
+	*/
 	public boolean hasDeadLine() {
 		return (this.deadLine == null) ? false : true;
 	}
