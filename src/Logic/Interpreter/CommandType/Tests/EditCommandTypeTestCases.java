@@ -10,10 +10,18 @@ public class EditCommandTypeTestCases {
 
 	@Test
 	public void testEditCommandType() {
-		EditCommandType editCommand = new EditCommandType("Old Task description", "New Task description");
+		EditCommandType editCommand = new EditCommandType("task description");
 		assertEquals("edit", editCommand.getType());
-		assertEquals("Old Task description", editCommand.getOriginalTask());
-		assertEquals("New Task description", editCommand.getNewTask());
+		assertEquals("task description", editCommand.getTaskDescription());
+		assertEquals("default", editCommand.getProjectName());
+	}
+	
+	@Test
+	public void testEditWithProjectCommandType() {
+		EditCommandType editCommand = new EditCommandType("task description", "project name");
+		assertEquals("edit", editCommand.getType());
+		assertEquals("task description", editCommand.getTaskDescription());
+		assertEquals("project name", editCommand.getProjectName());
 	}
 
 }

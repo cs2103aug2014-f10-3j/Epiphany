@@ -22,7 +22,7 @@ import Logic.Exceptions.*;
  */
 
 
-public class EpiphanyInterpreter implements deleteObserver{
+public class EpiphanyInterpreter implements deleteObserver, editObserver{
 	///all the string constants that are involved in displaying things to the user.
 	private static final String MESSAGE_COMMAND_PROMPT = "command: ";
 	private static final String MESSAGE_INVALID_COMMAND = "Invalid command!";
@@ -96,9 +96,22 @@ public class EpiphanyInterpreter implements deleteObserver{
 			return interpretSearchCommand(userInput);
 		} else if(userInput.matches("(delete|remove).*")) {
 			return interpretDeleteCommand(userInput);
+		} else if(userInput.matches("(edit).*")) {
+			return interpretEditCommand(userInput);
 		} else { 
 			return interpretAddCommand(userInput);
 		} 
+	}
+
+	private CommandType interpretEditCommand(String userInput) throws InvalidCommandException {
+		if(userInput.indexOf(' ')==-1){
+			throw new InvalidCommandException();
+		}
+		String toEdit = userInput.substring(userInput.indexOf(' ') + 1); 
+		if(toEdit.contains("#")){
+			return new EditCommandType(toEdit.substring(0,toEdit.indexOf('#')-1),toEdit.substring(toEdit.indexOf('#')+1));
+		}
+		return new EditCommandType(toEdit);
 	}
 
 	/**
@@ -232,13 +245,13 @@ public class EpiphanyInterpreter implements deleteObserver{
 		dictScan.close();
 	}
 
-	
+
 	/**
 	 * When delete is called we will perform a search for the given key, tasks that contain this
 	 * key will be enumerated to the user.
 	 * This function asks the user for the index of the task to be deleted (from the enumerated list)
 	 */
-	public int askForAdditionalInformation() throws CancelDeleteException {
+	public int askForAdditionalInformationForDelete() throws CancelDeleteException {
 		String inputFromUser = input.nextLine();
 		try{
 			int indexFromUser = Integer.parseInt(inputFromUser);
@@ -250,10 +263,57 @@ public class EpiphanyInterpreter implements deleteObserver{
 			uiHandler.printToTerminal("You have entered an invalid number. Press y to try again, press n to cancel delete.");
 			String userResponse = input.nextLine();
 			if(userResponse.equalsIgnoreCase("y")){
-				return askForAdditionalInformation();
+				return askForAdditionalInformationForDelete();
 			} else{
 				throw new CancelDeleteException();
 			}
 		}
 	}
-}
+
+	/**
+	 * When edit is called we will perform a search for the given key, tasks that contain this
+	 * key will be enumerated to the user.
+	 * This function asks the user for the index of the task to be edited (from the enumerated list)
+	 */
+	public int askForAdditionalInformationForEdit() throws CancelEditException {
+		String inputFromUser = input.nextLine();
+		try{
+			int indexFromUser = Integer.parseInt(inputFromUser);
+			if(indexFromUser<1){
+				throw new NumberFormatException("Invalid input : Negative index");
+			}
+			return indexFromUser;
+		} catch (NumberFormatException e){
+			uiHandler.printToTerminal("You have entered an invalid number. Press y to try again, press n to cancel edit.");
+			String userResponse = input.nextLine();
+			if(userResponse.equalsIgnoreCase("y")){
+				return askForAdditionalInformationForEdit();
+			} else{
+				throw new CancelEditException();
+			}
+		}
+	}
+
+		/**
+		 * When we have selected to task to be edited, we then delete it and add
+		 * a new task in its place, this function accepts the new task from the user.
+		 * @return CommandType
+		 */
+		public CommandType askForNewTaskForEdit() throws CancelEditException {
+			String inputFromUser = input.nextLine();
+			CommandType toPassToEngine;
+			try {
+				toPassToEngine = interpretAddCommand(inputFromUser);
+				assert(toPassToEngine != null);
+				return toPassToEngine;
+			} catch (InvalidCommandException e) {
+				uiHandler.printToTerminal("You have entered an invalid task. Press y to try again, press n to cancel edit.");
+				String userResponse = input.nextLine();
+				if(userResponse.equalsIgnoreCase("y")){
+					return askForNewTaskForEdit();
+				} else{
+					throw new CancelEditException();
+				}
+			}
+		}
+	}

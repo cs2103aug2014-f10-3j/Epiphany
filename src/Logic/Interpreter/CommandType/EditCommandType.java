@@ -8,23 +8,28 @@ package Logic.Interpreter.CommandType;
  */
 
 public class EditCommandType implements CommandType{
-	String originalTask;
-	String newTask;
+	private String projectName;
+	private String taskDescription;
 	
-	public EditCommandType(String _originalTask, String _newTask) {
-		originalTask = _originalTask;
-		newTask = _newTask;
+	public EditCommandType(String _taskDescription) {
+		taskDescription = _taskDescription;
+		projectName = "default";
 	}
 	
-	public String getOriginalTask(){
-		return originalTask; 
+	public EditCommandType(String _taskDescription, String _projectName) {
+		taskDescription = _taskDescription;
+		projectName = _projectName;
 	}
 	
-	public String getNewTask(){
-		return newTask; 
-	}
-
 	public String getType() {
 		return "edit";
+	}
+	
+	public String getProjectName(){
+		return projectName;
+	}
+	
+	public String getTaskDescription(){
+		return taskDescription;
 	}
 }
