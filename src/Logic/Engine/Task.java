@@ -35,6 +35,32 @@ public class Task {
 		public Task(){
 			
 		}
+		
+		@Override
+		public boolean equals(Object o){
+			if(o instanceof Task){
+				Task t = (Task) o;
+				if(t.getTaskDescription() != this.getTaskDescription()){
+					return false;
+				}
+				if(t.getDeadline() != this.getDeadline()){
+					return false;
+				}
+				if(t.getStartDate() != this.getStartDate()){
+					return false;
+				}
+				if(t.getType() != this.getType()){
+					return false;
+				}
+				if(t.getProjectName() != this.getProjectName()){
+					return false;
+				}
+				return true;
+				
+			}
+			return false;
+			
+		}
 
 /**********************Getters******************************/		
 		public String getTaskDescription() {

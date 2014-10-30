@@ -13,6 +13,6 @@ public class RedoCommandType implements CommandType{
 	}
 	
 	public String getType() {
-		return "undo";
+		return "redo";
 	}
 }

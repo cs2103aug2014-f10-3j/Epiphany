@@ -58,13 +58,17 @@ public class Engine {
 	public static final String MESSAGE_SORT = "All lines are now sorted.";
 	public static final String MESSAGE_INVALID_SEARCH = "No results to display.";
 	public static final String MESSAGE_PROVIDE_ARGUMENT = "Argument missing, please re-enter command.";
-	public static final String MESSAGE_UNDO_ERROR = "Nothing to undo";
+	public static final String MESSAGE_UNDO_ERROR = "Nothing to undo!";
+	public static final String MESSAGE_UNDO_SUCCESS = "Undone!";
+	public static final String MESSAGE_REDO_ERROR = "Nothing to redo!";
+	public static final String MESSAGE_REDO_SUCCESS = "Redone!";
 	private static final String ERROR_WRONG_INPUT = null;
 	private static final String ERROR_COMMAND_TYPE_NULL = null;
 	private static EpiphanyInterpreter interp;
 	private static Engine engine;
-	private static Stack<PastCommands> commandHistory;
-
+	private static Stack<PastCommands> undoStack;
+	private static Stack<PastCommands> redoStack;
+	
 	/**
 	 * Enums are used for type safety.
 	 * 
@@ -72,7 +76,7 @@ public class Engine {
 	 *
 	 */
 	enum CommandTypesEnum {
-		ADD, DISPLAY, DELETE, CLEAR, EXIT, INVALID, SEARCH, EDIT, UNDO
+		ADD, DISPLAY, DELETE, CLEAR, EXIT, INVALID, SEARCH, EDIT, UNDO, REDO
 	};
 
 	private Engine() throws IOException, ParseException {
@@ -110,7 +114,8 @@ public class Engine {
 		projectNames = new ArrayList<String>();
 		initializeEngine();
 		interp = new EpiphanyInterpreter();
-		commandHistory = new Stack<PastCommands>();
+		undoStack = new Stack<PastCommands>();
+		redoStack = new Stack<PastCommands>();
 	}
 
 	private void initializeEngine() throws IOException, FileNotFoundException,
@@ -268,6 +273,8 @@ public class Engine {
 			return CommandTypesEnum.EDIT;
 		} else if (commandType.getType().equalsIgnoreCase("undo")) {
 			return CommandTypesEnum.UNDO;
+		} else if(commandType.getType().equalsIgnoreCase("redo")){
+			return CommandTypesEnum.REDO;
 		} else {
 			return null;
 		}
@@ -304,9 +311,14 @@ public class Engine {
 
 			break;
 
-		case UNDO: // TODO
+		case UNDO: 
 			UndoCommandType undoUserCommand = (UndoCommandType) userCommand;
 			undo();
+			break;
+			
+		case REDO://TODO
+			RedoCommandType redoUserCommand = (RedoCommandType) userCommand;
+			redo();
 			break;
 
 		default:
@@ -360,7 +372,7 @@ public class Engine {
 				writer.close();
 			}
 		}
-		commandHistory.push(new PastCommands("add", new Task(taskDescription, dateFrom, dateTo, projectName)));
+		undoStack.push(new PastCommands("add", new Task(taskDescription, dateFrom, dateTo, projectName)));
 	}
 
 	private int findIndex(String projectName) {
@@ -394,8 +406,14 @@ public class Engine {
 			throws IOException {
 		
 		Task historyTask = new Task();
-
+		
+		//Need to check if this is a delete project call.
+		if(taskDescription.equals(null)){
+		//	deleteProject(projectName);
+		}
+		
 		ArrayList<Task> temp = search(taskDescription);
+		
 		if (!temp.isEmpty()) {
 			
 			UIHandler.getInstance().printToDisplay(
@@ -403,7 +421,7 @@ public class Engine {
 			int input;
 			
 			try {
-				input = interp.askForAdditionalInformation();
+				input = interp.askForAdditionalInformationForDelete();
 				Task taskToBeDeleted = temp.get(input - 1);
 				
 				historyTask = taskToBeDeleted; // to keep track for undo purposes
@@ -428,7 +446,7 @@ public class Engine {
 			UIHandler.getInstance().printToDisplay("No such task exists!");
 		}
 		
-		commandHistory.push(new PastCommands("delete", historyTask));
+		undoStack.push(new PastCommands("delete", historyTask));
 
 	}
 
@@ -550,12 +568,80 @@ public class Engine {
 
 	}
 
-	/********************** Undo Method ***********************************/
-	private void undo() {
-		if(commandHistory.isEmpty()){
+	/********************** Undo/Redo Methods ***********************************/
+	// * @throws IOException 
+	private void undo() throws IOException {
+		
+		if(undoStack.isEmpty()){
 			UIHandler.getInstance().printToTerminal(MESSAGE_UNDO_ERROR);
 		}else{
-			PastCommands mostRecent = commandHistory.pop();
+			PastCommands mostRecent = undoStack.pop();
+			
+			//Type check.
+			String type = mostRecent.getType();
+			Task t = mostRecent.task;
+			
+			if(type.equals("add")){
+				// undo add
+				if(projectNames.contains(t.getProjectName())){
+					//Match found
+				
+					int index = findIndex(t.getProjectName());
+					Project p = projectsList.get(index);
+					p.deleteTask(t);
+	
+				}
+				
+			}else if(type.equals("delete")){				
+				if(projectNames.contains(t.getProjectName())){
+					//Match found
+				
+					int index = findIndex(t.getProjectName());
+					Project p = projectsList.get(index);
+					p.addTask(t);
+	
+				}
+			}
+			
+			UIHandler.getInstance().printToTerminal(MESSAGE_UNDO_SUCCESS);
+			redoStack.push(mostRecent);
+		}
+	}
+	
+	private void redo() throws IOException {
+
+		if(redoStack.isEmpty()){
+			UIHandler.getInstance().printToTerminal(MESSAGE_REDO_ERROR);
+		}else{
+			PastCommands mostRecent = redoStack.pop();
+			
+			//Type check.
+			String type = mostRecent.getType();
+			Task t = mostRecent.task;
+			
+			if(type.equals("add")){
+				// undo add
+				if(projectNames.contains(t.getProjectName())){
+					//Match found
+				
+					int index = findIndex(t.getProjectName());
+					Project p = projectsList.get(index);
+					p.addTask(t);
+	
+				}
+				
+			}else if(type.equals("delete")){				
+				if(projectNames.contains(t.getProjectName())){
+					//Match found
+				
+					int index = findIndex(t.getProjectName());
+					Project p = projectsList.get(index);
+					p.deleteTask(t);
+	
+				}
+			}
+			
+			UIHandler.getInstance().printToTerminal(MESSAGE_REDO_SUCCESS);
 		}
 	}
 

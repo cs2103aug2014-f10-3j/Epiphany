@@ -17,10 +17,6 @@ public class Main extends Application {
 	
 	private Stage primaryStage;
 	private BorderPane rootLayout;
-	
-	public Main() {
-		
-	}
 
 	@Override
 	public void start(Stage primaryStage) throws IOException {
@@ -33,7 +29,6 @@ public class Main extends Application {
 					
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
-			primaryStage.setResizable(false); // cannot resize screen for now
 			primaryStage.show();
 	}
 
@@ -48,7 +43,6 @@ public class Main extends Application {
 			// set epiphany overview into the centre of the root layout
 			rootLayout.setCenter(epiphanyOverview);
 			
-			// give the controller access to the main app
 			GUIController controller = loader.getController();
 			controller.setMain(this);
 			
