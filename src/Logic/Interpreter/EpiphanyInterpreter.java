@@ -86,6 +86,8 @@ public class EpiphanyInterpreter implements deleteObserver{
 		userInput = userInput.trim();
 		if(userInput.equalsIgnoreCase("undo")){
 			return new UndoCommandType();
+		} else if(userInput.equalsIgnoreCase("redo")){
+			return new RedoCommandType();
 		} else if(userInput.matches("(display|view).*")){
 			return interpretDisplayCommand(userInput);
 		} else if(userInput.equals("exit")) {

@@ -6,6 +6,7 @@ package Logic.Interpreter;
  * 
  * @author abdulla contractor and amit gamane
  */
+
  public class UIHandler{
  	static UIHandler uiHandler;
  	
