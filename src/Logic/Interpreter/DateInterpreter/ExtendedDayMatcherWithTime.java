@@ -12,7 +12,6 @@ class ExtendedDayMatcherWithTime implements Matcher {
 	private final Pattern following = Pattern.compile("(following|the following).*");
 
 
-	@Override
 	public Date tryConvert(String input) {
 
 		if (next.matcher(input).matches()) {

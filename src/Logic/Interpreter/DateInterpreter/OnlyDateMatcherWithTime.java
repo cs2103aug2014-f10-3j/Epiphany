@@ -11,7 +11,6 @@ public class OnlyDateMatcherWithTime implements Matcher{
 	private final Pattern datewoletters = Pattern.compile("(the |)(\\d\\d|\\d)( | from )\\d+:\\d\\d");
 	private final Pattern extractDatePattern = Pattern.compile("\\d+");
 	
-	@Override
 	public Date tryConvert(String input) {
 
 		if (datewoletters.matcher(input).matches() || datewletters.matcher(input).matches()) {

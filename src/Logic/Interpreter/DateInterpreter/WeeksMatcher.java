@@ -9,7 +9,6 @@ class WeeksMatcher implements Matcher {
     private final Pattern weeks = Pattern.compile("[\\-\\+]?\\d+ weeks");
     private final Pattern inAWeek = Pattern.compile("a week");
 
-    @Override
     public Date tryConvert(String input) {
 
         if (weeks.matcher(input).matches()) {

@@ -20,7 +20,6 @@ public class DisplayCommandType implements CommandType{
 		modifiers = _modifiers;
 	}
 	
-	@Override
 	public String getType() {
 		return "display";
 	}

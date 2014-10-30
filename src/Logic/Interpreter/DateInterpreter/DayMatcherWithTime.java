@@ -14,7 +14,6 @@ class DayMatcherWithTime implements Matcher {
 	private final Pattern thursday = Pattern.compile("(this |)thursday( | from )\\d+:\\d\\d");
 	private final Pattern friday = Pattern.compile("(this |)friday( | from )\\d+:\\d\\d");
 
-	@Override
 	public Date tryConvert(String input) {
 
 		if (saturday.matcher(input).matches()) {

@@ -24,7 +24,6 @@ public class DeleteCommandType implements CommandType{
 		projectName = _projectName;
 	}
 	
-	@Override
 	public String getType() {
 		return "delete";
 	}

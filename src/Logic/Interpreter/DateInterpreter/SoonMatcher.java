@@ -9,7 +9,6 @@ class SoonMatcher implements Matcher {
     private final Pattern tomorrow = Pattern.compile(".*tomorrow.*");
     private final Pattern today = Pattern.compile(".*(today|tonight).*");
 
-    @Override
     public Date tryConvert(String input) {
         if (tomorrow.matcher(input).matches()) {
             Calendar calendar = Calendar.getInstance();

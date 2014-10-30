@@ -8,7 +8,6 @@ class DaysMatcher implements Matcher {
 
     private final Pattern days = Pattern.compile("[\\-\\+]?\\d+ days");
 
-    @Override
     public Date tryConvert(String input) {
 
         if (days.matcher(input).matches()) {

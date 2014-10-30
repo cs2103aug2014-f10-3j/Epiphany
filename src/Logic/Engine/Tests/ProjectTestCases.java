@@ -33,9 +33,9 @@ public class ProjectTestCases {
 		Calendar.getInstance().set(2000, 12, 12);
 		Date d2 = Calendar.getInstance().getTime();
 		
-		intervalTask = new Task("DAMITH", d1, d2, "CS2103", false);
-		deadlineTask = new Task("DAMOTH", null, d2, "CS2103", false);
-		floatingTask = new Task("DAMITH", null, null, "CS2103", false);
+		intervalTask = new Task("DAMITH", d1, d2, "CS2103");
+		deadlineTask = new Task("DAMOTH", null, d2, "CS2103");
+		floatingTask = new Task("DAMITH", null, null, "CS2103");
 	}
 	
 	@Test
@@ -118,7 +118,6 @@ public class ProjectTestCases {
 	}
 	
 	private class dateComparator implements Comparator<Task>{
-		@Override
 		public int compare(Task task1, Task task2) {
 			if(task1.getDeadline() == null && task2.getDeadline() == null){
 				return 0;

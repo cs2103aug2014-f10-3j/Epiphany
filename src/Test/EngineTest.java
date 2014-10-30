@@ -123,9 +123,9 @@ public class EngineTest {
 		addTask(cde.getDescription(), null, null, null);
 		
 		ArrayList<Task> expected = new ArrayList<Task>();
-		expected.add(new Task("hello hello", null,null,null, false));
-		expected.add(new Task("finish work by tomorrow", null,null,null, false));
-		e.projectsList.get(0).addTask();
+		expected.add(new Task("hello hello", null,null,null));
+		expected.add(new Task("finish work by tomorrow", null,null,null));
+		e.projectsList.get(0).addTask(null);
 		assertEquals(expected.get(0).getTaskDescription(), "hello hello" );
 		
 	}

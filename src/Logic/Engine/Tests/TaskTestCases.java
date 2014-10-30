@@ -29,19 +29,19 @@ public class TaskTestCases {
 	
 	@Test
 	public void testTaskDescription() {
-		Task t = new Task("finish CS2103", null, null, "CS2103", false);
+		Task t = new Task("finish CS2103", null, null, "CS2103");
 		
 		assertEquals(taskDescription, t.getTaskDescription());
 	}
 
 	public void testStartDate() {
-		Task t = new Task("finish CS2103", null, null, "CS2103", false);
+		Task t = new Task("finish CS2103", null, null, "CS2103");
 		
 		assertEquals(from, t.getStartDate());
 	}
 	
 	public void testDeadLine() {
-		Task t = new Task("finish CS2103", null, null, "CS2103", false);
+		Task t = new Task("finish CS2103", null, null, "CS2103");
 		
 		assertEquals(from, t.getStartDate());
 	}
@@ -63,7 +63,7 @@ public class TaskTestCases {
 	 * @return
 	 */
 	public boolean hasInterval(){
-		if(this.getStartDate() != null && this.getDeadline() != null){
+		if(this.startDate() != null && this.hasDeadLine() != null){
 			return true;
 		}else{
 			return false;
