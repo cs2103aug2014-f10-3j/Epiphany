@@ -83,7 +83,10 @@ public class EpiphanyInterpreter implements deleteObserver{
 	 * @throws ExitExeption 
 	 */
 	public CommandType interpretCommand(String userInput) throws InvalidCommandException, ExitException {
-		if(userInput.matches("(display|view).*")){
+		userInput = userInput.trim();
+		if(userInput.equalsIgnoreCase("undo")){
+			return new UndoCommandType();
+		} else if(userInput.matches("(display|view).*")){
 			return interpretDisplayCommand(userInput);
 		} else if(userInput.equals("exit")) {
 			return exitProgram();

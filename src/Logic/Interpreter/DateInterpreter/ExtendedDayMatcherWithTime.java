@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Pattern;
 
+import Logic.Exceptions.InvalidCommandException;
 import Logic.Interpreter.DateInterpreter.Matcher;
 
 class ExtendedDayMatcherWithTime implements Matcher {
@@ -12,7 +13,7 @@ class ExtendedDayMatcherWithTime implements Matcher {
 	private final Pattern following = Pattern.compile("(following|the following).*");
 
 
-	public Date tryConvert(String input) {
+	public Date tryConvert(String input) throws InvalidCommandException {
 
 		if (next.matcher(input).matches()) {
 			String extractedDay = input.split("(next|the coming|coming) ")[1];

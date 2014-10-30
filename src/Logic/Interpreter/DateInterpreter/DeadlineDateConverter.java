@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.TreeSet;
 
+import Logic.Exceptions.InvalidCommandException;
+
 public final class DeadlineDateConverter {
 
     private static final List<Matcher> matchers;
@@ -67,7 +69,7 @@ public final class DeadlineDateConverter {
     }*/
 
 
-    public static void convert(String input, ArrayList<Date> d) {
+    public static void convert(String input, ArrayList<Date> d) throws InvalidCommandException {
     	d.clear();
     	String toInterpret = input;
         for (Matcher matcher : matchers) {

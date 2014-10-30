@@ -4,12 +4,15 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Pattern;
 
+import Logic.Exceptions.InvalidCommandException;
+
 class SoonMatcherWithTime implements Matcher {
 
     private final Pattern tomorrow = Pattern.compile("tomorrow( | from )\\d+:\\d\\d");
     private final Pattern today = Pattern.compile("(today|tonight)( | from )\\d+:\\d\\d");
+    private final Pattern yesterday = Pattern.compile("(yesterday)( | from )\\d+:\\d\\d");
 
-    public Date tryConvert(String input) {
+    public Date tryConvert(String input) throws InvalidCommandException {
         if (tomorrow.matcher(input).matches()) {
             Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.DAY_OF_YEAR, +1);
@@ -26,7 +29,11 @@ class SoonMatcherWithTime implements Matcher {
             calendar.set(Calendar.HOUR_OF_DAY, hour);
             calendar.set(Calendar.MINUTE, minute);
             return calendar.getTime();
-        } else {
+        }
+        if (yesterday.matcher(input).matches()) {
+        	throw new InvalidCommandException();
+        }
+        else {
             return null;
         }
     }

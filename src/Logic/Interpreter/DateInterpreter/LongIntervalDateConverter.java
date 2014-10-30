@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import Logic.Exceptions.InvalidCommandException;
+
 public class LongIntervalDateConverter {
 
-	public static void convert(String input, ArrayList<Date> d) {
+	public static void convert(String input, ArrayList<Date> d) throws InvalidCommandException {
 		d.clear();
 		String[] tokens = input.split(" to ");
 		ArrayList<Date> dFrom = new ArrayList<Date>();
