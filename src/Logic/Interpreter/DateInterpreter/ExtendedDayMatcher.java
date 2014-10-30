@@ -9,8 +9,8 @@ import Logic.Interpreter.DateInterpreter.Matcher;
 
 class ExtendedDayMatcher implements Matcher {
 
-	private final Pattern next = Pattern.compile("(next|the coming|coming).*day");
-	private final Pattern following = Pattern.compile("(following|the following).*day");
+	private final Pattern next = Pattern.compile("(next|the coming|coming) (sat.*|sun.*|mon.*|tue.*|wed.*|thu.*|fri.*)");
+	private final Pattern following = Pattern.compile("(following|the following) (sat.*|sun.*|mon.*|tue.*|wed.*|thu.*|fri.*)");
 
 
 	public Date tryConvert(String input) throws InvalidCommandException {

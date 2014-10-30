@@ -6,13 +6,13 @@ import java.util.regex.Pattern;
 
 class DayMatcher implements Matcher {
 
-	private final Pattern saturday = Pattern.compile("(this |)saturday");
-	private final Pattern sunday = Pattern.compile("(this |)sunday");
-	private final Pattern monday = Pattern.compile("(this |)monday");
-	private final Pattern tuesday = Pattern.compile("(this |)tuesday");
-	private final Pattern wednesday = Pattern.compile("(this |)wednesday");
-	private final Pattern thursday = Pattern.compile("(this |)thursday");
-	private final Pattern friday = Pattern.compile("(this |)friday");
+	private final Pattern saturday = Pattern.compile("(this |)(saturday|sat)");
+	private final Pattern sunday = Pattern.compile("(this |)(sunday|sun)");
+	private final Pattern monday = Pattern.compile("(this |)(monday|mon)");
+	private final Pattern tuesday = Pattern.compile("(this |)(tuesday|tue|tues)");
+	private final Pattern wednesday = Pattern.compile("(this |)(wednesday|wed)");
+	private final Pattern thursday = Pattern.compile("(this |)(thursday|thurs)");
+	private final Pattern friday = Pattern.compile("(this |)(friday|fri)");
 
 	public Date tryConvert(String input) {
 

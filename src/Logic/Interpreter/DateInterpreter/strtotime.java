@@ -31,14 +31,14 @@ public final class strtotime {
     	if(input.matches(REGEX_ADD_DEADLINE_COMMAND)){
     		String[] tokens = input.split(REGEX_SPLIT_ADD_DEADLINE_COMMAND);
     		toInterpret = tokens[1];
-    		DeadlineDateConverter.convert(toInterpret, d);
+    		DeadlineDateConverter.convert(toInterpret.toLowerCase(), d);
     		if(!d.isEmpty()){
     			return tokens[0];
     		}
     	} else if(input.matches(REGEX_ADD_SHORT_INTERVAL_COMMAND)){
     		String[] tokens = input.split(REGEX_SPLIT_ADD_SHORT_INTERVAL_COMMAND);
     		toInterpret = tokens[1];
-    		ShortIntervalDateConverter.convert(toInterpret, d);
+    		ShortIntervalDateConverter.convert(toInterpret.toLowerCase(), d);
     		if(d.size()==2){
     			return tokens[0];
     		}
@@ -57,14 +57,14 @@ public final class strtotime {
     			toInterpret = input.substring(input.lastIndexOf("today"));
     			taskDescription = input.substring(0, input.lastIndexOf("today")-1);
     		}
-    		ShortIntervalDateConverter.convert(toInterpret, d);
+    		ShortIntervalDateConverter.convert(toInterpret.toLowerCase(), d);
     		if(d.size()==2||d.size()==1){
     			return taskDescription;
     		}
     	} else if(input.matches(REGEX_ADD_LONG_INTERVAL_COMMAND)){
     		String[] tokens = input.split(REGEX_SPLIT_ADD_LONG_INTERVAL_COMMAND);
     		toInterpret = tokens[1];
-    		LongIntervalDateConverter.convert(toInterpret, d);
+    		LongIntervalDateConverter.convert(toInterpret.toLowerCase(), d);
     		if(d.size()==2){
     			return tokens[0];
     		}
