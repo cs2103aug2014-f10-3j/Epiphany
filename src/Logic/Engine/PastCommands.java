@@ -9,9 +9,10 @@ package Logic.Engine;
 public class PastCommands {
 	
 /*************Attributes*************/	
-	String type;
-	Task task;
-	Project project;
+	private String type;
+	private Task task;
+	private Project project;
+	private String projectName;
 	
 /*************Constructors*************/
 	public PastCommands(String type, Task t){
@@ -23,6 +24,11 @@ public class PastCommands {
 		// mainly for delete
 		this.type = type;
 		this.project = project;
+	}
+	
+	public PastCommands(String type, String projectName){
+		this.type = type;
+		this.projectName = projectName;
 	}
 	
 	
@@ -37,6 +43,10 @@ public class PastCommands {
 	
 	public Project getProject(){
 		return this.project;
+	}
+	
+	public String getProjectName(){
+		return this.projectName;
 	}
 	
 	public boolean isProjectOnly(){

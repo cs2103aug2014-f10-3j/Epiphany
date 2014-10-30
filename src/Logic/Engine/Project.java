@@ -55,6 +55,13 @@ public class Project {
 			return this.floatingList;
 		}
 		
+		public boolean isEmpty(){
+			if(this.floatingList.isEmpty() && this.deadLineList.isEmpty() && this.intervalList.isEmpty())
+				return true;
+			else
+				return false;
+		}
+		
 
 /**********************Mutators***********************************/		
 

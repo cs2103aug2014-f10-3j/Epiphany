@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import Logic.Exceptions.CancelDeleteException;
+import Logic.Exceptions.CancelEditException;
 import Logic.Interpreter.EpiphanyInterpreter;
 import Logic.Interpreter.UIHandler;
 import Logic.Interpreter.CommandType.*;
@@ -44,13 +45,14 @@ public class Engine {
 
 	public static ArrayList<String> projectNames;
 	public static ArrayList<Project> projectsList;
+	public static final String MESSAGE_WELCOME = "Welcome to Epiphany! Please enter a task.";
 	public static final String MESSAGE_WRONG_ENTRY = "Wrong entry, please re-enter input.";
 	public static final String MESSAGE_SORTED = "Tasks sorted alphabetically!";
 	public static final String MESSAGE_DELETE_INVALID = " %s, is already empty, please re-enter command.";
 	public static final String MESSAGE_NO_ENTRY = "No such entry exists in %s.";
 	public static final String MESSAGE_DELETE = "Deleted from %s  %s.";
 	public static final String MESSAGE_CLEAR_EMPTY = "%s ";
-	public static final String MESSAGE_ADD = "Added to %s: %s.";
+	public static final String MESSAGE_ADD = "Task Added!";
 	public static final String MESSAGE_DISPLAY_ERROR = "No items to display.";
 	public static final String MESSAGE_CLEAR = "All content deleted from %s.";
 	public static final String MESSAGE_DISPLAY = "%d. %s";
@@ -109,7 +111,9 @@ public class Engine {
 	 * @throws ParseException
 	 */
 	private void run() throws IOException, ParseException {
-		UIHandler.getInstance().printToDisplay("Welcome to Epiphany!");
+		
+		new ASCIIArt().generateArt("EPIPHANY");
+		UIHandler.getInstance().printToDisplay(MESSAGE_WELCOME);
 		projectsList = new ArrayList<Project>();
 		projectNames = new ArrayList<String>();
 		initializeEngine();
@@ -280,7 +284,7 @@ public class Engine {
 		}
 	}
 
-	public void executeCommand(CommandType userCommand) throws IOException {
+	public void executeCommand(CommandType userCommand) throws IOException, CancelEditException, CancelDeleteException {
 		CommandTypesEnum commandType = determineCommandType(userCommand);
 
 		switch (commandType) {
@@ -306,8 +310,7 @@ public class Engine {
 
 		case EDIT: // TODO
 			EditCommandType editUserCommand = (EditCommandType) userCommand;
-			// edit(editUserCommand.getTaskDescription(),
-			// editUserCommand.getNewTaskDescription())
+			 edit(editUserCommand.getTaskDescription(), editUserCommand.getProjectName());
 
 			break;
 
@@ -372,6 +375,7 @@ public class Engine {
 				writer.close();
 			}
 		}
+		UIHandler.getInstance().printToTerminal(MESSAGE_ADD);
 		undoStack.push(new PastCommands("add", new Task(taskDescription, dateFrom, dateTo, projectName)));
 	}
 
@@ -416,8 +420,7 @@ public class Engine {
 		
 		if (!temp.isEmpty()) {
 			
-			UIHandler.getInstance().printToDisplay(
-					"Please enter the index number");
+			UIHandler.getInstance().printToTerminal("Please enter the index number of the task you want to delete: ", "inline");
 			int input;
 			
 			try {
@@ -454,20 +457,49 @@ public class Engine {
 	 * Edit Methods
 	 * 
 	 * @throws IOException
+	 * @throws CancelEditException 
 	 ***********************************/
 
 	// convert to a task
-	private void edit(String old, String edited) throws IOException {
-		for (Project p : projectsList) {
-			for (Task t : p.displayAllTasks()) {
-				if (t.getTaskDescription().equals(old)) {
-					Task updated = new Task(edited, t.getStartDate(),
-							t.getDeadline(), t.getProjectName());
-					p.editTask(t, updated);
-				}
+	private void edit(String taskDescription, String projectName) throws IOException, CancelEditException, CancelDeleteException {
 
-			}
+		Task historyTask = new Task();
+			
+		ArrayList<Task> temp = search(taskDescription);
+		
+		if (!temp.isEmpty()) {
+			//DELETE OLD TASK
+			UIHandler.getInstance().printToTerminal("Please enter the index of the task you want to edit: ", "inline");
+			
+			int input = interp.askForAdditionalInformationForEdit();
+			
+			Task taskToBeEdited = temp.get(input - 1);
+			
+			historyTask = taskToBeEdited; // to keep track for undo purposes
+			
+			projectName = taskToBeEdited.getProjectName();
+			int index = findIndex(projectName);
+
+			Project currProject = projectsList.get(index);
+			currProject.deleteTask(taskToBeEdited);
+
+			
+			//ADD NEW TASK
+			UIHandler.getInstance().printToTerminal("Please update your task:", "inline");
+
+			CommandType newUserCommand = interp.askForNewTaskForEdit();
+			executeCommand(newUserCommand);
+			
+		} else {
+			UIHandler.getInstance().printToDisplay("Cannot edit!");
 		}
+		
+		undoStack.push(new PastCommands("delete", historyTask));
+	//	undoStack.push(new PastCommands("add", historyTask));
+		undoStack.push(new PastCommands("edit", historyTask.getProjectName()));
+
+
+
 	}
 
 	/********************** Search Methods ***********************************/
@@ -481,8 +513,7 @@ public class Engine {
 	 * @param projectName
 	 *            is the name of the project that we wish to search in
 	 */
-	private void search(String searchPhrase, String projectName)
-			throws IOException {
+	private void search(String searchPhrase, String projectName) throws IOException {
 		if (projectName.equals("")) {
 			search(searchPhrase);
 		} else {
@@ -521,6 +552,10 @@ public class Engine {
 	 *            is the ArrayList that we wish to display
 	 */
 	private void displayArrayList(ArrayList<Task> projectList) {
+		if(projectList.isEmpty()){
+			UIHandler.getInstance().printToTerminal(MESSAGE_INVALID_SEARCH);
+		}
+		
 		int counter = 1;
 		for (Task t : projectList) {
 			UIHandler.getInstance().printToDisplay(
@@ -545,6 +580,11 @@ public class Engine {
 	private void display(String input) throws IOException {
 		if (input.equals("all")) {
 			// display everything
+			
+			if(projectsList.size() == 1 && projectsList.get(0).isEmpty()){
+				UIHandler.getInstance().printToTerminal(MESSAGE_DISPLAY_ERROR);
+			}
+			
 
 			int counter = 1;
 			for (int i = 0; i < projectsList.size(); i++) {
@@ -562,14 +602,12 @@ public class Engine {
 		} else if (projectNames.contains(input)) {
 			displayProject(input);
 		} else {
-			// ERROR
-			// TO-DO
+			UIHandler.getInstance().printToTerminal(MESSAGE_DISPLAY_ERROR);
 		}
 
 	}
 
 	/********************** Undo/Redo Methods ***********************************/
-	// * @throws IOException 
 	private void undo() throws IOException {
 		
 		if(undoStack.isEmpty()){
@@ -579,37 +617,62 @@ public class Engine {
 			
 			//Type check.
 			String type = mostRecent.getType();
-			Task t = mostRecent.task;
+			Task task = mostRecent.getTask();
 			
 			if(type.equals("add")){
 				// undo add
-				if(projectNames.contains(t.getProjectName())){
+				if(projectNames.contains(task.getProjectName())){
 					//Match found
 				
-					int index = findIndex(t.getProjectName());
+					int index = findIndex(task.getProjectName());
 					Project p = projectsList.get(index);
-					p.deleteTask(t);
+					p.deleteTask(task);
 	
 				}
+				
+				redoStack.push(mostRecent);
 				
 			}else if(type.equals("delete")){				
-				if(projectNames.contains(t.getProjectName())){
+				if(projectNames.contains(task.getProjectName())){
 					//Match found
 				
-					int index = findIndex(t.getProjectName());
+					int index = findIndex(task.getProjectName());
 					Project p = projectsList.get(index);
-					p.addTask(t);
+					p.addTask(task);
 	
 				}
+				
+				redoStack.push(mostRecent);
+				
+			}else if(type.equals("edit")){
+					PastCommands first = undoStack.pop(); //del
+					PastCommands second = undoStack.pop(); //add
+					
+					if(projectNames.contains(mostRecent.getProjectName())){
+				
+						int index = findIndex(mostRecent.getProjectName());
+						Project p = projectsList.get(index);
+						
+						if(first.getType().equals("delete")){
+							p.addTask(first.getTask());
+						}
+						
+						if(second.getType().equals("add")){
+							p.deleteTask(second.getTask());			
+						}
+					}
+					
+					redoStack.push(first);
+					redoStack.push(second);	
+					redoStack.push(mostRecent);
 			}
 			
 			UIHandler.getInstance().printToTerminal(MESSAGE_UNDO_SUCCESS);
-			redoStack.push(mostRecent);
 		}
 	}
 	
 	private void redo() throws IOException {
-
+		
 		if(redoStack.isEmpty()){
 			UIHandler.getInstance().printToTerminal(MESSAGE_REDO_ERROR);
 		}else{
@@ -617,32 +680,129 @@ public class Engine {
 			
 			//Type check.
 			String type = mostRecent.getType();
-			Task t = mostRecent.task;
+			Task task = mostRecent.getTask();
 			
 			if(type.equals("add")){
 				// undo add
-				if(projectNames.contains(t.getProjectName())){
+				if(projectNames.contains(task.getProjectName())){
 					//Match found
 				
-					int index = findIndex(t.getProjectName());
+					int index = findIndex(task.getProjectName());
 					Project p = projectsList.get(index);
-					p.addTask(t);
+					p.addTask(task);
 	
-				}
-				
+				}				
 			}else if(type.equals("delete")){				
-				if(projectNames.contains(t.getProjectName())){
+				if(projectNames.contains(task.getProjectName())){
 					//Match found
 				
-					int index = findIndex(t.getProjectName());
+					int index = findIndex(task.getProjectName());
 					Project p = projectsList.get(index);
-					p.deleteTask(t);
+					p.deleteTask(task);
 	
+				}				
+			}else if(type.equals("edit")){
+					PastCommands first = redoStack.pop(); //add
+					PastCommands second = redoStack.pop(); //del
+					
+					if(projectNames.contains(mostRecent.getProjectName())){
+				
+						int index = findIndex(mostRecent.getProjectName());
+						Project p = projectsList.get(index);
+						
+						if(first.getType().equals("add")){
+							p.addTask(first.getTask());
+						}
+						
+						if(second.getType().equals("delete")){
+							p.deleteTask(second.getTask());			
+						}
+					}	
+			}
+			
+			UIHandler.getInstance().printToTerminal(MESSAGE_REDO_SUCCESS);
+		}	}
+/*	
+private void undoEdit() throws IOException {
+		
+		if(undoStack.isEmpty()){
+			UIHandler.getInstance().printToTerminal(MESSAGE_UNDO_ERROR);
+		}else{
+			for (int i = 0; i < 2; i++) {
+				PastCommands mostRecent = undoStack.pop();
+
+				// Type check.
+				String type = mostRecent.getType();
+				Task t = mostRecent.task;
+
+				if (type.equals("add")) {
+					// undo add
+					if (projectNames.contains(t.getProjectName())) {
+						// Match found
+
+						int index = findIndex(t.getProjectName());
+						Project p = projectsList.get(index);
+						p.deleteTask(t);
+
+					}
+
+				} else if (type.equals("delete")) {
+					if (projectNames.contains(t.getProjectName())) {
+						// Match found
+
+						int index = findIndex(t.getProjectName());
+						Project p = projectsList.get(index);
+						p.addTask(t);
+
+					}
+				}
+
+				redoStack.push(mostRecent);
+			}
+			
+			UIHandler.getInstance().printToTerminal(MESSAGE_UNDO_SUCCESS);
+
+		}
+
+	}
+	
+	private void redoEdit() throws IOException {
+
+		if(redoStack.isEmpty()){
+			UIHandler.getInstance().printToTerminal(MESSAGE_REDO_ERROR);
+		}else{
+			for (int i = 0; i < 2; i++) {
+				PastCommands mostRecent = redoStack.pop();
+
+				// Type check.
+				String type = mostRecent.getType();
+				Task t = mostRecent.task;
+
+				if (type.equals("add")) {
+					// undo add
+					if (projectNames.contains(t.getProjectName())) {
+						// Match found
+
+						int index = findIndex(t.getProjectName());
+						Project p = projectsList.get(index);
+						p.addTask(t);
+
+					}
+
+				} else if (type.equals("delete")) {
+					if (projectNames.contains(t.getProjectName())) {
+						// Match found
+
+						int index = findIndex(t.getProjectName());
+						Project p = projectsList.get(index);
+						p.deleteTask(t);
+
+					}
 				}
 			}
 			
 			UIHandler.getInstance().printToTerminal(MESSAGE_REDO_SUCCESS);
 		}
 	}
-
+*/
 }

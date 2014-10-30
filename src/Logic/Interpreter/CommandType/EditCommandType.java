@@ -8,6 +8,7 @@ package Logic.Interpreter.CommandType;
  */
 
 public class EditCommandType implements CommandType{
+	
 	private String projectName;
 	private String taskDescription;
 	

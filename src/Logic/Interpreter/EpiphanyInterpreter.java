@@ -44,8 +44,10 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 	 * @param args which contains the file name (at index 0) entered by the user.
 	 * @throws ParseException 
 	 * @throws IOException 
+	 * @throws CancelDeleteException 
+	 * @throws CancelEditException 
 	 */
-	public static void main(String[] args) throws IOException, ParseException {
+	public static void main(String[] args) throws IOException, ParseException, CancelEditException, CancelDeleteException {
 		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
 		interpreter.acceptUserInputUntilExit();
 	}
@@ -54,8 +56,10 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 	 * This method accepts the user inputs until the 'exit' command is entered. None of the actual
 	 * operations are carried out in this function - all the operations are left to the 'route' function.
 	 * @throws IOException 
+	 * @throws CancelDeleteException 
+	 * @throws CancelEditException 
 	 */
-	void acceptUserInputUntilExit() throws IOException {
+	void acceptUserInputUntilExit() throws IOException, CancelEditException, CancelDeleteException {
 		String userInput;
 		do{
 			uiHandler.printToTerminal(MESSAGE_COMMAND_PROMPT, "inline");
