@@ -1,7 +1,8 @@
-package application;
+package GUI.src.application;
 	
 import java.io.IOException;
 
+import GUI.src.application.GUIController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
@@ -21,12 +22,11 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) throws IOException {
 			this.primaryStage = primaryStage;
-			this.primaryStage.setTitle("Epiphany");
+			this.primaryStage.setTitle("Epiphany GUI");
 			rootLayout = new BorderPane();
 			Scene scene = new Scene(rootLayout,600,600);
 			showEpiphanyOverview();
-			
-					
+		
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.show();
@@ -37,7 +37,7 @@ public class Main extends Application {
 		try {
 			// load epiphany overview
 			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(Main.class.getResource("EpiphanyLayout.fxml"));
+			loader.setLocation(Main.class.getResource("EpiphanyStage.fxml")); // problematic
 			AnchorPane epiphanyOverview = (AnchorPane) loader.load();
 
 			// set epiphany overview into the centre of the root layout
@@ -45,8 +45,7 @@ public class Main extends Application {
 			
 			GUIController controller = loader.getController();
 			controller.setMain(this);
-			
-			
+		
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
