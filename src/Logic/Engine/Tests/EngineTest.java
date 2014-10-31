@@ -18,14 +18,16 @@ import Logic.Interpreter.CommandType.EditCommandType;
 import Logic.Interpreter.CommandType.SearchCommandType;
 import Logic.Engine.Task;
 import Logic.Engine.Project;
+import Logic.Exceptions.CancelDeleteException;
+import Logic.Exceptions.CancelEditException;
 
 public class EngineTest{
 
 	@Test
-	public void engineAddDefaultTest() throws IOException, ParseException {
+	public void engineAddDefaultTest() throws IOException, ParseException, CancelEditException, CancelDeleteException {
 		Engine e = Engine.getInstance();
 		// add floating tasks into default project
-		AddCommandType add1 = new AddCommandType("This is a test task");
+		AddCommandType add1 = new AddCommandType("Ambition is a crime");
 		AddCommandType add2 = new AddCommandType("This is a test task part 2");
 		e.executeCommand(add1);
 		e.executeCommand(add2);
@@ -36,12 +38,12 @@ public class EngineTest{
 		String saved2 = e.projectsList.get(0).displayAllTasks().get(1).getTaskDescription();
 		String testing2 = "This is a test task part 2";
 
-		assertEquals("This is a test task", saved1);
-		assertEquals("This is a test task part 2", saved2);
+		assertEquals("Ambition is a crime", saved1);
+		assertEquals("Ambition is a crime", saved2);
 	}
 	
-	@Test
-	public void engineAddFloatingTest() throws IOException, ParseException {
+/*	@Test
+	public void engineAddFloatingTest() throws IOException, ParseException, CancelEditException, CancelDeleteException {
 		Engine e = Engine.getInstance();
 		// add floating tasks into default project
 		AddCommandType add1 = new AddCommandType("This is a test task, ");
@@ -58,5 +60,5 @@ public class EngineTest{
 		assertEquals("This is a test task", saved1);
 		assertEquals("This is a test task part 2", saved2);
 	}
-	
+	*/
 }

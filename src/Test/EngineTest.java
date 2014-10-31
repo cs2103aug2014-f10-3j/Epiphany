@@ -107,7 +107,7 @@ public class EngineTest {
 	}
 
 
-	Engine e =  new Engine();
+	//Engine e =  new Engine();
 	
 	
 	
@@ -116,7 +116,7 @@ public class EngineTest {
 	public void testAdd() throws IOException{
 		
 		AddCommandType abcd = new AddCommandType("Hello hello");
-		e.executeCommand(abcd);
+		//e.executeCommand(abcd);
 		addTask(abcd.getDescription(), null, null, null);
 		
 		AddCommandType cde = new AddCommandType("finish work by tomorrow");
@@ -125,7 +125,7 @@ public class EngineTest {
 		ArrayList<Task> expected = new ArrayList<Task>();
 		expected.add(new Task("hello hello", null,null,null));
 		expected.add(new Task("finish work by tomorrow", null,null,null));
-		e.projectsList.get(0).addTask(null);
+		//e.projectsList.get(0).addTask(null);
 		assertEquals(expected.get(0).getTaskDescription(), "hello hello" );
 		
 	}

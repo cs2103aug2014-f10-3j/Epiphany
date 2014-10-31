@@ -12,7 +12,6 @@ class DateFormatMatcherThree implements Matcher {
         this.dateFormat = dateFormat;
     }
 
-    @Override
     public Date tryConvert(String input) {
         try {
             return dateFormat.parse(input);

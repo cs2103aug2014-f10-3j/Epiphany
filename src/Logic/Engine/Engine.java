@@ -77,7 +77,7 @@ public class Engine {
 	 * @author Wei Yang
 	 *
 	 */
-	enum CommandTypesEnum {
+	public enum CommandTypesEnum {
 		ADD, DISPLAY, DELETE, CLEAR, EXIT, INVALID, SEARCH, EDIT, UNDO, REDO
 	};
 

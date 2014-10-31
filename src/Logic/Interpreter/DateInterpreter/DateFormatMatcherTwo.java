@@ -12,7 +12,6 @@ class DateFormatMatcherTwo implements Matcher {
         this.dateFormat = dateFormat;
     }
 
-    @Override
     public Date tryConvert(String input) {
         try {
             Date d = dateFormat.parse(input);
