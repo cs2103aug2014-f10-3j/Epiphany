@@ -1,17 +1,13 @@
 package Logic.Engine;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.LineNumberReader;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -376,7 +372,7 @@ public class Engine {
 			}
 		}
 		UIHandler.getInstance().printToTerminal(MESSAGE_ADD);
-		undoStack.push(new PastCommands("add", new Task(taskDescription, dateFrom, dateTo, projectName)));
+		undoStack.push(new PastCommands("add", new Task(taskDescription, dateFrom, dateTo, projectName), projectName));
 	}
 
 	private int findIndex(String projectName) {
@@ -412,9 +408,9 @@ public class Engine {
 		Task historyTask = new Task();
 		
 		//Need to check if this is a delete project call.
-		if(taskDescription.equals(null)){
+	//	if(taskDescription.equals(null)){
 		//	deleteProject(projectName);
-		}
+	//	}
 		
 		ArrayList<Task> temp = search(taskDescription);
 		
@@ -449,7 +445,7 @@ public class Engine {
 			UIHandler.getInstance().printToDisplay("No such task exists!");
 		}
 		
-		undoStack.push(new PastCommands("delete", historyTask));
+		undoStack.push(new PastCommands("delete", historyTask, historyTask.getProjectName()));
 
 	}
 
@@ -494,7 +490,7 @@ public class Engine {
 			UIHandler.getInstance().printToDisplay("Cannot edit!");
 		}
 		
-		undoStack.push(new PastCommands("delete", historyTask));
+	//	undoStack.push(new PastCommands("delete", historyTask));
 	//	undoStack.push(new PastCommands("add", historyTask));
 		undoStack.push(new PastCommands("edit", historyTask.getProjectName()));
 
@@ -645,25 +641,30 @@ public class Engine {
 				redoStack.push(mostRecent);
 				
 			}else if(type.equals("edit")){
-					PastCommands first = undoStack.pop(); //del
-					PastCommands second = undoStack.pop(); //add
+					PastCommands first = undoStack.pop(); //(now add) del
 					
-					if(projectNames.contains(mostRecent.getProjectName())){
+				//	PastCommands second = undoStack.pop(); //add
+					
+					if(projectNames.contains(first.getProjectName())){
 				
-						int index = findIndex(mostRecent.getProjectName());
+						int index = findIndex(first.getProjectName());
 						Project p = projectsList.get(index);
 						
-						if(first.getType().equals("delete")){
-							p.addTask(first.getTask());
-						}
-						
-						if(second.getType().equals("add")){
-							p.deleteTask(second.getTask());			
+						if(first.getType().equals("add")){
+							p.deleteTask(first.getTask()); 
 						}
 					}
 					
+					PastCommands toPut = undoStack.peek();
+					
+					if(projectNames.contains(toPut.getProjectName())){
+						int index = findIndex(toPut.getProjectName());
+						Project p = projectsList.get(index);
+						p.addTask(toPut.getTask());	
+					}
+						
 					redoStack.push(first);
-					redoStack.push(second);	
+					redoStack.push(toPut);	
 					redoStack.push(mostRecent);
 			}
 			
@@ -702,22 +703,29 @@ public class Engine {
 	
 				}				
 			}else if(type.equals("edit")){
-					PastCommands first = redoStack.pop(); //add
-					PastCommands second = redoStack.pop(); //del
-					
-					if(projectNames.contains(mostRecent.getProjectName())){
+				PastCommands existingTask = redoStack.pop(); //(now add) del
 				
-						int index = findIndex(mostRecent.getProjectName());
+				PastCommands newTask = redoStack.pop(); //add
+					
+					if(projectNames.contains(existingTask.getProjectName())){
+				
+						int index = findIndex(existingTask.getProjectName());
 						Project p = projectsList.get(index);
 						
-						if(first.getType().equals("add")){
-							p.addTask(first.getTask());
+						if(existingTask.getType().equals("add")){
+							p.deleteTask(existingTask.getTask()); 
 						}
+					}
+										
+					if(projectNames.contains(newTask.getProjectName())){
+						int index = findIndex(newTask.getProjectName());
+						Project p = projectsList.get(index);
+						p.addTask(newTask.getTask());	
+					}
 						
-						if(second.getType().equals("delete")){
-							p.deleteTask(second.getTask());			
-						}
-					}	
+			//		redoStack.push(existingTask);
+			//		redoStack.push(second);	
+			//		redoStack.push(mostRecent);
 			}
 			
 			UIHandler.getInstance().printToTerminal(MESSAGE_REDO_SUCCESS);

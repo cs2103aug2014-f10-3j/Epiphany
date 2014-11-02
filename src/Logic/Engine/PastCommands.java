@@ -15,9 +15,10 @@ public class PastCommands {
 	private String projectName;
 	
 /*************Constructors*************/
-	public PastCommands(String type, Task t){
+	public PastCommands(String type, Task t, String projectName){
 		this.type = type;
 		this.task = t;
+		this.projectName = projectName;
 	}
 	
 	public PastCommands(String type, Project project){

@@ -6,6 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
+import Storage.Writer;
+
 
 /**
  * This class is used to create and modify projects that are created by the Engine. 
@@ -17,6 +19,7 @@ public class Project {
 		private ArrayList<Task> deadLineList;
 		private ArrayList<Task> intervalList;
 		private ArrayList<Task> floatingList;
+		private Writer writer;
 
 /**********************Constructors ***********************************/
 		/**
@@ -29,12 +32,13 @@ public class Project {
 			deadLineList = new ArrayList<Task>();
 			intervalList = new ArrayList<Task>();
 			floatingList = new ArrayList<Task>();
+			writer = new Writer(projectName, deadLineList, intervalList, floatingList);
 			
 			if(!list.isEmpty()){
 				populateLists(list);
 			}
 			
-			createNewFile(projectName, deadLineList, intervalList, floatingList); //creates a new text file with relevant info. 
+			createNewFile(); //creates a new text file with relevant info. 
 		}
 
 /**********************Getters***********************************/		
@@ -93,10 +97,7 @@ public class Project {
 			}
 			
 			// Task added. Repopulate txt file.
-			writeToFile(this.projectName, deadLineList, intervalList, floatingList);
-			
-			
-			
+			writer.writeToFile();
 		} 
 		
 		/**
@@ -115,7 +116,7 @@ public class Project {
 			}
 			
 			// Task deleted. Repopulate txt file.
-			writeToFile(this.projectName, deadLineList, intervalList, floatingList);
+			writer.writeToFile();
 		}
 		
 		/**
@@ -199,18 +200,11 @@ public class Project {
 		 * @throws IOException
 		 * @author amit
 		 */
-		public void createNewFile(String fileName, ArrayList<Task> dLineList, ArrayList<Task> interList, ArrayList<Task> floatList ) throws IOException {
-			writeToFile(fileName, dLineList, interList, floatList);
+		public void createNewFile() throws IOException {
+			writer.writeToFile();
 		}
 
-		/**
-		 * Does the actual writing to .txt file.
-		 * @param dLineList
-		 * @param interList
-		 * @param floatList
-		 * @throws IOException
-		 * @author amit
-		 */
+		/*
 		private void writeToFile(String fileName, ArrayList<Task> dLineList,
 				ArrayList<Task> interList, ArrayList<Task> floatList)
 				throws IOException {
@@ -245,7 +239,7 @@ public class Project {
 	
 			writer.close();
 		}
-		
+		*/
 		
 		private void populateLists(ArrayList<Task> list) {
 			for(Task t : list){
