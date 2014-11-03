@@ -49,6 +49,7 @@ public class Engine {
 	public static final String MESSAGE_DELETE = "Deleted from %s  %s.";
 	public static final String MESSAGE_CLEAR_EMPTY = "%s ";
 	public static final String MESSAGE_ADD = "Task Added!";
+	public static final String MESSAGE_ADD_DUPLICATE = "This task already exists!";
 	public static final String MESSAGE_DISPLAY_ERROR = "No items to display.";
 	public static final String MESSAGE_CLEAR = "All content deleted from %s.";
 	public static final String MESSAGE_DISPLAY = "%d. %s";
@@ -338,28 +339,39 @@ public class Engine {
 	 * @throws IOException
 	 */
 	private void add(String taskDescription, Date dateFrom, Date dateTo, String projectName) throws IOException {
+		
+		Task incomingTask = new Task(taskDescription, dateFrom, dateTo, projectName);
+		
+		// Duplicate check.
+		int indexProj = findIndex(projectName);
+		Project proj = projectsList.get(indexProj);
+			
+		// need to check if this incoming task already exists.
+		if(proj.containsTask(incomingTask)){
+			UIHandler.getInstance().printToTerminal(MESSAGE_ADD_DUPLICATE);
+			return;
+		}
+		
+		// else, continue
 		if (projectNames.contains(projectName)) {
 			// Existing project
 			int index = findIndex(projectName);
 			Project currProject = projectsList.get(index);
-			currProject.addTask(new Task(taskDescription, dateFrom, dateTo,
-					projectName));
+			currProject.addTask(incomingTask);
 			projectsList.set(index, currProject);
 		} else {
 			// default project
 			if (projectName.equals("default")) {
 				int index = 0;
 				Project currProject = projectsList.get(index);
-				currProject.addTask(new Task(taskDescription, dateFrom, dateTo,
-						projectName));
+				currProject.addTask(incomingTask);
 				projectsList.set(index, currProject);
 			}
 			// create a new project
 			else {
 				projectNames.add(projectName);
 				ArrayList<Task> temp = new ArrayList<Task>();
-				temp.add(new Task(taskDescription, dateFrom, dateTo,
-						projectName));
+				temp.add(incomingTask);
 				projectsList.add(new Project(projectName, temp));
 
 				File file = new File(
@@ -372,7 +384,7 @@ public class Engine {
 			}
 		}
 		UIHandler.getInstance().printToTerminal(MESSAGE_ADD);
-		undoStack.push(new PastCommands("add", new Task(taskDescription, dateFrom, dateTo, projectName), projectName));
+		undoStack.push(new PastCommands("add", incomingTask, projectName));
 	}
 
 	private int findIndex(String projectName) {

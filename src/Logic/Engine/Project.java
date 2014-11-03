@@ -66,6 +66,21 @@ public class Project {
 				return false;
 		}
 		
+		/**
+		 * This method checks if Task t already exists in this project.
+		 * @param t
+		 * @return
+		 */
+		public boolean containsTask(Task t){
+			if(this.deadLineList.contains(t) || this.intervalList.contains(t) || this.floatingList.contains(t)){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		
+		
+		
 
 /**********************Mutators***********************************/		
 
@@ -204,43 +219,6 @@ public class Project {
 			writer.writeToFile();
 		}
 
-		/*
-		private void writeToFile(String fileName, ArrayList<Task> dLineList,
-				ArrayList<Task> interList, ArrayList<Task> floatList)
-				throws IOException {
-
-			File file = new File("../Epiphany/src/Logic/Engine/Projects/" + fileName);
-			FileWriter f = new FileWriter(file);
-			BufferedWriter writer = new BufferedWriter(f);
-			
-			writer.write("");
-			
-				// for deadline
-				for(Task t : dLineList){
-					writer.write(t.toString());
-					writer.newLine();
-					writer.flush();
-				}
-				
-				//for interval
-				for(Task t : interList){
-					writer.write(t.toString());
-					writer.newLine();
-					writer.flush();
-				}
-				
-				//for floating
-				for(Task t : floatList){
-					writer.write(t.toString());
-					writer.newLine();
-					writer.flush();
-				}
-			
-	
-			writer.close();
-		}
-		*/
-		
 		private void populateLists(ArrayList<Task> list) {
 			for(Task t : list){
 				String type = t.getType();

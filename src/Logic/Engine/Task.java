@@ -40,19 +40,34 @@ public class Task {
 		public boolean equals(Object o){
 			if(o instanceof Task){
 				Task t = (Task) o;
-				if(t.getTaskDescription() != this.getTaskDescription()){
+				if(!t.getTaskDescription().equals(this.getTaskDescription())){
 					return false;
 				}
-				if(t.getDeadline() != this.getDeadline()){
+				if(this.getDeadline()!= null && t.getDeadline() != null){
+					return this.getDeadline().equals(t.getDeadline());
+				}
+				if((this.getDeadline() == null && t.getDeadline() != null)){ 
 					return false;
 				}
-				if(t.getStartDate() != this.getStartDate()){
+				if((this.getDeadline() != null && t.getDeadline() == null)){
 					return false;
 				}
-				if(t.getType() != this.getType()){
+
+
+				if(this.getStartDate()!= null && t.getStartDate() != null){
+					return this.getStartDate().equals(t.getStartDate());
+				}
+				if((this.getStartDate() == null && t.getStartDate() != null)){ 
 					return false;
 				}
-				if(t.getProjectName() != this.getProjectName()){
+				if((this.getStartDate() != null && t.getStartDate() == null)){
+					return false;
+				}
+				
+				if(!t.getType().equals(this.getType())){
+					return false;
+				}
+				if(!t.getProjectName().equals(this.getProjectName())){
 					return false;
 				}
 				return true;
