@@ -1,4 +1,10 @@
 package Logic.Interpreter;
+
+import java.io.IOException;
+import java.text.ParseException;
+
+import GUIBackup.EpiphanyUI;
+
 /**
  * This is a singleton class that can be instantiated and used to perform
  * all display to the user interface.
@@ -8,18 +14,27 @@ package Logic.Interpreter;
  */
 
  public class UIHandler{
- 	static UIHandler uiHandler;
+ 	public static UIHandler uiHandler;
+ 	public static EpiphanyUI ui;
  	
- 	private UIHandler() {
+ 	private UIHandler() throws IOException, ParseException {
+ 		uiHandler=this;
+ 		ui = new EpiphanyUI();
  	}
  	
 	/**
 	 * Obtain a instance of the class
 	 * @return UIHandler
+	 * @throws ParseException 
+	 * @throws IOException 
 	 */
  	public static UIHandler getInstance(){
  		if(uiHandler == null){
- 			uiHandler = new UIHandler();
+ 			try {
+				uiHandler = new UIHandler();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
  		} 
  		return uiHandler;
  	}
@@ -29,7 +44,8 @@ package Logic.Interpreter;
 	 * @param toPrint
 	 */
  	public void printToTerminal(String toPrint){
- 		System.out.println(toPrint);
+ 		//System.out.println(toPrint);
+ 		ui.changeSystemStatusTo(toPrint);
  	}
  
  	/**
@@ -39,6 +55,7 @@ package Logic.Interpreter;
  	 */
  	public void printToTerminal(String toPrint, String modifier){
  		System.out.print(toPrint);
+ 		ui.changeSystemStatusTo(toPrint);
  	}
  	
  	/**
@@ -46,6 +63,7 @@ package Logic.Interpreter;
  	 * @param toPrint
  	 */
  	public void printToDisplay(String toPrint){
- 		System.out.println(toPrint);
- 	}	
+ 		//System.out.println(toPrint);
+ 		ui.changeDisplayTo(toPrint);
+ 	}
  }

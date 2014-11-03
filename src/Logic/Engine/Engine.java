@@ -67,7 +67,7 @@ public class Engine {
 	private static Engine engine;
 	private static Stack<PastCommands> undoStack;
 	private static Stack<PastCommands> redoStack;
-	
+
 	/**
 	 * Enums are used for type safety.
 	 * 
@@ -108,7 +108,7 @@ public class Engine {
 	 * @throws ParseException
 	 */
 	private void run() throws IOException, ParseException {
-		
+
 		new ASCIIArt().generateArt("EPIPHANY");
 		UIHandler.getInstance().printToDisplay(MESSAGE_WELCOME);
 		projectsList = new ArrayList<Project>();
@@ -120,7 +120,7 @@ public class Engine {
 	}
 
 	private void initializeEngine() throws IOException, FileNotFoundException,
-			ParseException {
+	ParseException {
 		// assume that projectNames exists.
 		int noOfProjects = countLines("projectMasterList");
 
@@ -151,7 +151,7 @@ public class Engine {
 	}
 
 	private void populateProjectsWithTasks() throws FileNotFoundException,
-			IOException, ParseException {
+	IOException, ParseException {
 		for (String fileName : projectNames) {
 			ArrayList<Task> temp = new ArrayList<Task>();
 
@@ -215,7 +215,7 @@ public class Engine {
 	}
 
 	private void populateProjectNames() throws FileNotFoundException,
-			IOException {
+	IOException {
 		Scanner sc = new Scanner(new File(
 				"../Epiphany/src/Logic/Engine/projectMasterList.txt"));
 		while (sc.hasNextLine()) {
@@ -281,7 +281,7 @@ public class Engine {
 		}
 	}
 
-	public void executeCommand(CommandType userCommand) throws IOException, CancelEditException, CancelDeleteException {
+	public void executeCommand(CommandType userCommand) throws IOException{
 		CommandTypesEnum commandType = determineCommandType(userCommand);
 
 		switch (commandType) {
@@ -307,7 +307,7 @@ public class Engine {
 
 		case EDIT: // TODO
 			EditCommandType editUserCommand = (EditCommandType) userCommand;
-			 edit(editUserCommand.getTaskDescription(), editUserCommand.getProjectName());
+			edit(editUserCommand.getTaskDescription(), editUserCommand.getProjectName());
 
 			break;
 
@@ -315,7 +315,7 @@ public class Engine {
 			UndoCommandType undoUserCommand = (UndoCommandType) userCommand;
 			undo();
 			break;
-			
+
 		case REDO://TODO
 			RedoCommandType redoUserCommand = (RedoCommandType) userCommand;
 			redo();
@@ -339,21 +339,21 @@ public class Engine {
 	 * @throws IOException
 	 */
 	private void add(String taskDescription, Date dateFrom, Date dateTo, String projectName) throws IOException {
-		
+
 		Task incomingTask = new Task(taskDescription, dateFrom, dateTo, projectName);
-		
+
 		// Duplicate check.
 		if(projectNames.contains(projectName)){
 			int indexProj = findIndex(projectName);
 			Project proj = projectsList.get(indexProj);
-				
+
 			// need to check if this incoming task already exists.
 			if(proj.containsTask(incomingTask)){
 				UIHandler.getInstance().printToTerminal(MESSAGE_ADD_DUPLICATE);
 				return;
 			}
 		}
-		
+
 		// else, continue
 		if (projectNames.contains(projectName)) {
 			// Existing project
@@ -418,27 +418,27 @@ public class Engine {
 
 	private void delete(String taskDescription, String projectName)
 			throws IOException {
-		
+
 		Task historyTask = new Task();
-		
+
 		//Need to check if this is a delete project call.
-	//	if(taskDescription.equals(null)){
+		//	if(taskDescription.equals(null)){
 		//	deleteProject(projectName);
-	//	}
-		
+		//	}
+
 		ArrayList<Task> temp = search(taskDescription);
-		
+
 		if (!temp.isEmpty()) {
-			
+
 			UIHandler.getInstance().printToTerminal("Please enter the index number of the task you want to delete: ", "inline");
 			int input;
-			
+
 			try {
 				input = interp.askForAdditionalInformationForDelete();
 				Task taskToBeDeleted = temp.get(input - 1);
-				
+
 				historyTask = taskToBeDeleted; // to keep track for undo purposes
-				
+
 				projectName = taskToBeDeleted.getProjectName();
 				int indexProject = findIndex(projectName);
 
@@ -458,7 +458,7 @@ public class Engine {
 		} else {
 			UIHandler.getInstance().printToDisplay("No such task exists!");
 		}
-		
+
 		undoStack.push(new PastCommands("delete", historyTask, historyTask.getProjectName()));
 
 	}
@@ -471,41 +471,45 @@ public class Engine {
 	 ***********************************/
 
 	// convert to a task
-	private void edit(String taskDescription, String projectName) throws IOException, CancelEditException, CancelDeleteException {
+	private void edit(String taskDescription, String projectName) throws IOException {
 
 		Task historyTask = new Task();
-			
+
 		ArrayList<Task> temp = search(taskDescription);
-		
+
 		if (!temp.isEmpty()) {
 			//DELETE OLD TASK
-			UIHandler.getInstance().printToTerminal("Please enter the index of the task you want to edit: ", "inline");
-			
-			int input = interp.askForAdditionalInformationForEdit();
-			
-			Task taskToBeEdited = temp.get(input - 1);
-			
-			historyTask = taskToBeEdited; // to keep track for undo purposes
-			
-			projectName = taskToBeEdited.getProjectName();
-			int index = findIndex(projectName);
+			try{
+				UIHandler.getInstance().printToTerminal("Please enter the index of the task you want to edit: ", "inline");
 
-			Project currProject = projectsList.get(index);
-			currProject.deleteTask(taskToBeEdited);
+				int input = interp.askForAdditionalInformationForEdit();
 
-			
-			//ADD NEW TASK
-			UIHandler.getInstance().printToTerminal("Please update your task:", "inline");
+				Task taskToBeEdited = temp.get(input - 1);
 
-			CommandType newUserCommand = interp.askForNewTaskForEdit();
-			executeCommand(newUserCommand);
-			
+				historyTask = taskToBeEdited; // to keep track for undo purposes
+
+				projectName = taskToBeEdited.getProjectName();
+				int index = findIndex(projectName);
+
+				Project currProject = projectsList.get(index);
+				currProject.deleteTask(taskToBeEdited);
+
+
+				//ADD NEW TASK
+				UIHandler.getInstance().printToTerminal("Please update your task:", "inline");
+
+				CommandType newUserCommand = interp.askForNewTaskForEdit();
+				executeCommand(newUserCommand);
+			} catch (CancelEditException e){
+				return;
+			}
+
 		} else {
 			UIHandler.getInstance().printToDisplay("Cannot edit!");
 		}
-		
-	//	undoStack.push(new PastCommands("delete", historyTask));
-	//	undoStack.push(new PastCommands("add", historyTask));
+
+		//	undoStack.push(new PastCommands("delete", historyTask));
+		//	undoStack.push(new PastCommands("add", historyTask));
 		undoStack.push(new PastCommands("edit", historyTask.getProjectName()));
 
 
@@ -565,7 +569,7 @@ public class Engine {
 		if(projectList.isEmpty()){
 			UIHandler.getInstance().printToTerminal(MESSAGE_INVALID_SEARCH);
 		}
-		
+
 		int counter = 1;
 		for (Task t : projectList) {
 			UIHandler.getInstance().printToDisplay(
@@ -590,11 +594,11 @@ public class Engine {
 	private void display(String input) throws IOException {
 		if (input.equals("all")) {
 			// display everything
-			
+
 			if(projectsList.size() == 1 && projectsList.get(0).isEmpty()){
 				UIHandler.getInstance().printToTerminal(MESSAGE_DISPLAY_ERROR);
 			}
-			
+
 
 			int counter = 1;
 			for (int i = 0; i < projectsList.size(); i++) {
@@ -619,134 +623,134 @@ public class Engine {
 
 	/********************** Undo/Redo Methods ***********************************/
 	private void undo() throws IOException {
-		
+
 		if(undoStack.isEmpty()){
 			UIHandler.getInstance().printToTerminal(MESSAGE_UNDO_ERROR);
 		}else{
 			PastCommands mostRecent = undoStack.pop();
-			
+
 			//Type check.
 			String type = mostRecent.getType();
 			Task task = mostRecent.getTask();
-			
+
 			if(type.equals("add")){
 				// undo add
 				if(projectNames.contains(task.getProjectName())){
 					//Match found
-				
+
 					int index = findIndex(task.getProjectName());
 					Project p = projectsList.get(index);
 					p.deleteTask(task);
-	
+
 				}
-				
+
 				redoStack.push(mostRecent);
-				
+
 			}else if(type.equals("delete")){				
 				if(projectNames.contains(task.getProjectName())){
 					//Match found
-				
+
 					int index = findIndex(task.getProjectName());
 					Project p = projectsList.get(index);
 					p.addTask(task);
-	
+
 				}
-				
+
 				redoStack.push(mostRecent);
-				
+
 			}else if(type.equals("edit")){
-					PastCommands first = undoStack.pop(); //(now add) del
-					
+				PastCommands first = undoStack.pop(); //(now add) del
+
 				//	PastCommands second = undoStack.pop(); //add
-					
-					if(projectNames.contains(first.getProjectName())){
-				
-						int index = findIndex(first.getProjectName());
-						Project p = projectsList.get(index);
-						
-						if(first.getType().equals("add")){
-							p.deleteTask(first.getTask()); 
-						}
+
+				if(projectNames.contains(first.getProjectName())){
+
+					int index = findIndex(first.getProjectName());
+					Project p = projectsList.get(index);
+
+					if(first.getType().equals("add")){
+						p.deleteTask(first.getTask()); 
 					}
-					
-					PastCommands toPut = undoStack.peek();
-					
-					if(projectNames.contains(toPut.getProjectName())){
-						int index = findIndex(toPut.getProjectName());
-						Project p = projectsList.get(index);
-						p.addTask(toPut.getTask());	
-					}
-						
-					redoStack.push(first);
-					redoStack.push(toPut);	
-					redoStack.push(mostRecent);
+				}
+
+				PastCommands toPut = undoStack.peek();
+
+				if(projectNames.contains(toPut.getProjectName())){
+					int index = findIndex(toPut.getProjectName());
+					Project p = projectsList.get(index);
+					p.addTask(toPut.getTask());	
+				}
+
+				redoStack.push(first);
+				redoStack.push(toPut);	
+				redoStack.push(mostRecent);
 			}
-			
+
 			UIHandler.getInstance().printToTerminal(MESSAGE_UNDO_SUCCESS);
 		}
 	}
-	
+
 	private void redo() throws IOException {
-		
+
 		if(redoStack.isEmpty()){
 			UIHandler.getInstance().printToTerminal(MESSAGE_REDO_ERROR);
 		}else{
 			PastCommands mostRecent = redoStack.pop();
-			
+
 			//Type check.
 			String type = mostRecent.getType();
 			Task task = mostRecent.getTask();
-			
+
 			if(type.equals("add")){
 				// undo add
 				if(projectNames.contains(task.getProjectName())){
 					//Match found
-				
+
 					int index = findIndex(task.getProjectName());
 					Project p = projectsList.get(index);
 					p.addTask(task);
-	
+
 				}				
 			}else if(type.equals("delete")){				
 				if(projectNames.contains(task.getProjectName())){
 					//Match found
-				
+
 					int index = findIndex(task.getProjectName());
 					Project p = projectsList.get(index);
 					p.deleteTask(task);
-	
+
 				}				
 			}else if(type.equals("edit")){
 				PastCommands existingTask = redoStack.pop(); //(now add) del
-				
+
 				PastCommands newTask = redoStack.pop(); //add
-					
-					if(projectNames.contains(existingTask.getProjectName())){
-				
-						int index = findIndex(existingTask.getProjectName());
-						Project p = projectsList.get(index);
-						
-						if(existingTask.getType().equals("add")){
-							p.deleteTask(existingTask.getTask()); 
-						}
+
+				if(projectNames.contains(existingTask.getProjectName())){
+
+					int index = findIndex(existingTask.getProjectName());
+					Project p = projectsList.get(index);
+
+					if(existingTask.getType().equals("add")){
+						p.deleteTask(existingTask.getTask()); 
 					}
-										
-					if(projectNames.contains(newTask.getProjectName())){
-						int index = findIndex(newTask.getProjectName());
-						Project p = projectsList.get(index);
-						p.addTask(newTask.getTask());	
-					}
-						
-			//		redoStack.push(existingTask);
-			//		redoStack.push(second);	
-			//		redoStack.push(mostRecent);
+				}
+
+				if(projectNames.contains(newTask.getProjectName())){
+					int index = findIndex(newTask.getProjectName());
+					Project p = projectsList.get(index);
+					p.addTask(newTask.getTask());	
+				}
+
+				//		redoStack.push(existingTask);
+				//		redoStack.push(second);	
+				//		redoStack.push(mostRecent);
 			}
-			
+
 			UIHandler.getInstance().printToTerminal(MESSAGE_REDO_SUCCESS);
 		}	}
-/*	
+	/*	
 private void undoEdit() throws IOException {
-		
+
 		if(undoStack.isEmpty()){
 			UIHandler.getInstance().printToTerminal(MESSAGE_UNDO_ERROR);
 		}else{
@@ -781,13 +785,13 @@ private void undoEdit() throws IOException {
 
 				redoStack.push(mostRecent);
 			}
-			
+
 			UIHandler.getInstance().printToTerminal(MESSAGE_UNDO_SUCCESS);
 
 		}
 
 	}
-	
+
 	private void redoEdit() throws IOException {
 
 		if(redoStack.isEmpty()){
@@ -822,9 +826,9 @@ private void undoEdit() throws IOException {
 					}
 				}
 			}
-			
+
 			UIHandler.getInstance().printToTerminal(MESSAGE_REDO_SUCCESS);
 		}
 	}
-*/
+	 */
 }

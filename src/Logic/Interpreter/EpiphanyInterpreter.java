@@ -33,7 +33,7 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 
 	public EpiphanyInterpreter() throws IOException, ParseException {
 		engine = Engine.getInstance();
-		input = new Scanner( System.in );
+		input = new Scanner(System.in);
 		uiHandler = UIHandler.getInstance();
 		this.populateDictionary(); //adds an English dictionary
 	}
@@ -43,14 +43,14 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 	 * abstracted out to other methods.
 	 * @param args which contains the file name (at index 0) entered by the user.
 	 * @throws ParseException 
-	 * @throws IOException 
+	 * @throws IOException
 	 * @throws CancelDeleteException 
 	 * @throws CancelEditException 
 	 */
-	public static void main(String[] args) throws IOException, ParseException, CancelEditException, CancelDeleteException {
+	/*public static void main(String[] args) throws IOException, ParseException, CancelEditException, CancelDeleteException {
 		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
 		interpreter.acceptUserInputUntilExit();
-	}
+	}*/
 
 	/**
 	 * This method accepts the user inputs until the 'exit' command is entered. None of the actual
@@ -59,7 +59,7 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 	 * @throws CancelDeleteException 
 	 * @throws CancelEditException 
 	 */
-	void acceptUserInputUntilExit() throws IOException, CancelEditException, CancelDeleteException {
+	/*void acceptUserInputUntilExit() throws IOException, CancelEditException, CancelDeleteException {
 		String userInput;
 		do{
 			uiHandler.printToTerminal(MESSAGE_COMMAND_PROMPT, "inline");
@@ -77,6 +77,20 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 			}
 		} while(!userInput.equalsIgnoreCase("exit"));
 		input.close();
+	}*/
+
+	public void acceptUserInput(String userInput) throws IOException{
+		CommandType toPassToEngine;
+		try {
+			toPassToEngine = interpretCommand(userInput);
+			assert(toPassToEngine != null);
+			engine.executeCommand(toPassToEngine);
+		} catch (InvalidCommandException e) {
+			uiHandler.printToTerminal(MESSAGE_INVALID_COMMAND);
+		}
+		catch (ExitException e) {
+			System.exit(0);
+		}
 	}
 
 	/**
@@ -298,26 +312,26 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 		}
 	}
 
-		/**
-		 * When we have selected to task to be edited, we then delete it and add
-		 * a new task in its place, this function accepts the new task from the user.
-		 * @return CommandType
-		 */
-		public CommandType askForNewTaskForEdit() throws CancelEditException {
-			String inputFromUser = input.nextLine();
-			CommandType toPassToEngine;
-			try {
-				toPassToEngine = interpretAddCommand(inputFromUser);
-				assert(toPassToEngine != null);
-				return toPassToEngine;
-			} catch (InvalidCommandException e) {
-				uiHandler.printToTerminal("You have entered an invalid task. Press y to try again, press n to cancel edit.");
-				String userResponse = input.nextLine();
-				if(userResponse.equalsIgnoreCase("y")){
-					return askForNewTaskForEdit();
-				} else{
-					throw new CancelEditException();
-				}
+	/**
+	 * When we have selected to task to be edited, we then delete it and add
+	 * a new task in its place, this function accepts the new task from the user.
+	 * @return CommandType
+	 */
+	public CommandType askForNewTaskForEdit() throws CancelEditException {
+		String inputFromUser = input.nextLine();
+		CommandType toPassToEngine;
+		try {
+			toPassToEngine = interpretAddCommand(inputFromUser);
+			assert(toPassToEngine != null);
+			return toPassToEngine;
+		} catch (InvalidCommandException e) {
+			uiHandler.printToTerminal("You have entered an invalid task. Press y to try again, press n to cancel edit.");
+			String userResponse = input.nextLine();
+			if(userResponse.equalsIgnoreCase("y")){
+				return askForNewTaskForEdit();
+			} else{
+				throw new CancelEditException();
 			}
 		}
 	}
+}
