@@ -343,13 +343,15 @@ public class Engine {
 		Task incomingTask = new Task(taskDescription, dateFrom, dateTo, projectName);
 		
 		// Duplicate check.
-		int indexProj = findIndex(projectName);
-		Project proj = projectsList.get(indexProj);
-			
-		// need to check if this incoming task already exists.
-		if(proj.containsTask(incomingTask)){
-			UIHandler.getInstance().printToTerminal(MESSAGE_ADD_DUPLICATE);
-			return;
+		if(projectNames.contains(projectName)){
+			int indexProj = findIndex(projectName);
+			Project proj = projectsList.get(indexProj);
+				
+			// need to check if this incoming task already exists.
+			if(proj.containsTask(incomingTask)){
+				UIHandler.getInstance().printToTerminal(MESSAGE_ADD_DUPLICATE);
+				return;
+			}
 		}
 		
 		// else, continue

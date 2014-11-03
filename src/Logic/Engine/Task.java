@@ -43,6 +43,7 @@ public class Task {
 				if(!t.getTaskDescription().equals(this.getTaskDescription())){
 					return false;
 				}
+				
 				if(this.getDeadline()!= null && t.getDeadline() != null){
 					return this.getDeadline().equals(t.getDeadline());
 				}
