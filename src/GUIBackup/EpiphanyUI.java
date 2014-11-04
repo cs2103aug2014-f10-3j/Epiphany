@@ -104,7 +104,7 @@ public class EpiphanyUI extends JFrame {
 
 
 	public void changeDisplayTo(String toDisplay){
-		displayArea.setText(toDisplay);
+		displayArea.append(toDisplay + "\n");
 	}
 	
 	public void changeSystemStatusTo(String newStatus){
