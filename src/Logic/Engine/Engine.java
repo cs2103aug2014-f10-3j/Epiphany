@@ -41,7 +41,7 @@ public class Engine {
 
 	public static ArrayList<String> projectNames;
 	public static ArrayList<Project> projectsList;
-	public static final String MESSAGE_WELCOME = "Welcome to Epiphany! Please enter a task.";
+	public static final String MESSAGE_WELCOME = "";
 	public static final String MESSAGE_WRONG_ENTRY = "Wrong entry, please re-enter input.";
 	public static final String MESSAGE_SORTED = "Tasks sorted alphabetically!";
 	public static final String MESSAGE_DELETE_INVALID = " %s, is already empty, please re-enter command.";
@@ -528,8 +528,6 @@ public class Engine {
 			UIHandler.getInstance().printToDisplay("Cannot edit!");
 		}
 
-		// undoStack.push(new PastCommands("delete", historyTask));
-		// undoStack.push(new PastCommands("add", historyTask));
 		undoStack.push(new PastCommands("edit", historyTask.getProjectName()));
 
 	}
@@ -659,36 +657,52 @@ public class Engine {
 	private void collateAllForDisplay() {
 		printByDate = new ArrayList<DisplayObject>();
 		ArrayList<Task> floating = new ArrayList<Task>();
+		
+		// Loop Through List of Projects.
 		for (int i = 0; i < projectNames.size(); i++) {
-			ArrayList<Task> currProjectTasks = projectsList.get(i)
-					.retrieveAllTasks();
+			ArrayList<Task> currProjectTasks = projectsList.get(i).retrieveAllTasks();
+			
 			// sort tasks into many arrayLIST which shall then be printed
 			// according to date
 			for (int j = 0; j < currProjectTasks.size(); j++) {
 				Task currTask = currProjectTasks.get(j);
+				
 				if (!currTask.hasDeadLine()) {
 					floating.add(currTask);
-				} else if (checkIfDeadlineListExists(currTask) > 0) {
-					DisplayObject currDisplayObject = printByDate.get(i);
-					currDisplayObject.getList().add(currTask);
+				} else if (checkIfDeadlineListExists(currTask) >= 0) {
+					DisplayObject currDisplayObject = printByDate.get(checkIfDeadlineListExists(currTask));
+					currDisplayObject.addTaskToList(currTask);
 				} else {
-					printByDate.add(new DisplayObject(currTask.getDeadline(),
-							currTask));
+					DisplayObject newDisplayObject = new DisplayObject(currTask.getDeadline());
+					newDisplayObject.addTaskToList(currTask);
+					printByDate.add(newDisplayObject);
 				}
 			}
 			printByDate.add(new DisplayObject(null, floating));// check if null
 																// causes
 																// problems
 		}
+		
 	}
 
 	private void displayAll() {
 		//Collections.sort((List<T>) printByDate); SORT IT SOMEHOW
 		for(int i = 0; i < printByDate.size(); i++){
 			DisplayObject currDisplayObject = printByDate.get(i);
-			UIHandler.getInstance().printToDisplay(currDisplayObject.getDate().toString());
-			displayArrayList(currDisplayObject.getList());
+			Date currDate = currDisplayObject.getDate();
+			if(currDate == null){
+				// Floating
+				UIHandler.getInstance().printToDisplay("floating");
+				displayArrayList(currDisplayObject.getList());
+				
+			}else{
+				UIHandler.getInstance().printToDisplay(currDate.toString());
+				displayArrayList(currDisplayObject.getList());	
+			}
+		
 		}
+		
+		
 	}
 
 	// check if the format of the date created is correct
@@ -702,16 +716,16 @@ public class Engine {
 	 * @return
 	 */
 	private int checkIfDeadlineListExists(Task currTask) {
+		// does this work?
+		
 		for (int i = 0; i < printByDate.size(); i++) {
-			if (currTask.getDeadline().equals(printByDate.get(i).getDate())) {// does
-																				// this
-																				// work??????????
+			if (isDateEqual(currTask.getDeadline(), printByDate.get(i).getDate())) {
 				return i;
 			} else {
 				continue;
 			}
 		}
-		return 0;
+		return -1;
 	}
 
 	private Date getDate(int year, int month, int day) {
@@ -885,6 +899,22 @@ public class Engine {
 
 			UIHandler.getInstance().printToTerminal(MESSAGE_REDO_SUCCESS);
 		}
+	}
+	
+	private boolean isDateEqual(Date d1, Date d2){
+		if(d1.getDate() != d2.getDate()){
+			return false;
+		}
+		
+		if(d1.getMonth() != d2.getMonth()){
+			return false;
+		}
+		
+		if(d1.getYear() != d2.getYear()){
+			return false;
+		}
+		
+		return true;
 	}
 }
 /**

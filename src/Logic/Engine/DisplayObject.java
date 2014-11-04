@@ -20,12 +20,21 @@ public class DisplayObject {
 		public DisplayObject(Date date, ArrayList<Task> list){
 			this.date = date;
 			this.list = list;
-			}
+		}
 		
 		public DisplayObject(Date date, Task task){
-			
 			this.date = date;
 			list.add(task);
+		}
+		
+		public DisplayObject(Date date){
+			list = new ArrayList<Task>();
+			this.date = date;
+		}
+		
+		public void addTaskToList(Task t){
+			assert(list != null);
+			this.list.add(t);
 		}
 		
 		
