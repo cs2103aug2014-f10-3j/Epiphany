@@ -182,7 +182,7 @@ public class Project {
 		 * @return ArrayList<Task>
 		 * @author amit
 		 */
-		public ArrayList<Task>displayAllTasks(){
+		public ArrayList<Task> retrieveAllTasks(){
 			ArrayList<Task> results = new ArrayList<Task>();
 			
 			results.addAll(deadLineList);
@@ -271,7 +271,7 @@ public class Project {
 		
 		/**
 		 * Sorts by impending task(date)
-		 * @author amit
+		 * @author Abdullah
 		 *
 		 */
 	private class dateComparator implements Comparator<Task> {
