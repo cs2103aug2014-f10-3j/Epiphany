@@ -1,5 +1,6 @@
 package Logic.Interpreter;
 
+import java.awt.FontFormatException;
 import java.io.IOException;
 import java.text.ParseException;
 
@@ -17,7 +18,7 @@ import GUIBackup.EpiphanyUI;
  	public static UIHandler uiHandler;
  	public static EpiphanyUI ui;
  	
- 	private UIHandler() throws IOException, ParseException {
+ 	private UIHandler() throws IOException, ParseException, FontFormatException {
  		uiHandler=this;
  		ui = new EpiphanyUI();
  	}

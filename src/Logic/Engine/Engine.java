@@ -593,6 +593,7 @@ public class Engine {
 					counter + ". " + t.printTaskForDisplay());
 			counter++;
 		}
+		UIHandler.getInstance().printToDisplay("\n");
 	}
 
 	/**
@@ -692,14 +693,14 @@ public class Engine {
 			Date currDate = currDisplayObject.getDate();
 			if(currDate == null){
 				// Floating
-				UIHandler.getInstance().printToDisplay("floating");
+				UIHandler.getInstance().printToDisplay("Untimed Tasks:");
 				displayArrayList(currDisplayObject.getList());
 				
 			}else{
 				UIHandler.getInstance().printToDisplay(currDate.toString());
 				displayArrayList(currDisplayObject.getList());	
 			}
-		
+			
 		}
 		
 		

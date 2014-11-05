@@ -41,7 +41,7 @@ public class EpiphanyUI extends JFrame {
 		epiphanyUI = this;
 		this.setVisible(true);
 		interpreter = new EpiphanyInterpreter();
-		setTitle("Simple example");
+		setTitle("Epiphany");
 		setSize(500, 650);
 		setResizable(false);
 		getContentPane().setBackground(Color.black);
