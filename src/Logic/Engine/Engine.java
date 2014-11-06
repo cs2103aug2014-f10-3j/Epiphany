@@ -596,7 +596,6 @@ public class Engine {
 	}
 
 	private void displayAll() {
-		// Collections.sort((List<T>) printByDate); SORT IT SOMEHOW
 		for (DisplayObject disp : ListByDate) {
 
 			Date currDate = disp.getDate();
@@ -605,13 +604,19 @@ public class Engine {
 				ArrayList<Task> listDisObj = disp.getList(); // Floating
 
 				if (!listDisObj.isEmpty()) {
+				//	UIHandler.getInstance().printToDisplay("/**************************************************************************************************/" + "\n");
 					UIHandler.getInstance().printToDisplay("Bucket List:");
 					displayArrayList(listDisObj);
+				//	UIHandler.getInstance().printToDisplay("/**************************************************************************************************/");
 				}
 
 			} else {
-				UIHandler.getInstance().printToDisplay(disp.dateToString());
+				UIHandler.getInstance().printToDisplay("------------------------");
+				UIHandler.getInstance().printToDisplay("> " + disp.dateToString() + " |");
+				UIHandler.getInstance().printToDisplay("------------------------");
+
 				displayArrayList(disp.getList());
+
 			}
 		}
 	}
