@@ -104,7 +104,7 @@ public class Engine {
 	 */
 	private void run() throws IOException, ParseException {
 
-		// new ASCIIArt().generateArt("EPIPHANY");
+		new ASCIIArt().generateArt("EPIPHANY");
 		UIHandler.getInstance().printToDisplay(MESSAGE_WELCOME);
 		initializeDS();
 		initializeEngine();
@@ -580,10 +580,9 @@ public class Engine {
 					ListByDate.add(newDisplayObject);
 				}
 			}
-			ListByDate.add(new DisplayObject(null, floating));// check if null
-																// causes
-																// problems
 		}
+		ListByDate.add(new DisplayObject(null, floating));
+
 
 	}
 
