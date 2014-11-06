@@ -1,8 +1,5 @@
 package Logic.Engine;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
@@ -269,11 +266,6 @@ public class Project {
 			}
 		}
 		
-		/**
-		 * Sorts by impending task(date)
-		 * @author Abdullah
-		 *
-		 */
 	private class dateComparator implements Comparator<Task> {
 		public int compare(Task task1, Task task2) {
 			if (task1.getDeadline() == null && task2.getDeadline() == null) {

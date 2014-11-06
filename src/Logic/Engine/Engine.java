@@ -1,15 +1,11 @@
 package Logic.Engine;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import Logic.Exceptions.CancelDeleteException;
@@ -17,6 +13,8 @@ import Logic.Exceptions.CancelEditException;
 import Logic.Interpreter.EpiphanyInterpreter;
 import Logic.Interpreter.UIHandler;
 import Logic.Interpreter.CommandType.*;
+import Storage.Writer;
+import Storage.Reader;
 
 /**
  * This class can be instantiated to perform all the operations that the program
@@ -37,10 +35,8 @@ import Logic.Interpreter.CommandType.*;
  */
 public class Engine {
 
-	/********************** Declaration of constants and variables ***********************************/
-
-	public static ArrayList<String> projectNames;
-	public static ArrayList<Project> projectsList;
+	/****************************************Message Prompts************************************************/
+	
 	public static final String MESSAGE_WELCOME = "";
 	public static final String MESSAGE_WRONG_ENTRY = "Wrong entry, please re-enter input.";
 	public static final String MESSAGE_SORTED = "Tasks sorted alphabetically!";
@@ -61,24 +57,20 @@ public class Engine {
 	public static final String MESSAGE_UNDO_SUCCESS = "Undone!";
 	public static final String MESSAGE_REDO_ERROR = "Nothing to redo!";
 	public static final String MESSAGE_REDO_SUCCESS = "Redone!";
-	private static final String ERROR_WRONG_INPUT = null;
+	private static final String ERROR_WRONG_CMDTYPE = null;
 	private static final String ERROR_COMMAND_TYPE_NULL = null;
+	
+	
+	/*****************Data Structures and Objects********************/
 	private static EpiphanyInterpreter interp;
 	private static Engine engine;
+	public static ArrayList<String> projectNames;
+	public static ArrayList<Project> projectsList;
 	private static Stack<PastCommands> undoStack;
 	private static Stack<PastCommands> redoStack;
-	private static ArrayList<DisplayObject> printByDate;
+	private static ArrayList<DisplayObject> ListByDate;
 
-	/**
-	 * Enums are used for type safety.
-	 * 
-	 * @author Wei Yang
-	 *
-	 */
-	public enum CommandTypesEnum {
-		ADD, DISPLAY, DELETE, CLEAR, EXIT, INVALID, SEARCH, EDIT, UNDO, REDO
-	};
-
+	
 	private Engine() throws IOException, ParseException {
 		engine = this;
 		run();
@@ -98,6 +90,7 @@ public class Engine {
 
 		return engine;
 	}
+	
 
 	/********************** Run and Engine Initialization Methods ***********************************/
 
@@ -110,128 +103,72 @@ public class Engine {
 	 */
 	private void run() throws IOException, ParseException {
 
-		new ASCIIArt().generateArt("EPIPHANY");
+//		new ASCIIArt().generateArt("EPIPHANY");
 		UIHandler.getInstance().printToDisplay(MESSAGE_WELCOME);
+		initializeDS();
+		initializeEngine();
+	}
+
+	/**
+	 * Initializes the main data structures to be used by engine.
+	 * @author amit 
+	 * @throws IOException
+	 * @throws ParseException
+	 */
+	private void initializeDS() throws IOException, ParseException {
 		projectsList = new ArrayList<Project>();
 		projectNames = new ArrayList<String>();
-		initializeEngine();
 		interp = new EpiphanyInterpreter();
 		undoStack = new Stack<PastCommands>();
 		redoStack = new Stack<PastCommands>();
 	}
 
-	private void initializeEngine() throws IOException, FileNotFoundException,
-			ParseException {
+	/**
+	 * Reads in relevant saved data and boots Epiphany Engine 
+	 * @author amit
+	 * @throws IOException
+	 * @throws FileNotFoundException
+	 * @throws ParseException
+	 */
+	private void initializeEngine() throws IOException, FileNotFoundException, ParseException {
 		// assume that projectNames exists.
 		int noOfProjects = countLines("projectMasterList");
 
 		if (noOfProjects == 0) {
+	
 			createDefault(); // default project does not exist. need to create.
-
 		} else {
-			// there is atleast 1 project. Read in project names and populate
-			// tasks.
+			// there is atleast 1 project. Read in project names and populate tasks.
 
 			populateProjectNames();
 			populateProjectsWithTasks();
 		}
 	}
 
+	/**
+	 * Creates the default project
+	 * @throws IOException
+	 */
 	private void createDefault() throws IOException {
 		projectNames.add("default");
 		projectsList.add(new Project("default", new ArrayList<Task>()));
-
-		File file = new File(
-				"../Epiphany/src/Logic/Engine/projectMasterList.txt");
-		FileWriter f = new FileWriter(file, true);
-		BufferedWriter writer = new BufferedWriter(f);
-
-		writer.write("default");
-		writer.flush();
-		writer.close();
+		Writer.generateDefault();
 	}
 
-	private void populateProjectsWithTasks() throws FileNotFoundException,
-			IOException, ParseException {
-		for (String fileName : projectNames) {
-			ArrayList<Task> temp = new ArrayList<Task>();
-
-			File f = new File("../Epiphany/src/Logic/Engine/Projects/"
-					+ fileName);
-			BufferedReader reader = new BufferedReader(new FileReader(f));
-			String line = null;
-			while ((line = reader.readLine()) != null) {
-				String[] taskComponents = line.split("~");
-
-				String type = taskComponents[0];
-				String description = taskComponents[1];
-				Date from = parseDate(taskComponents[2]);
-				Date to = parseDate(taskComponents[3]);
-				String projName = taskComponents[4];
-
-				Task t = null;
-
-				if (type.equals("deadline")) {
-					t = new Task(description, null, to, projName);
-				} else if (type.equals("interval")) {
-					t = new Task(description, from, to, projName);
-				} else if (type.equals("floating")) {
-					t = new Task(description, null, null, projName);
-				}
-
-				temp.add(t);
-			}
-
-			reader.close();
-
-			Project p = new Project(fileName, temp);
-			projectsList.add(p);
-		}
-	}
-
-	private Date parseDate(String input) throws ParseException {
-		Date date = new Date();
-
-		if (!input.equals("null")) {
-			SimpleDateFormat sdf = new SimpleDateFormat(
-					"EEE MMM dd HH:mm:ss zzz yyyy");
-			date = sdf.parse(input);
-		} else {
-			return null;
-		}
-
-		return date;
-
-		/*
-		 * String[] components = input.split(" "); String dow = components[0];
-		 * String month = components[1]; int date =
-		 * Integer.parseInt(components[2]);
-		 * 
-		 * String[] time = components[3].split(":"); int hour =
-		 * Integer.parseInt(time[0]); int min = Integer.parseInt(time[1]); int
-		 * seconds = Integer.parseInt(time[2]);
-		 * 
-		 * int year = Integer.parseInt(components[5]);
-		 */
+	private void populateProjectsWithTasks() throws FileNotFoundException, IOException, ParseException {
+		Reader reader = new Reader(projectNames, projectsList);
+		reader.readProjectData();
 	}
 
 	private void populateProjectNames() throws FileNotFoundException,
 			IOException {
-		Scanner sc = new Scanner(new File(
-				"../Epiphany/src/Logic/Engine/projectMasterList.txt"));
-		while (sc.hasNextLine()) {
-			projectNames.add(sc.nextLine());
-
-		}
+		Reader reader = new Reader(projectNames, projectsList);
+		reader.readProjectTitles();
 	}
 
-	private boolean parseBool(String input) {
-		return (input.equalsIgnoreCase("true")) ? true : false;
-	}
 
 	public static int countLines(String filename) throws IOException {
-		File file = new File("../Epiphany/src/Logic/Engine/" + filename
-				+ ".txt");
+		File file = new File("../Epiphany/src/Storage/" + filename + ".txt");
 		int lineNumber = 0;
 
 		if (file.exists()) {
@@ -250,6 +187,16 @@ public class Engine {
 	}
 
 	/********************** Command Type Filter ***********************************/
+	
+	/**
+	 * Enums are used for type safety.
+	 * 
+	 * @author Wei Yang
+	 *
+	 */
+	public enum CommandTypesEnum {
+		ADD, DISPLAY, DELETE, CLEAR, EXIT, INVALID, SEARCH, EDIT, UNDO, REDO
+	};
 
 	/**
 	 * Takes a command type input, as is given by the interpreter and returns
@@ -262,7 +209,6 @@ public class Engine {
 	private CommandTypesEnum determineCommandType(CommandType commandType) {
 		if (commandType == null)
 			throw new Error(ERROR_COMMAND_TYPE_NULL);
-
 		if (commandType.getType().equalsIgnoreCase("add")) {
 			return CommandTypesEnum.ADD;
 		} else if (commandType.getType().equalsIgnoreCase("display")) {
@@ -286,46 +232,42 @@ public class Engine {
 		CommandTypesEnum commandType = determineCommandType(userCommand);
 
 		switch (commandType) {
-		case ADD:// METHOD DONE
+		case ADD:
 			AddCommandType addUserCommand = (AddCommandType) userCommand;
-			add(addUserCommand.getDescription(), addUserCommand.getDateFrom(),
-					addUserCommand.getDateTo(), addUserCommand.getProjectName());
+			add(addUserCommand.getDescription(), addUserCommand.getDateFrom(), addUserCommand.getDateTo(), addUserCommand.getProjectName());
 			break;
+			
 		case DISPLAY:
 			DisplayCommandType displayUserCommand = (DisplayCommandType) userCommand;
-			display(displayUserCommand.getModifiers());
+			displayOverall(displayUserCommand.getModifiers());
 			break;
+			
 		case DELETE:
 			DeleteCommandType deleteUserCommand = (DeleteCommandType) userCommand;
-			delete(deleteUserCommand.getTaskDescription(),
-					deleteUserCommand.getProjectName());
+			delete(deleteUserCommand.getTaskDescription(), deleteUserCommand.getProjectName());
 			break;
+			
 		case SEARCH:
 			SearchCommandType searchUserCommand = (SearchCommandType) userCommand;
-			search(searchUserCommand.getTaskDescription(),
-					searchUserCommand.getProjectName());
+			searchInProj(searchUserCommand.getTaskDescription(), searchUserCommand.getProjectName());
 			break;
 
 		case EDIT:
 			EditCommandType editUserCommand = (EditCommandType) userCommand;
-			edit(editUserCommand.getTaskDescription(),
-					editUserCommand.getProjectName());
-
+			edit(editUserCommand.getTaskDescription(), editUserCommand.getProjectName());
 			break;
 
 		case UNDO:
-			UndoCommandType undoUserCommand = (UndoCommandType) userCommand;
 			undo();
 			break;
 
 		case REDO:
-			RedoCommandType redoUserCommand = (RedoCommandType) userCommand;
 			redo();
 			break;
 
 		default:
-			// throw an error if the command is not recognized
-			throw new Error(ERROR_WRONG_INPUT);
+			throw new Error(ERROR_WRONG_CMDTYPE); // throw an error if the command is not recognized
+
 		}
 	}
 
@@ -340,11 +282,9 @@ public class Engine {
 	 *            is the command that the interpreter send in.
 	 * @throws IOException
 	 */
-	private void add(String taskDescription, Date dateFrom, Date dateTo,
-			String projectName) throws IOException {
+	private void add(String taskDescription, Date dateFrom, Date dateTo, String projectName) throws IOException {
 
-		Task incomingTask = new Task(taskDescription, dateFrom, dateTo,
-				projectName);
+		Task incomingTask = new Task(taskDescription, dateFrom, dateTo, projectName);
 
 		// Duplicate check.
 		if (projectNames.contains(projectName)) {
@@ -380,18 +320,15 @@ public class Engine {
 				temp.add(incomingTask);
 				projectsList.add(new Project(projectName, temp));
 
-				File file = new File(
-						"../Epiphany/src/Logic/Engine/projectMasterList.txt");
-				FileWriter f = new FileWriter(file, true);
-				BufferedWriter writer = new BufferedWriter(f);
-				writer.newLine();
-				writer.write(projectName);
-				writer.close();
+				Writer.updateProjectMasterList(projectName);
 			}
 		}
+		
 		UIHandler.getInstance().printToTerminal(MESSAGE_ADD);
-		undoStack.push(new PastCommands("add", incomingTask, projectName));
+		addToUndoStack("add", projectName, incomingTask);
 	}
+
+	
 
 	private int findIndex(String projectName) {
 		for (int i = 0; i < projectNames.size(); i++) {
@@ -403,41 +340,19 @@ public class Engine {
 		return -1;
 	}
 
-	/**********************
-	 * Delete Methods
-	 * 
-	 * @throws IOException
-	 * @throws CancelDeleteException
-	 ********************************/
+	/********************** Delete Methods ***********************************/
 
-	// private void deleteTask(String taskDescription, String projectName)
-	// throws IOException, CancelDeleteException {
-
-	// if (projectNames.contains(projectName)) {
-	// search(taskDescription);
-	// deleteTaskProperly(taskDescription);
-	// }
-
-	// }
 
 	private void delete(String taskDescription, String projectName)
 			throws IOException {
 
 		Task historyTask = new Task();
 
-		// Need to check if this is a delete project call.
-		// if(taskDescription.equals(null)){
-		// deleteProject(projectName);
-		// }
-
 		ArrayList<Task> temp = search(taskDescription);
 
 		if (!temp.isEmpty()) {
 
-			UIHandler
-					.getInstance()
-					.printToTerminal(
-							"Please enter the index number of the task you want to delete");
+			UIHandler.getInstance().printToTerminal("Please enter the index number of the task you want to delete");
 
 			int input;
 
@@ -454,16 +369,14 @@ public class Engine {
 				Project currProject = projectsList.get(indexProject);
 				currProject.deleteTask(taskToBeDeleted);
 				ArrayList<Task> currList = currProject.retrieveAllTasks();
-				if (currList.isEmpty()
-						&& !currProject.getProjectName().equals("default")) {
-					UIHandler.getInstance().printToDisplay(
-							currProject.getProjectName()
-									+ " has been removed. ");
+				
+				if (currList.isEmpty() && !currProject.getProjectName().equals("default")) {
+					
+					UIHandler.getInstance().printToDisplay(currProject.getProjectName() + " has been removed. ");
 					projectsList.remove(indexProject);
+					
 				} else {
-					UIHandler.getInstance().printToDisplay(
-							taskToBeDeleted.getTaskDescription()
-									+ " has been removed. ");
+					UIHandler.getInstance().printToDisplay(taskToBeDeleted.getTaskDescription() + " has been removed. ");
 				}
 			} catch (CancelDeleteException e) {
 				return;
@@ -473,21 +386,14 @@ public class Engine {
 			UIHandler.getInstance().printToDisplay("No such task exists!");
 		}
 
-		undoStack.push(new PastCommands("delete", historyTask, historyTask
-				.getProjectName()));
+		addToUndoStack("delete", historyTask.getProjectName(), historyTask);
 
 	}
 
-	/**********************
-	 * Edit Methods
-	 * 
-	 * @throws IOException
-	 * @throws CancelEditException
-	 ***********************************/
+	/********************************* Edit Methods ***********************************/
 
 	// convert to a task
-	private void edit(String taskDescription, String projectName)
-			throws IOException {
+	private void edit(String taskDescription, String projectName) throws IOException {
 
 		Task historyTask = new Task();
 
@@ -496,11 +402,7 @@ public class Engine {
 		if (!temp.isEmpty()) {
 			// DELETE OLD TASK
 			try {
-				UIHandler
-						.getInstance()
-						.printToTerminal(
-								"Please enter the index of the task you want to edit: ",
-								"inline");
+				UIHandler.getInstance().printToTerminal("Please enter the index of the task you want to edit: ", "inline");
 
 				int input = interp.askForAdditionalInformationForEdit();
 
@@ -515,11 +417,11 @@ public class Engine {
 				currProject.deleteTask(taskToBeEdited);
 
 				// ADD NEW TASK
-				UIHandler.getInstance().printToTerminal(
-						"Please update your task:", "inline");
+				UIHandler.getInstance().printToTerminal("Please update your task:", "inline");
 
 				CommandType newUserCommand = interp.askForNewTaskForEdit();
 				executeCommand(newUserCommand);
+				
 			} catch (CancelEditException e) {
 				return;
 			}
@@ -528,8 +430,7 @@ public class Engine {
 			UIHandler.getInstance().printToDisplay("Cannot edit!");
 		}
 
-		undoStack.push(new PastCommands("edit", historyTask.getProjectName()));
-
+		addToUndoStack("edit", historyTask.getProjectName(), null);
 	}
 
 	/********************** Search Methods ***********************************/
@@ -543,7 +444,7 @@ public class Engine {
 	 * @param projectName
 	 *            is the name of the project that we wish to search in
 	 */
-	private void search(String searchPhrase, String projectName)
+	private void searchInProj(String searchPhrase, String projectName)
 			throws IOException {
 		if (projectName.equals("")) {
 			search(searchPhrase);
@@ -565,12 +466,15 @@ public class Engine {
 		ArrayList<Task> tempResultsForProject = new ArrayList<Task>();
 		ArrayList<Task> allInclusive = new ArrayList<Task>();
 		for (Project p : projectsList) {
+			
 			tempResultsForProject = (p.searchForTask(searchPhrase));
+			
 			if (!tempResultsForProject.isEmpty()) {
 				allInclusive.addAll(tempResultsForProject);
 			}
 		}
 		displayArrayList(allInclusive);
+		
 		return allInclusive;
 	}
 
@@ -583,14 +487,14 @@ public class Engine {
 	 *            is the ArrayList that we wish to display
 	 */
 	private void displayArrayList(ArrayList<Task> projectList) {
+		
 		if (projectList.isEmpty()) {
 			UIHandler.getInstance().printToTerminal(MESSAGE_INVALID_SEARCH);
 		}
 
 		int counter = 1;
 		for (Task t : projectList) {
-			UIHandler.getInstance().printToDisplay(
-					counter + ". " + t.printTaskForDisplay());
+			UIHandler.getInstance().printToDisplay(counter + ". " + t.printTaskForDisplay());
 			counter++;
 		}
 		UIHandler.getInstance().printToDisplay("\n");
@@ -619,33 +523,19 @@ public class Engine {
 	 *            or "#projectName"
 	 * @throws IOException
 	 */
-	private void display(String input) throws IOException {
+	private void displayOverall(String input) throws IOException {
 		if (input.equals("all")) {
 
 			if (projectsList.size() == 1 && projectsList.get(0).isEmpty()) {
-				UIHandler.getInstance().printToTerminal(
-						MESSAGE_NOTHING_TO_DISPLAY_ERROR);
+				UIHandler.getInstance().printToTerminal(MESSAGE_NOTHING_TO_DISPLAY_ERROR);
 			}
 			collateAllForDisplay();
 			displayAll();
-			/*int counter = 1;
-			for (int i = 0; i < projectsList.size(); i++) {
-
-				Project currProj = projectsList.get(i);
-				ArrayList<Task> taskList = currProj.retrieveAllTasks();
-
-				for (Task t : taskList) {
-					UIHandler.getInstance().printToDisplay(
-							counter + ". " + t.printTaskForDisplay());
-					counter++;
-				}*/
 			
-
 		} else if (projectNames.contains(input)) {
 			displayProject(input);
 		} else {
-			UIHandler.getInstance().printToTerminal(
-					MESSAGE_NOTHING_TO_DISPLAY_ERROR);
+			UIHandler.getInstance().printToTerminal(MESSAGE_NOTHING_TO_DISPLAY_ERROR);
 		}
 
 	}
@@ -656,30 +546,28 @@ public class Engine {
 	 * last ones to be displayed would be floating tasks
 	 */
 	private void collateAllForDisplay() {
-		printByDate = new ArrayList<DisplayObject>();
+		ListByDate = new ArrayList<DisplayObject>();
 		ArrayList<Task> floating = new ArrayList<Task>();
 		
 		// Loop Through List of Projects.
-		for (int i = 0; i < projectNames.size(); i++) {
-			ArrayList<Task> currProjectTasks = projectsList.get(i).retrieveAllTasks();
+		for (String projectName : projectNames) {
+			ArrayList<Task> currProjectTasks = projectsList.get(findIndex(projectName)).retrieveAllTasks();
 			
-			// sort tasks into many arrayLIST which shall then be printed
-			// according to date
-			for (int j = 0; j < currProjectTasks.size(); j++) {
-				Task currTask = currProjectTasks.get(j);
+			// sort tasks into many arrayLIST which shall then be printed, according to date
+			for (Task currTask : currProjectTasks) {
 				
 				if (!currTask.hasDeadLine()) {
 					floating.add(currTask);
 				} else if (checkIfDeadlineListExists(currTask) >= 0) {
-					DisplayObject currDisplayObject = printByDate.get(checkIfDeadlineListExists(currTask));
+					DisplayObject currDisplayObject = ListByDate.get(checkIfDeadlineListExists(currTask));
 					currDisplayObject.addTaskToList(currTask);
 				} else {
 					DisplayObject newDisplayObject = new DisplayObject(currTask.getDeadline());
 					newDisplayObject.addTaskToList(currTask);
-					printByDate.add(newDisplayObject);
+					ListByDate.add(newDisplayObject);
 				}
 			}
-			printByDate.add(new DisplayObject(null, floating));// check if null
+			ListByDate.add(new DisplayObject(null, floating));// check if null
 																// causes
 																// problems
 		}
@@ -688,22 +576,23 @@ public class Engine {
 
 	private void displayAll() {
 		//Collections.sort((List<T>) printByDate); SORT IT SOMEHOW
-		for(int i = 0; i < printByDate.size(); i++){
-			DisplayObject currDisplayObject = printByDate.get(i);
-			Date currDate = currDisplayObject.getDate();
+		for(DisplayObject disp : ListByDate){
+			
+			Date currDate = disp.getDate();
+			
 			if(currDate == null){
-				// Floating
-				UIHandler.getInstance().printToDisplay("Untimed Tasks:");
-				displayArrayList(currDisplayObject.getList());
+				ArrayList<Task> listDisObj = disp.getList(); 				// Floating
+				
+				if(!listDisObj.isEmpty()){
+					UIHandler.getInstance().printToDisplay("Untimed Tasks:");
+					displayArrayList(listDisObj);
+				}
 				
 			}else{
 				UIHandler.getInstance().printToDisplay(currDate.toString());
-				displayArrayList(currDisplayObject.getList());	
+				displayArrayList(disp.getList());	
 			}
-			
 		}
-		
-		
 	}
 
 	// check if the format of the date created is correct
@@ -719,8 +608,8 @@ public class Engine {
 	private int checkIfDeadlineListExists(Task currTask) {
 		// does this work?
 		
-		for (int i = 0; i < printByDate.size(); i++) {
-			if (isDateEqual(currTask.getDeadline(), printByDate.get(i).getDate())) {
+		for (int i = 0; i < ListByDate.size(); i++) {
+			if (isDateEqual(currTask.getDeadline(), ListByDate.get(i).getDate())) {
 				return i;
 			} else {
 				continue;
@@ -893,13 +782,14 @@ public class Engine {
 					p.addTask(newTask.getTask());
 				}
 
-				// redoStack.push(existingTask);
-				// redoStack.push(second);
-				// redoStack.push(mostRecent);
 			}
 
 			UIHandler.getInstance().printToTerminal(MESSAGE_REDO_SUCCESS);
 		}
+	}
+	
+	private void addToUndoStack(String type, String projectName, Task incomingTask) {
+		undoStack.push(new PastCommands(type, incomingTask, projectName));
 	}
 	
 	private boolean isDateEqual(Date d1, Date d2){
