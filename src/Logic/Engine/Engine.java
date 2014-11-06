@@ -1,12 +1,10 @@
 package Logic.Engine;
 
-import java.awt.font.TextAttribute;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
-import java.text.AttributedString;
 import java.text.ParseException;
 import java.util.*;
 
@@ -203,7 +201,7 @@ public class Engine {
 	 *
 	 */
 	public enum CommandTypesEnum {
-		ADD, DISPLAY, DELETE, CLEAR, EXIT, INVALID, SEARCH, EDIT, UNDO, REDO, COMPLETE
+		ADD, DISPLAY, DELETE, CLEAR, EXIT, INVALID, SEARCH, EDIT, UNDO, REDO
 	};
 
 	/**
@@ -231,8 +229,6 @@ public class Engine {
 			return CommandTypesEnum.UNDO;
 		} else if (commandType.getType().equalsIgnoreCase("redo")) {
 			return CommandTypesEnum.REDO;
-		} else if (commandType.getType().equalsIgnoreCase("complete")) {
-			return CommandTypesEnum.COMPLETE;
 		} else {
 			return null;
 		}
@@ -278,10 +274,6 @@ public class Engine {
 		case REDO:
 			redo();
 			break;
-			
-		case COMPLETE:
-			CompleteCommandType completeUserCommand = (CompleteCommandType) userCommand;
-			checkCompleteTask(completeUserCommand.getTaskDescription());
 
 		default:
 			throw new Error(ERROR_WRONG_CMDTYPE); // throw an error if the
@@ -604,10 +596,10 @@ public class Engine {
 				ArrayList<Task> listDisObj = disp.getList(); // Floating
 
 				if (!listDisObj.isEmpty()) {
-				//	UIHandler.getInstance().printToDisplay("/**************************************************************************************************/" + "\n");
-					UIHandler.getInstance().printToDisplay("Bucket List:");
+					UIHandler.getInstance().printToDisplay("----------------");
+					UIHandler.getInstance().printToDisplay("> " + "Bucket List:" + " |");
+					UIHandler.getInstance().printToDisplay("----------------");
 					displayArrayList(listDisObj);
-				//	UIHandler.getInstance().printToDisplay("/**************************************************************************************************/");
 				}
 
 			} else {
@@ -805,32 +797,6 @@ public class Engine {
 			Task incomingTask) {
 		undoStack.push(new PastCommands(type, incomingTask, projectName));
 	}
-	
-	/************************ Mark a Task as complete *******************/
-	
-	private void checkCompleteTask(String input) {
-		ArrayList<Task> temp;
-		try {
-			temp = search(input);
-			if (temp.contains(input) && temp.size() == 1) { //input is exact to Taskdescription of said task
-				temp.get(0).isFinished();
-				UIHandler.getInstance().printToDisplay(strikeThroughText(input));
-			}
-		} catch (IOException e) {
-
-			e.printStackTrace();
-		}
-	}
-
- 	public String strikeThroughText(String input) {
- 		String output;
- 		AttributedString str_attribute = new AttributedString(input);
- 		str_attribute.addAttribute(TextAttribute.STRIKETHROUGH, input.length());
- 		output = str_attribute.toString();
- 		return output;
- 	}
- 	
- 	//to undo strikethrough just use undo command
 
 	/********************************* Helper methods ********************************/
 	private void removeTask(Task taskToBeDeleted) throws IOException {
