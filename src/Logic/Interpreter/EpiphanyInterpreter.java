@@ -31,7 +31,8 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 	Scanner input; //This scanner will deal with all input from user.
 	UIHandler uiHandler; 
 
-	public EpiphanyInterpreter() throws IOException, ParseException {
+	public EpiphanyInterpreter() throws IOException, ParseException
+ {
 		engine = Engine.getInstance();
 		input = new Scanner(System.in);
 		uiHandler = UIHandler.getInstance();
