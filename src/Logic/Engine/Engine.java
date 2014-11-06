@@ -342,7 +342,6 @@ public class Engine {
 	}
 
 	/********************** Delete Methods ***********************************/
-	
 
 	private void delete(String taskDescription, String projectName)
 			throws IOException {
@@ -362,7 +361,7 @@ public class Engine {
 		} else if (tasksToDisplayForDelete.size() > 1) {
 
 			ArrayList<Task> temp;
-		
+
 			temp = tasksToDisplayForDelete;
 			displayArrayList(tasksToDisplayForDelete);
 
@@ -375,25 +374,23 @@ public class Engine {
 				if (input.length == 0) {
 					UIHandler.getInstance().printToDisplay(NO_INDEX_SPECIFIED);
 				} else {
+					
 					for (int i = 0; i < input.length; i++) {
-						Task taskToBeDeleted = temp.get(input[i]);
+						Task taskToBeDeleted = temp.get(input[i] - 1);
 
 						mostRecentTask = taskToBeDeleted;
 						removeTask(taskToBeDeleted);
-						
 
 					}
 				}
 			} catch (CancelDeleteException e) {
 				return;
 			}
-		
+
 		} else {
 			UIHandler.getInstance().printToDisplay("No such task exists!");
 		}
 	}
-
-	
 
 	/********************************* Edit Methods ***********************************/
 
@@ -534,7 +531,7 @@ public class Engine {
 	 */
 	private void displayOverall(String input) throws IOException {
 		if (input.equals("all")) {
-			//UIHandler.getInstance().resetDisplay();
+			// UIHandler.getInstance().resetDisplay();
 			if (projectsList.size() == 1 && projectsList.get(0).isEmpty()) {
 				UIHandler.getInstance().printToDisplay(
 						MESSAGE_NOTHING_TO_DISPLAY_ERROR);
@@ -543,7 +540,7 @@ public class Engine {
 			displayAll();
 
 		} else if (projectNames.contains(input)) {
-			//UIHandler.getInstance().resetDisplay();
+			// UIHandler.getInstance().resetDisplay();
 			displayProject(input);
 		} else {
 			UIHandler.getInstance().printToDisplay(
@@ -701,11 +698,11 @@ public class Engine {
 					Project p = findProject(mostRecent.getProjectName());
 					p.addTask(task);
 					redoStack.push(mostRecent);
-					// TODO// I dont think this would work.
+					
 				} else if (typeOfCommand.equals("edit")) {
 
 					PastCommands first = undoStack.pop();
-					// Project p = findProject(first.getProjectName());
+				
 					if (projectNames.contains(first.getProjectName())) {
 
 						int index = findIndex(first.getProjectName());
@@ -819,6 +816,7 @@ public class Engine {
 					taskToBeDeleted);
 		}
 	}
+
 	private ArrayList<Task> searchForTask(String taskDescription) {
 		ArrayList<Task> positiveMatches = new ArrayList<Task>();
 		for (int i = 0; i < projectsList.size(); i++) {
@@ -833,7 +831,7 @@ public class Engine {
 		}
 		return positiveMatches;
 	}
-	
+
 	private int findIndex(String projectName) {
 		for (int i = 0; i < projectNames.size(); i++) {
 			if (projectNames.get(i).equals(projectName)) {
