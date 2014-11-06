@@ -2,6 +2,8 @@ package Logic.Engine;
 
 import java.util.Date;
 
+import Logic.Interpreter.UIHandler;
+
 
 /**
  * This class helps in the creation and management of tasks. 
@@ -185,8 +187,11 @@ public class Task {
 						// print time diff
 						s = this.getTaskDescription() + " from " + formatToTime(this.getStartDate()) + " to " + formatToTime(this.getDeadline());
 					}else{
-						s =  this.getTaskDescription() + " from " + this.getStartDate().getDate() + " " + formatToMonth(this.getStartDate().getMonth()) + " to " + this.getDeadline().getDate() + " " + formatToMonth(this.getDeadline().getMonth()) + "\t\t #" + this.getProjectName();
-					}				}else if(this.isFloating()){
+						s =  this.getTaskDescription() + " from " + this.getStartDate().getDate() + " " + formatToMonth(this.getStartDate().getMonth()) + " to " + this.getDeadline().getDate() + " " + formatToMonth(this.getDeadline().getMonth());
+					//	s = addSpace(s);
+					//	s += "\t\t #" + this.getProjectName();
+					}				
+				}else if(this.isFloating()){
 					s =  this.getTaskDescription();
 				}else if(this.hasDeadLine()){
 					s = this.getTaskDescription();
@@ -195,14 +200,22 @@ public class Task {
 				if(this.hasInterval()){
 					if(isSingleDayTask(this.getStartDate(), this.deadLine)){
 						// print time diff
-						s = this.getTaskDescription() + " from " + formatToTime(this.getStartDate()) + " to " + formatToTime(this.getDeadline()) + "\t\t #" + this.getProjectName();
+						s = this.getTaskDescription() + " from " + formatToTime(this.getStartDate()) + " to " + formatToTime(this.getDeadline());
+						s = addSpace(s);
+						s += "\t\t #" + this.getProjectName();	
 					}else{
-						s =  this.getTaskDescription() + " from " + this.getStartDate().getDate() + " " + formatToMonth(this.getStartDate().getMonth()) + " to " + this.getDeadline().getDate() + " " + formatToMonth(this.getDeadline().getMonth()) + "\t\t #" + this.getProjectName();
+						s =  this.getTaskDescription() + " from " + this.getStartDate().getDate() + " " + formatToMonth(this.getStartDate().getMonth()) + " to " + this.getDeadline().getDate() + " " + formatToMonth(this.getDeadline().getMonth());
+						s = addSpace(s);
+						s += "\t\t #" + this.getProjectName();		
 					}
 				}else if(this.isFloating()){
-					s =  this.getTaskDescription() + "\t\t #" + this.getProjectName();
+					s =  this.getTaskDescription();
+					s = addSpace(s);
+					s += "\t\t #" + this.getProjectName();
 				}else if(this.hasDeadLine()){
-					s = this.getTaskDescription() + "\t\t #" + this.getProjectName();
+					s = this.getTaskDescription();
+					s = addSpace(s);
+					s += "\t\t #" + this.getProjectName();
 				}
 			}
 			return s;
@@ -301,6 +314,16 @@ public class Task {
 		
 		private static boolean isSingleDayTask(Date d1, Date d2){
 			return (d1.getDate() == d2.getDate() && d1.getMonth() == d2.getMonth() && d1.getYear() == d2.getYear());
+		}
+		
+		private static String addSpace(String s){
+			int numOfSpaces = 40 - s.length();
+			
+			for(int i = 0; i < numOfSpaces; i++){
+				s += " ";
+			}
+			
+			return s;
 		}
 		
 	}
