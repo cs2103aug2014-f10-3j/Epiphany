@@ -48,7 +48,6 @@ import java.awt.font.TextAttribute;
 	 */
  	public void printToTerminal(String toPrint){
  		System.out.println(toPrint);
- 		//ui.changeSystemStatusTo(toPrint);
  	}
  
  	/**
@@ -58,7 +57,6 @@ import java.awt.font.TextAttribute;
  	 */
  	public void printToTerminal(String toPrint, String modifier){
  		System.out.print(toPrint);
- 		//ui.changeSystemStatusTo(toPrint);
  	}
  	
  	/**
@@ -67,20 +65,15 @@ import java.awt.font.TextAttribute;
  	 */
  	public void printToDisplay(String toPrint){
  		System.out.println(toPrint);
- 		//ui.changeDisplayTo(toPrint);
  	}
  	
- 	/*public  void resetDisplay(){
- 		ui.resetDisplay();
-<<<<<<< Updated upstream
- 	}*/
-=======
- 	}
+
+
  	
  	// wy added a function here to enable strikethrough text
  	public void strikeThroughText(String input) {
  		AttributedString str_attribute = new AttributedString(input);
  		str_attribute.addAttribute(TextAttribute.STRIKETHROUGH, input.length());
  	}
->>>>>>> Stashed changes
+
  }
