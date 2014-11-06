@@ -203,7 +203,7 @@ public class Engine {
 	 *
 	 */
 	public enum CommandTypesEnum {
-		ADD, DISPLAY, DELETE, CLEAR, EXIT, INVALID, SEARCH, EDIT, UNDO, REDO
+		ADD, DISPLAY, DELETE, CLEAR, EXIT, INVALID, SEARCH, EDIT, UNDO, REDO, COMPLETE
 	};
 
 	/**
@@ -231,6 +231,8 @@ public class Engine {
 			return CommandTypesEnum.UNDO;
 		} else if (commandType.getType().equalsIgnoreCase("redo")) {
 			return CommandTypesEnum.REDO;
+		} else if (commandType.getType().equalsIgnoreCase("complete")) {
+			return CommandTypesEnum.COMPLETE;
 		} else {
 			return null;
 		}
@@ -276,6 +278,10 @@ public class Engine {
 		case REDO:
 			redo();
 			break;
+			
+		case COMPLETE:
+			CompleteCommandType completeUserCommand = (CompleteCommandType) userCommand;
+			checkCompleteTask(completeUserCommand.getTaskDescription());
 
 		default:
 			throw new Error(ERROR_WRONG_CMDTYPE); // throw an error if the
