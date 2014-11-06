@@ -349,10 +349,7 @@ public class Engine {
 
 		if (!temp.isEmpty()) {
 
-			UIHandler
-					.getInstance()
-					.printToTerminal(
-							"Please enter the index number of the task you want to delete");
+			UIHandler.getInstance().printToTerminal("Please enter the index number of the task you want to delete");
 
 			int input;
 
@@ -373,13 +370,13 @@ public class Engine {
 				if (currList.isEmpty()
 						&& !currProject.getProjectName().equals("default")) {
 
-					UIHandler.getInstance().printToDisplay(
+					UIHandler.getInstance().printToTerminal(
 							currProject.getProjectName()
 									+ " has been removed. ");
 					projectsList.remove(indexProject);
 
 				} else {
-					UIHandler.getInstance().printToDisplay(
+					UIHandler.getInstance().printToTerminal(
 							taskToBeDeleted.getTaskDescription()
 									+ " has been removed. ");
 				}
@@ -388,7 +385,7 @@ public class Engine {
 			}
 			// Looks for the index and removes it
 		} else {
-			UIHandler.getInstance().printToDisplay("No such task exists!");
+			UIHandler.getInstance().printToTerminal("No such task exists!");
 		}
 
 		addToUndoStack("delete", historyTask.getProjectName(), historyTask);
@@ -411,8 +408,7 @@ public class Engine {
 				UIHandler
 						.getInstance()
 						.printToTerminal(
-								"Please enter the index of the task you want to edit: ",
-								"inline");
+								"Please enter the index of the task you want to edit");
 
 				int input = interp.askForAdditionalInformationForEdit();
 
@@ -428,7 +424,7 @@ public class Engine {
 
 				// ADD NEW TASK
 				UIHandler.getInstance().printToTerminal(
-						"Please update your task:", "inline");
+						"Please update your task");
 
 				CommandType newUserCommand = interp.askForNewTaskForEdit();
 				executeCommand(newUserCommand);
@@ -438,7 +434,7 @@ public class Engine {
 			}
 
 		} else {
-			UIHandler.getInstance().printToDisplay("Cannot edit!");
+			UIHandler.getInstance().printToTerminal("Cannot edit!");
 		}
 
 		addToUndoStack("edit", historyTask.getProjectName(), null);
@@ -537,7 +533,7 @@ public class Engine {
 	 */
 	private void displayOverall(String input) throws IOException {
 		if (input.equals("all")) {
-
+			UIHandler.getInstance().resetDisplay();
 			if (projectsList.size() == 1 && projectsList.get(0).isEmpty()) {
 				UIHandler.getInstance().printToTerminal(
 						MESSAGE_NOTHING_TO_DISPLAY_ERROR);
@@ -546,6 +542,7 @@ public class Engine {
 			displayAll();
 
 		} else if (projectNames.contains(input)) {
+			UIHandler.getInstance().resetDisplay();
 			displayProject(input);
 		} else {
 			UIHandler.getInstance().printToTerminal(

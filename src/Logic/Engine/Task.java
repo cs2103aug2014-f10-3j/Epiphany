@@ -16,8 +16,6 @@ public class Task {
 		private Date deadLine;
 		private String projectName;
 		private boolean isCompleted;
-		
-		private static String[] months;
 
 		/**
 		 * Overloaded constructors for the creation of tasks are shown below. They differ in the 
@@ -31,8 +29,7 @@ public class Task {
 			this.from = from;
 			this.deadLine = deadLine;
 			this.projectName = ProjectName;
-			months = new String[13];
-			populateMonths();
+			
 		}
 		
 		public Task(){
@@ -168,10 +165,9 @@ public class Task {
 			}else if(this.from != null && this.deadLine != null){
 				s = this.getType() + "~" + this.getTaskDescription() + "~" + this.getStartDate().toString() + "~" + this.getDeadline().toString() + "~" + this.getProjectName() + "~" + this.isCompleted();
 			}
+			
 			return s;
 		}
-		
-		/* Not used for now
 		public String printTaskForDisplay(){
 			String s = null;
 			
@@ -191,39 +187,11 @@ public class Task {
 				}else if(this.hasDeadLine()){
 					s = this.getTaskDescription() + " by " + this.getDeadline() +  "\t\t #" + this.getProjectName();
 				}
+				
 			}
+			
 			return s;
 		}
-		*/
-		// DD MMM YYYY, 
-		public String deadLineToString() {
-			Date dLine = this.deadLine;
-			return dLine.getDate() + " " + convertToMonth(dLine.getMonth()) + dLine.getYear();	
-		}
-		/*
-		public String startDateToString() {
-			return
-		}
-		*/
 
-		private void populateMonths() {
-			months[1] = "Jan";
-			months[2] = "Feb";
-			months[3] = "Mar";
-			months[4] = "Apr";
-			months[5] = "May";
-			months[6] = "Jun";
-			months[7] = "Jul";
-			months[8] = "Aug";
-			months[9] = "Sep";
-			months[10] = "Oct";
-			months[11] = "Nov";
-			months[12] = "Dec";
-		}
 		
-		private static String convertToMonth(int input) {
-			return months[input];
-		}
-		
-		private static String 
 	}
