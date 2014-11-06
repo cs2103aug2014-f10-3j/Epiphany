@@ -598,7 +598,7 @@ public class Engine {
 				ArrayList<Task> listDisObj = disp.getList(); // Floating
 
 				if (!listDisObj.isEmpty()) {
-					UIHandler.getInstance().printToDisplay("Untimed Tasks:");
+					UIHandler.getInstance().printToDisplay("Bucket List:");
 					displayArrayList(listDisObj);
 				}
 

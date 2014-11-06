@@ -181,15 +181,24 @@ public class Task {
 			
 			if(this.getProjectName().equals("default")){
 				if(this.hasInterval()){
-					s =  this.getTaskDescription() + " from " + this.getStartDate().toString() + " to " + this.getDeadline().toString();
-				}else if(this.isFloating()){
+					if(isSingleDayTask(this.getStartDate(), this.deadLine)){
+						// print time diff
+						s = this.getTaskDescription() + " from " + formatToTime(this.getStartDate()) + " to " + formatToTime(this.getDeadline());
+					}else{
+						s =  this.getTaskDescription() + " from " + this.getStartDate().getDate() + " " + formatToMonth(this.getStartDate().getMonth()) + " to " + this.getDeadline().getDate() + " " + formatToMonth(this.getDeadline().getMonth()) + "\t\t #" + this.getProjectName();
+					}				}else if(this.isFloating()){
 					s =  this.getTaskDescription();
 				}else if(this.hasDeadLine()){
 					s = this.getTaskDescription();
 				}
 			}else{
 				if(this.hasInterval()){
-					s =  this.getTaskDescription() + " from " + this.getStartDate().toString() + " to " + this.getDeadline().toString() + "\t\t #" + this.getProjectName();
+					if(isSingleDayTask(this.getStartDate(), this.deadLine)){
+						// print time diff
+						s = this.getTaskDescription() + " from " + formatToTime(this.getStartDate()) + " to " + formatToTime(this.getDeadline()) + "\t\t #" + this.getProjectName();
+					}else{
+						s =  this.getTaskDescription() + " from " + this.getStartDate().getDate() + " " + formatToMonth(this.getStartDate().getMonth()) + " to " + this.getDeadline().getDate() + " " + formatToMonth(this.getDeadline().getMonth()) + "\t\t #" + this.getProjectName();
+					}
 				}else if(this.isFloating()){
 					s =  this.getTaskDescription() + "\t\t #" + this.getProjectName();
 				}else if(this.hasDeadLine()){
@@ -230,7 +239,7 @@ public class Task {
 			String output = "null";
 			if(this.deadLine != null){
 				Date dLine = this.deadLine;
-				output = dLine.getDate() + " " + convertToMonth(dLine.getMonth()) + (dLine.getYear() + 1900);
+				output = dLine.getDate() + " " + formatToMonth(dLine.getMonth()) + (dLine.getYear() + 1900);
 			}
 			return output;
 		}
@@ -240,13 +249,13 @@ public class Task {
 			String output = "null";
 			if(this.from != null){
 				Date startDate = this.from;
-				output = startDate.getDate() + " " + convertToMonth(startDate.getMonth()) + (startDate.getYear() + 1900);
+				output = startDate.getDate() + " " + formatToMonth(startDate.getMonth()) + (startDate.getYear() + 1900);
 			}
 			return output;
 		}
 		
 		public String getDeadLineDay(){
-			return convertToDay(this.deadLine.getDay());
+			return formatToDay(this.deadLine.getDay());
 		}
 		
 		/**********************Helper Methods****************************/
@@ -266,7 +275,7 @@ public class Task {
 			months[11] = "Dec";
 		}
 		
-		private static String convertToMonth(int input) {
+		private static String formatToMonth(int input) {
 			return months[input];
 		}
 		
@@ -280,8 +289,44 @@ public class Task {
 			days[6] = "Saturday";
 		}
 		
-		private static String convertToDay(int input){
+		private static String formatToDay(int input){
 			return days[input];
+		}
+		
+		private static String formatToTime(Date d){
+			String output = "";
+			int hour = d.getHours();
+			int minutes = d.getMinutes();
+			
+			if(hour < 12){
+				//am
+				if(minutes == 0){
+					output = hour + "am";
+				}else{
+					output = hour + ":" + minutes + "am";
+				} 
+				
+			}else if(hour >12){
+				//pm
+				if(minutes == 0){
+					output = (hour % 12) + "pm";
+				}else{
+					output = (hour % 12) + ":" + minutes + "pm";
+				} 	
+			}else{
+				if(minutes == 0){
+					output = "12pm";
+				}else{
+					output = 12 + ":" + minutes + "pm";
+				} 	
+			}
+			
+			return output;
+			
+		}
+		
+		private static boolean isSingleDayTask(Date d1, Date d2){
+			return (d1.getDate() == d2.getDate() && d1.getMonth() == d2.getMonth() && d1.getYear() == d2.getYear());
 		}
 		
 	}
