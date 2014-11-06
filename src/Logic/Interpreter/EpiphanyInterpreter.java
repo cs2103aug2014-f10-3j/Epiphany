@@ -48,10 +48,10 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 	 * @throws CancelDeleteException 
 	 * @throws CancelEditException 
 	 */
-	/*public static void main(String[] args) throws IOException, ParseException, CancelEditException, CancelDeleteException {
+	public static void main(String[] args) throws IOException, ParseException, CancelEditException, CancelDeleteException {
 		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
 		interpreter.acceptUserInputUntilExit();
-	}*/
+	}
 
 	/**
 	 * This method accepts the user inputs until the 'exit' command is entered. None of the actual
@@ -60,7 +60,7 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 	 * @throws CancelDeleteException 
 	 * @throws CancelEditException 
 	 */
-	/*void acceptUserInputUntilExit() throws IOException, CancelEditException, CancelDeleteException {
+	void acceptUserInputUntilExit() throws IOException, CancelEditException, CancelDeleteException {
 		String userInput;
 		do{
 			uiHandler.printToTerminal(MESSAGE_COMMAND_PROMPT, "inline");
@@ -78,9 +78,9 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 			}
 		} while(!userInput.equalsIgnoreCase("exit"));
 		input.close();
-	}*/
+	}
 
-	public void acceptUserInput(String userInput) throws IOException{
+	/*public void acceptUserInput(String userInput) throws IOException{
 		CommandType toPassToEngine;
 		try {
 			toPassToEngine = interpretCommand(userInput);
@@ -92,7 +92,7 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 		catch (ExitException e) {
 			System.exit(0);
 		}
-	}
+	}*/
 
 	/**
 	 * This function recognizes the type of input by user.
@@ -270,14 +270,18 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 	 * key will be enumerated to the user.
 	 * This function asks the user for the index of the task to be deleted (from the enumerated list)
 	 */
-	public int askForAdditionalInformationForDelete() throws CancelDeleteException {
+	public int[] askForAdditionalInformationForDelete() throws CancelDeleteException {
 		String inputFromUser = input.nextLine();
 		try{
-			int indexFromUser = Integer.parseInt(inputFromUser);
-			if(indexFromUser<1){
-				throw new NumberFormatException("Invalid input : Negative index");
+			String[] stringIndeces = inputFromUser.split(",");
+			int[] intIndeces = new int[stringIndeces.length];
+			for (int i = 0; i < stringIndeces.length; i++) {
+				intIndeces[i] = Integer.parseInt(stringIndeces[i]);
+				if(intIndeces[i]<1){
+					throw new NumberFormatException("Invalid input : Negative index");
+				}
 			}
-			return indexFromUser;
+			return intIndeces;
 		} catch (NumberFormatException e){
 			uiHandler.printToTerminal("You have entered an invalid number. Press y to try again, press n to cancel delete.");
 			String userResponse = input.nextLine();

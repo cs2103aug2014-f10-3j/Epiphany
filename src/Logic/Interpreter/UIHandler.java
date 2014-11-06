@@ -4,7 +4,7 @@ import java.awt.FontFormatException;
 import java.io.IOException;
 import java.text.ParseException;
 
-import GUIBackup.EpiphanyUI;
+//import GUIBackup.EpiphanyUI;
 
 /**
  * This is a singleton class that can be instantiated and used to perform
@@ -16,11 +16,11 @@ import GUIBackup.EpiphanyUI;
 
  public class UIHandler{
  	public static UIHandler uiHandler;
- 	public static EpiphanyUI ui;
+ 	//public static EpiphanyUI ui;
  	
  	private UIHandler() throws IOException, ParseException, FontFormatException {
  		uiHandler=this;
- 		ui = new EpiphanyUI();
+ 		//ui = new EpiphanyUI();
  	}
  	
 	/**
@@ -45,8 +45,8 @@ import GUIBackup.EpiphanyUI;
 	 * @param toPrint
 	 */
  	public void printToTerminal(String toPrint){
- 		//System.out.println(toPrint);
- 		ui.changeSystemStatusTo(toPrint);
+ 		System.out.println(toPrint);
+ 		//ui.changeSystemStatusTo(toPrint);
  	}
  
  	/**
@@ -54,21 +54,21 @@ import GUIBackup.EpiphanyUI;
  	 * @param toPrint
  	 * @param modifier
  	 */
- 	/*public void printToTerminal(String toPrint, String modifier){
+ 	public void printToTerminal(String toPrint, String modifier){
  		System.out.print(toPrint);
- 		ui.changeSystemStatusTo(toPrint);
- 	}*/
+ 		//ui.changeSystemStatusTo(toPrint);
+ 	}
  	
  	/**
  	 * Prints paramter to Display Console
  	 * @param toPrint
  	 */
  	public void printToDisplay(String toPrint){
- 		//System.out.println(toPrint);
- 		ui.changeDisplayTo(toPrint);
+ 		System.out.println(toPrint);
+ 		//ui.changeDisplayTo(toPrint);
  	}
  	
- 	public  void resetDisplay(){
+ 	/*public  void resetDisplay(){
  		ui.resetDisplay();
- 	}
+ 	}*/
  }
