@@ -15,6 +15,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import Logic.Interpreter.EpiphanyInterpreter;
 
@@ -105,6 +106,10 @@ public class EpiphanyUI extends JFrame {
 
 	public void changeDisplayTo(String toDisplay){
 		displayArea.append(toDisplay + "\n");
+	}
+	
+	public void resetDisplay(){
+		displayArea.setText("");
 	}
 	
 	public void changeSystemStatusTo(String newStatus){

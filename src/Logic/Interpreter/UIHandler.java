@@ -54,10 +54,10 @@ import GUIBackup.EpiphanyUI;
  	 * @param toPrint
  	 * @param modifier
  	 */
- 	public void printToTerminal(String toPrint, String modifier){
+ 	/*public void printToTerminal(String toPrint, String modifier){
  		System.out.print(toPrint);
  		ui.changeSystemStatusTo(toPrint);
- 	}
+ 	}*/
  	
  	/**
  	 * Prints paramter to Display Console
@@ -66,5 +66,9 @@ import GUIBackup.EpiphanyUI;
  	public void printToDisplay(String toPrint){
  		//System.out.println(toPrint);
  		ui.changeDisplayTo(toPrint);
+ 	}
+ 	
+ 	public  void resetDisplay(){
+ 		ui.resetDisplay();
  	}
  }
