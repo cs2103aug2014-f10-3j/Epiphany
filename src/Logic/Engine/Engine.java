@@ -501,8 +501,7 @@ public class Engine {
 
 		int counter = 1;
 		for (Task t : projectList) {
-			UIHandler.getInstance().printToDisplay(
-					counter + ". " + t.printTaskForDisplay());
+			UIHandler.getInstance().printToDisplay(counter + ". " + t.printTaskForDisplay());
 			counter++;
 		}
 		UIHandler.getInstance().printToDisplay("\n");
@@ -604,7 +603,7 @@ public class Engine {
 				}
 
 			} else {
-				UIHandler.getInstance().printToDisplay(currDate.toString());
+				UIHandler.getInstance().printToDisplay(disp.dateToString());
 				displayArrayList(disp.getList());
 			}
 		}

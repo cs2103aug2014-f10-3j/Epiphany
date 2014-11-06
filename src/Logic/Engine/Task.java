@@ -16,6 +16,8 @@ public class Task {
 		private Date deadLine;
 		private String projectName;
 		private boolean isCompleted;
+		private static String[] months;
+		private static String[] days;
 
 		/**
 		 * Overloaded constructors for the creation of tasks are shown below. They differ in the 
@@ -29,6 +31,12 @@ public class Task {
 			this.from = from;
 			this.deadLine = deadLine;
 			this.projectName = ProjectName;
+			
+			months = new String[12];
+			populateMonths();
+			
+			days = new String[7];
+			populateDays();
 			
 		}
 		
@@ -152,7 +160,7 @@ public class Task {
 			}
 		}
 		
-/**********************Other Methods******************************/	
+/**********************String Methods******************************/	
 
 		@Override
 		public String toString() {
@@ -165,9 +173,34 @@ public class Task {
 			}else if(this.from != null && this.deadLine != null){
 				s = this.getType() + "~" + this.getTaskDescription() + "~" + this.getStartDate().toString() + "~" + this.getDeadline().toString() + "~" + this.getProjectName() + "~" + this.isCompleted();
 			}
-			
 			return s;
 		}
+		
+		public String printTaskForDisplay(){
+			String s = null;
+			
+			if(this.getProjectName().equals("default")){
+				if(this.hasInterval()){
+					s =  this.getTaskDescription() + " from " + this.getStartDate().toString() + " to " + this.getDeadline().toString();
+				}else if(this.isFloating()){
+					s =  this.getTaskDescription();
+				}else if(this.hasDeadLine()){
+					s = this.getTaskDescription();
+				}
+			}else{
+				if(this.hasInterval()){
+					s =  this.getTaskDescription() + " from " + this.getStartDate().toString() + " to " + this.getDeadline().toString() + "\t\t #" + this.getProjectName();
+				}else if(this.isFloating()){
+					s =  this.getTaskDescription() + "\t\t #" + this.getProjectName();
+				}else if(this.hasDeadLine()){
+					s = this.getTaskDescription() + "\t\t #" + this.getProjectName();
+				}
+			}
+			return s;
+		}
+		
+		
+		/* Unused for now, keep code.
 		public String printTaskForDisplay(){
 			String s = null;
 			
@@ -187,11 +220,68 @@ public class Task {
 				}else if(this.hasDeadLine()){
 					s = this.getTaskDescription() + " by " + this.getDeadline() +  "\t\t #" + this.getProjectName();
 				}
-				
 			}
-			
 			return s;
 		}
+		*/
+		
+		// DD MMM YYYY, 
+		public String deadLineToString() {
+			String output = "null";
+			if(this.deadLine != null){
+				Date dLine = this.deadLine;
+				output = dLine.getDate() + " " + convertToMonth(dLine.getMonth()) + (dLine.getYear() + 1900);
+			}
+			return output;
+		}
+		
+		// DD MMM YYYY, 
+		public String startDateToString() {
+			String output = "null";
+			if(this.from != null){
+				Date startDate = this.from;
+				output = startDate.getDate() + " " + convertToMonth(startDate.getMonth()) + (startDate.getYear() + 1900);
+			}
+			return output;
+		}
+		
+		public String getDeadLineDay(){
+			return convertToDay(this.deadLine.getDay());
+		}
+		
+		/**********************Helper Methods****************************/
 
+		private void populateMonths() {
+			months[0] = "Jan";
+			months[1] = "Feb";
+			months[2] = "Mar";
+			months[3] = "Apr";
+			months[4] = "May";
+			months[5] = "Jun";
+			months[6] = "Jul";
+			months[7] = "Aug";
+			months[8] = "Sep";
+			months[9] = "Oct";
+			months[10] = "Nov";
+			months[11] = "Dec";
+		}
+		
+		private static String convertToMonth(int input) {
+			return months[input];
+		}
+		
+		private void populateDays(){
+			days[0] = "Sunday";
+			days[1] = "Monday";
+			days[2] = "Tuesday";
+			days[3] = "Wednesday";
+			days[4] = "Thursday";
+			days[5] = "Friday";
+			days[6] = "Saturday";
+		}
+		
+		private static String convertToDay(int input){
+			return days[input];
+		}
 		
 	}
