@@ -127,7 +127,7 @@ public class Project {
 				floatingList.remove(t);
 			}
 			
-			// Task deleted. Repopulate txt file.
+			// Update text file.
 			writer.writeToFile();
 		}
 		
