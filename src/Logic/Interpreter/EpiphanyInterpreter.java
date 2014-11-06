@@ -202,6 +202,9 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 		}
 		String toDelete = userInput.substring(userInput.indexOf(' ') + 1); 
 		if(toDelete.contains("#")){
+			if(toDelete.startsWith("#")){
+				return new DeleteCommandType(null, toDelete.substring(1));
+			}
 			return new DeleteCommandType(toDelete.substring(0,toDelete.indexOf('#')-1),toDelete.substring(toDelete.indexOf('#')+1));
 		}
 		return new DeleteCommandType(toDelete);
