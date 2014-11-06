@@ -32,7 +32,7 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 	UIHandler uiHandler; 
 
 	public EpiphanyInterpreter() throws IOException, ParseException
- {
+	{
 		engine = Engine.getInstance();
 		input = new Scanner(System.in);
 		uiHandler = UIHandler.getInstance();
@@ -109,6 +109,8 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 			return new RedoCommandType();
 		} else if(userInput.matches("(display|view|ls).*")){
 			return interpretDisplayCommand(userInput);
+		} else if(userInput.matches("(\\c|\\complete).*")){
+			return interpretCompleteCommand(userInput);
 		} else if(userInput.equals("exit")) {
 			return exitProgram();
 		} else if(userInput.matches("(search|find).*")) {
@@ -120,6 +122,17 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 		} else { 
 			return interpretAddCommand(userInput);
 		} 
+	}
+
+	private CommandType interpretCompleteCommand(String userInput) throws InvalidCommandException {
+		if(userInput.indexOf(' ')==-1){
+			throw new InvalidCommandException();
+		}
+		String completeMe = userInput.substring(userInput.indexOf(' ') + 1);
+		if(completeMe.contains("#")){
+			return new CompleteCommandType(completeMe.substring(0,completeMe.indexOf('#')-1),completeMe.substring(completeMe.indexOf('#')+1));
+		}
+		return new CompleteCommandType(completeMe);
 	}
 
 	private CommandType interpretEditCommand(String userInput) throws InvalidCommandException {
