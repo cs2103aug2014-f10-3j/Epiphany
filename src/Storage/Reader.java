@@ -51,6 +51,8 @@ public class Reader {
 				Date from = parseDate(taskComponents[2]);
 				Date to = parseDate(taskComponents[3]);
 				String projName = taskComponents[4];
+				// 5 reserved for completion status
+//				int UID = Integer.parseInt(taskComponents[6]);
 
 				Task t = null;
 

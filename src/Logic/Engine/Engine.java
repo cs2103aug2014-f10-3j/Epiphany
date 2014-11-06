@@ -69,7 +69,7 @@ public class Engine {
 	private static Stack<PastCommands> undoStack;
 	private static Stack<PastCommands> redoStack;
 	private static ArrayList<DisplayObject> ListByDate;
-
+	
 	private Engine() throws IOException, ParseException {
 		engine = this;
 		run();
@@ -158,8 +158,7 @@ public class Engine {
 		Writer.generateDefault();
 	}
 
-	private void populateProjectsWithTasks() throws FileNotFoundException,
-			IOException, ParseException {
+	private void populateProjectsWithTasks() throws FileNotFoundException, IOException, ParseException {
 		Reader reader = new Reader(projectNames, projectsList);
 		reader.readProjectData();
 	}
@@ -293,8 +292,7 @@ public class Engine {
 	private void add(String taskDescription, Date dateFrom, Date dateTo,
 			String projectName) throws IOException {
 
-		Task incomingTask = new Task(taskDescription, dateFrom, dateTo,
-				projectName);
+		Task incomingTask = new Task(taskDescription, dateFrom, dateTo, projectName);
 
 		// Duplicate check.
 		if (projectNames.contains(projectName)) {

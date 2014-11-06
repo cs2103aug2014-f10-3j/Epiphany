@@ -208,32 +208,6 @@ public class Task {
 			return s;
 		}
 		
-		
-		/* Unused for now, keep code.
-		public String printTaskForDisplay(){
-			String s = null;
-			
-			if(this.getProjectName().equals("default")){
-				if(this.hasInterval()){
-					s =  this.getTaskDescription() + " from " + this.getStartDate().toString() + " to " + this.getDeadline().toString();
-				}else if(this.isFloating()){
-					s =  this.getTaskDescription();
-				}else if(this.hasDeadLine()){
-					s = this.getTaskDescription() + " by " + this.getDeadline();
-				}
-			}else{
-				if(this.hasInterval()){
-					s =  this.getTaskDescription() + " from " + this.getStartDate().toString() + " to " + this.getDeadline().toString() + "\t\t #" + this.getProjectName();
-				}else if(this.isFloating()){
-					s =  this.getTaskDescription() + "\t\t #" + this.getProjectName();
-				}else if(this.hasDeadLine()){
-					s = this.getTaskDescription() + " by " + this.getDeadline() +  "\t\t #" + this.getProjectName();
-				}
-			}
-			return s;
-		}
-		*/
-		
 		// DD MMM YYYY, 
 		public String deadLineToString() {
 			String output = "null";
