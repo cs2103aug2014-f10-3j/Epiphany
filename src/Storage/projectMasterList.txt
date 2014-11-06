@@ -1,1 +1,3 @@
 default
+cs2103
+life
