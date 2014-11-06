@@ -2,7 +2,9 @@ package Logic.Interpreter;
 
 import java.awt.FontFormatException;
 import java.io.IOException;
+import java.text.AttributedString;
 import java.text.ParseException;
+import java.awt.font.TextAttribute;
 
 //import GUIBackup.EpiphanyUI;
 
@@ -70,5 +72,15 @@ import java.text.ParseException;
  	
  	/*public  void resetDisplay(){
  		ui.resetDisplay();
+<<<<<<< Updated upstream
  	}*/
+=======
+ 	}
+ 	
+ 	// wy added a function here to enable strikethrough text
+ 	public void strikeThroughText(String input) {
+ 		AttributedString str_attribute = new AttributedString(input);
+ 		str_attribute.addAttribute(TextAttribute.STRIKETHROUGH, input.length());
+ 	}
+>>>>>>> Stashed changes
  }

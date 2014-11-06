@@ -1,10 +1,12 @@
 package Logic.Engine;
 
+import java.awt.font.TextAttribute;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.text.AttributedString;
 import java.text.ParseException;
 import java.util.*;
 
@@ -792,6 +794,32 @@ public class Engine {
 			Task incomingTask) {
 		undoStack.push(new PastCommands(type, incomingTask, projectName));
 	}
+	
+	/************************ Mark a Task as complete *******************/
+	
+	private void checkCompleteTask(String input) {
+		ArrayList<Task> temp;
+		try {
+			temp = search(input);
+			if (temp.contains(input) && temp.size() == 1) { //input is exact to Taskdescription of said task
+				temp.get(0).isFinished();
+				UIHandler.getInstance().printToDisplay(strikeThroughText(input));
+			}
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
+	}
+
+ 	public String strikeThroughText(String input) {
+ 		String output;
+ 		AttributedString str_attribute = new AttributedString(input);
+ 		str_attribute.addAttribute(TextAttribute.STRIKETHROUGH, input.length());
+ 		output = str_attribute.toString();
+ 		return output;
+ 	}
+ 	
+ 	//to undo strikethrough just use undo command
 
 	/********************************* Helper methods ********************************/
 	private void removeTask(Task taskToBeDeleted) throws IOException {
