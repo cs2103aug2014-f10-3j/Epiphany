@@ -608,7 +608,57 @@ public class Engine {
 
 	}
 
+	private boolean isThereATask() {
+
+		for (int i = 0; i < projectNames.size(); i++) {
+			Project currProject = projectsList.get(i);
+			if (currProject.retrieveAllTasks().isEmpty()) {
+				continue;
+			} else if (!currProject.retrieveAllTasks().isEmpty()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private void displayAll() {
+		if (!isThereATask()) {
+			UIHandler.getInstance().printToDisplay(
+					MESSAGE_NOTHING_TO_DISPLAY_ERROR);
+		} else {
+			for (DisplayObject disp : ListByDate) {
+
+				Date currDate = disp.getDate();
+
+				if (currDate == null) {
+					ArrayList<Task> listDisObj = disp.getList(); // Floating
+
+					if (!listDisObj.isEmpty()) {
+						UIHandler.getInstance().printToDisplay(
+								"----------------");
+						UIHandler.getInstance().printToDisplay(
+								"> " + "Bucket List:" + " |");
+						UIHandler.getInstance().printToDisplay(
+								"----------------");
+						displayArrayList(listDisObj);
+					}
+
+				} else {
+					UIHandler.getInstance().printToDisplay(
+							"------------------------");
+					UIHandler.getInstance().printToDisplay(
+							"> " + disp.dateToString() + " |");
+					UIHandler.getInstance().printToDisplay(
+							"------------------------");
+
+					displayArrayList(disp.getList());
+
+				}
+			}
+		}
+	}
+
+/*	private void displayAll() {
 		for (DisplayObject disp : ListByDate) {
 
 			Date currDate = disp.getDate();
@@ -633,7 +683,7 @@ public class Engine {
 			}
 		}
 	}
-
+*/
 	// check if the format of the date created is correct
 
 	/**
