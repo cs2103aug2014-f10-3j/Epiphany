@@ -890,6 +890,8 @@ public class Engine {
 	}
 	
 	/************************ Mark a Task as complete *******************/
+	// this method supports undo and redo of marking a task as complete
+	
 	private void checkCompleteTask(String input) {
 		Task mostRecentTask = new Task();
 		ArrayList<Task> tasksToBeCompleted = new ArrayList<Task>();
@@ -899,11 +901,14 @@ public class Engine {
 		} else if (tasksToBeCompleted.size() == 1) {
 			Task targetTask = tasksToBeCompleted.get(0);
 			mostRecentTask = targetTask;
-			mostRecentTask.isFinished(); // marked as finished
+			
+			mostRecentTask.setStatus();
+			
 			markTaskDescriptionAsComplete(mostRecentTask);
 			
-			UIHandler.getInstance().printToDisplay(mostRecentTask.getTaskDescription() + " is marked as completed!" );
-	    } else if (tasksToBeCompleted.size() > 1) {
+			//UIHandler.getInstance().printToDisplay(mostRecentTask.getTempTaskDescription() + " is marked as completed!" );
+	    
+		} else if (tasksToBeCompleted.size() > 1) {
 	    	ArrayList<Task> temp;
 	    	temp = tasksToBeCompleted;
 	    	displayArrayList(temp);
@@ -912,7 +917,7 @@ public class Engine {
 			int[] inputForComplete = new int[20];
 
 			try {
-				inputForComplete = interp.askForAdditionalInformationForDelete();
+				inputForComplete = interp.askForAdditionalInformationForDelete(); // same function as deleteObserver
 				if (inputForComplete.length == 0) {
 					UIHandler.getInstance().printToDisplay(MESSAGE_NO_INDEX_SPECIFIED);
 				} else {
@@ -921,9 +926,12 @@ public class Engine {
 						Task taskToBeDeleted = temp.get(inputForComplete[i] - 1);
 
 						mostRecentTask = taskToBeDeleted;
-						mostRecentTask.isFinished(); // marked as finished
+						//mostRecentTask.isFinished(); // marked as finished
+						
+						mostRecentTask.setStatus();
+						
 						markTaskDescriptionAsComplete(mostRecentTask);
-						UIHandler.getInstance().printToDisplay(mostRecentTask.getTaskDescription() + " is marked as completed!" );
+						//UIHandler.getInstance().printToDisplay(mostRecentTask.getTaskDescription() + " is marked as completed!" );
 					}
 				}
 			} catch (CancelDeleteException e) {
@@ -934,17 +942,18 @@ public class Engine {
 		}
 	}
 	
+	
 	// some special effect to denote that the task has been complete
     public void markTaskDescriptionAsComplete(Task input) {
-    	String originalInstruction = input.getTaskDescription();
-    	input.setInstruction(originalInstruction + " [DONE]");
+    	if (input.isCompleted() == true) {
+    		String originalInstruction = input.getTaskDescription();
+    		input.setInstruction(originalInstruction + " [DONE]");
+    		UIHandler.getInstance().printToDisplay(input.getTempTaskDescription() + " is marked as completed!" );
+    	} else { // if false, undo the operation and display the original task description
+    	    input.setInstruction(input.getTempTaskDescription());
+    		UIHandler.getInstance().printToDisplay(input.getTempTaskDescription() + " is marked as ongoing!" );
+    	}
     }
-    
-    // to do.
-    public void unmarkTaskAsComplete(Task input) {
-    	
-    }
-    
     
  	public String strikeThroughText(String input) {
  		String output;

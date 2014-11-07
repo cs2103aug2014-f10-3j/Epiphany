@@ -14,6 +14,7 @@ import Logic.Interpreter.UIHandler;
  */
 public class Task {
 		private String taskDescription;
+		private String tempTaskDescription; // backup of taskDescription, cannot be mutated
 		private Date from;
 		private Date deadLine;
 		private String projectName;
@@ -33,6 +34,7 @@ public class Task {
 			this.from = from;
 			this.deadLine = deadLine;
 			this.projectName = ProjectName;
+			this.tempTaskDescription = taskDescription;
 			
 			months = new String[12];
 			populateMonths();
@@ -64,7 +66,6 @@ public class Task {
 					return false;
 				}
 
-
 				if(this.getStartDate()!= null && t.getStartDate() != null){
 					return this.getStartDate().equals(t.getStartDate());
 				}
@@ -91,6 +92,10 @@ public class Task {
 /**********************Getters******************************/		
 		public String getTaskDescription() {
 			return this.taskDescription;
+		}
+		
+		public String getTempTaskDescription() {
+			return this.tempTaskDescription;
 		}
 
 		public Date getStartDate() {
@@ -150,6 +155,14 @@ public class Task {
 		public boolean isFinished() {
 			this.isCompleted = true;
 			return this.isCompleted;
+		}
+		
+		public void setStatus() { //to reverse the operation
+			if (this.isCompleted == false) {
+				this.isCompleted = true;
+			} else if (this.isCompleted = true) {
+				this.isCompleted = false;
+			}
 		}
 		
 		public String getType(){
@@ -324,6 +337,5 @@ public class Task {
 			}
 			
 			return s;
-		}
-		
+		}		
 	}
