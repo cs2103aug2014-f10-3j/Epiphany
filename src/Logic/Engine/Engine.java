@@ -360,7 +360,7 @@ public class Engine {
 	/********************** Delete Methods ***********************************/
 
 	private void delete(String taskDescription, String projectName) throws IOException {
-		if(taskDescription == null && !projectName.equals("default")){
+		if(taskDescription == null){
 			// Deleting a project instead.
 			int indexOfProjectToDelete = findIndex(projectName);
 
@@ -852,8 +852,12 @@ public class Engine {
 
 		if (taskList.isEmpty() && !currProject.getProjectName().equals("default")) {
 
-			UIHandler.getInstance().printToDisplay(currProject.getProjectName() + " has been removed. ");
 			projectsList.remove(indexProject);
+			projectNames.remove(projectName);
+			Writer.deleteProject(projectName, projectNames);
+			UIHandler.getInstance().printToDisplay(projectName + " has been removed. ");
+
+
 
 		} else {
 			UIHandler.getInstance().printToDisplay(taskToBeDeleted.getTaskDescription() + " has been removed. ");
