@@ -223,6 +223,10 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 		String projectName = "";
 		if(userInput.contains("#")){
 			projectName = userInput.substring(userInput.indexOf('#')+1);
+			if(projectName.equals("default")){
+				throw new InvalidCommandException();
+			}
+			
 			userInput = userInput.substring(0,userInput.indexOf('#')-1);
 		}
 		ArrayList<Date> dates = new ArrayList<Date>();

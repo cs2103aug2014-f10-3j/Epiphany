@@ -59,12 +59,13 @@ public class Engine {
 	private static final String MESSAGE_UNDO_SUCCESS = "Undone!";
 	private static final String MESSAGE_REDO_ERROR = "Nothing to redo!";
 	private static final String MESSAGE_REDO_SUCCESS = "Redone!";
-	private static final String ERROR_INVALID_PROJECT = "Project does not exist!";
-	private static final String ERROR_WRONG_CMDTYPE = null;
-	private static final String ERROR_COMMAND_TYPE_NULL = null;
-	private static final String NO_INDEX_SPECIFIED = "No index has been specified!";
-	private static final String MESSAGE_FOR_DELETE = "Please enter the index number of the task you want to delete";
-	private static final String NOTHING_TO_DELETE = "Nothing to delete!";
+	private static final String MESSAGE_ERROR_INVALID_PROJECT = "Project does not exist!";
+	private static final String MESSAGE_ERROR_WRONG_CMDTYPE = null;
+	private static final String MESSAGE_ERROR_COMMAND_TYPE_NULL = null;
+	private static final String MESSAGE_NO_INDEX_SPECIFIED = "No index has been specified!";
+	private static final String MESSAGE_FOR_DELETE = "Please enter the index number of the task you want to delete:";
+	private static final String MESSAGE_NOTHING_TO_DELETE = "Nothing to delete!";
+	private static final String MESSAGE_ERROR_INVALID_CMD = "This project name is invalid!";
 
 	/***************** Data Structures and Objects ********************/
 	private static EpiphanyInterpreter interp;
@@ -216,7 +217,7 @@ public class Engine {
 	 */
 	private CommandTypesEnum determineCommandType(CommandType commandType) {
 		if (commandType == null)
-			throw new Error(ERROR_COMMAND_TYPE_NULL);
+			throw new Error(MESSAGE_ERROR_COMMAND_TYPE_NULL);
 		if (commandType.getType().equalsIgnoreCase("add")) {
 			return CommandTypesEnum.ADD;
 		} else if (commandType.getType().equalsIgnoreCase("display")) {
@@ -286,7 +287,7 @@ public class Engine {
 			
 
 		default:
-			throw new Error(ERROR_WRONG_CMDTYPE); // throw an error if the
+			throw new Error(MESSAGE_ERROR_WRONG_CMDTYPE); // throw an error if the
 													// command is not recognized
 
 		}
@@ -305,7 +306,12 @@ public class Engine {
 	 */
 	private void add(String taskDescription, Date dateFrom, Date dateTo,
 			String projectName) throws IOException {
-
+/*
+		if(projectName.equals("default")){
+			UIHandler.getInstance().printToTerminal(MESSAGE_ERROR_INVALID_CMD);
+			return;
+		}
+*/		
 		Task incomingTask = new Task(taskDescription, dateFrom, dateTo,
 				projectName);
 
@@ -353,20 +359,29 @@ public class Engine {
 
 	/********************** Delete Methods ***********************************/
 
-	private void delete(String taskDescription, String projectName)
-			throws IOException {
+	private void delete(String taskDescription, String projectName) throws IOException {
+		if(taskDescription == null && !projectName.equals("default")){
+			// Deleting a project instead.
+			int indexOfProjectToDelete = findIndex(projectName);
 
-		Task mostRecentTask = new Task();
-		ArrayList<Task> tasksToDisplayForDelete = new ArrayList<Task>();
-		tasksToDisplayForDelete = searchForTask(taskDescription);
+			projectsList.remove(indexOfProjectToDelete);
+			projectNames.remove(projectName);
+			Writer.deleteProject(projectName);
+			UIHandler.getInstance().printToDisplay(projectName + " has been removed. ");
+
+			return;
+		}
+		
+		
+		ArrayList<Task> tasksToDisplayForDelete = searchForTask(taskDescription);
+		
 		if (tasksToDisplayForDelete.size() == 0) {
-			UIHandler.getInstance().printToDisplay(NOTHING_TO_DELETE);
+			UIHandler.getInstance().printToDisplay(MESSAGE_NOTHING_TO_DELETE);
 
 		} else if (tasksToDisplayForDelete.size() == 1) {
 
 			Task taskToBeDeleted = tasksToDisplayForDelete.get(0);
-			mostRecentTask = taskToBeDeleted;
-			removeTask(taskToBeDeleted);
+			removeTaskFromProj(taskToBeDeleted);
 
 		} else if (tasksToDisplayForDelete.size() > 1) {
 
@@ -377,20 +392,17 @@ public class Engine {
 
 			UIHandler.getInstance().printToDisplay(MESSAGE_FOR_DELETE);
 
-			int[] input = new int[20];
-
 			try {
-				input = interp.askForAdditionalInformationForDelete();
+				int[] input = interp.askForAdditionalInformationForDelete();
+				
 				if (input.length == 0) {
-					UIHandler.getInstance().printToDisplay(NO_INDEX_SPECIFIED);
+					UIHandler.getInstance().printToDisplay(MESSAGE_NO_INDEX_SPECIFIED);
 				} else {
 					
 					for (int i = 0; i < input.length; i++) {
 						Task taskToBeDeleted = temp.get(input[i] - 1);
 
-						mostRecentTask = taskToBeDeleted;
-						removeTask(taskToBeDeleted);
-
+						removeTaskFromProj(taskToBeDeleted);
 					}
 				}
 			} catch (CancelDeleteException e) {
@@ -700,7 +712,7 @@ public class Engine {
 			String typeOfCommand = mostRecent.getType();
 			Task task = mostRecent.getTask();
 			if (!projectNames.contains(mostRecent.getProjectName())) {
-				UIHandler.getInstance().printToDisplay(ERROR_INVALID_PROJECT);
+				UIHandler.getInstance().printToDisplay(MESSAGE_ERROR_INVALID_PROJECT);
 
 			} else {
 				if (typeOfCommand.equals("add")) {
@@ -808,27 +820,24 @@ public class Engine {
 	}
 
 	/********************************* Helper methods ********************************/
-	private void removeTask(Task taskToBeDeleted) throws IOException {
+	private void removeTaskFromProj(Task taskToBeDeleted) throws IOException {
 		String projectName = taskToBeDeleted.getProjectName();
 		int indexProject = findIndex(projectName);
+		
 		Project currProject = projectsList.get(indexProject);
+		
 		currProject.deleteTask(taskToBeDeleted);
-		ArrayList<Task> currList = currProject.retrieveAllTasks();
+		ArrayList<Task> taskList = currProject.retrieveAllTasks();
 
-		if (currList.isEmpty()
-				&& !currProject.getProjectName().equals("default")) {
+		if (taskList.isEmpty() && !currProject.getProjectName().equals("default")) {
 
-			UIHandler.getInstance().printToDisplay(
-					currProject.getProjectName() + " has been removed. ");
+			UIHandler.getInstance().printToDisplay(currProject.getProjectName() + " has been removed. ");
 			projectsList.remove(indexProject);
 
 		} else {
-			UIHandler.getInstance().printToDisplay(
-					taskToBeDeleted.getTaskDescription()
-							+ " has been removed. ");
-			addToUndoStack("delete", taskToBeDeleted.getProjectName(),
-					taskToBeDeleted);
+			UIHandler.getInstance().printToDisplay(taskToBeDeleted.getTaskDescription() + " has been removed. ");
 		}
+		addToUndoStack("delete", taskToBeDeleted.getProjectName(),taskToBeDeleted);
 	}
 
 	private ArrayList<Task> searchForTask(String taskDescription) {
@@ -880,7 +889,7 @@ public class Engine {
 		return p;
 	}
 	
-/************************ Mark a Task as complete *******************/
+	/************************ Mark a Task as complete *******************/
 	private void checkCompleteTask(String input) {
 		Task mostRecentTask = new Task();
 		ArrayList<Task> tasksToBeCompleted = new ArrayList<Task>();
@@ -905,7 +914,7 @@ public class Engine {
 			try {
 				inputForComplete = interp.askForAdditionalInformationForDelete();
 				if (inputForComplete.length == 0) {
-					UIHandler.getInstance().printToDisplay(NO_INDEX_SPECIFIED);
+					UIHandler.getInstance().printToDisplay(MESSAGE_NO_INDEX_SPECIFIED);
 				} else {
 					
 					for (int i = 0; i < inputForComplete.length; i++) {

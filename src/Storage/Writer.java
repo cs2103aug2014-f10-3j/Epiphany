@@ -94,4 +94,9 @@ public class Writer {
 		writer.write(projectName);
 		writer.close();
 	}
+	
+	public static void deleteProject(String projectName){
+		File f = new File("../Epiphany/src/Storage/Projects/" + projectName);
+		f.delete();
+	}
 }
