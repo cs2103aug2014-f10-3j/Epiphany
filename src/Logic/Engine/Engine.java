@@ -282,7 +282,7 @@ public class Engine {
 		case COMPLETE:
 			CompleteCommandType completeUserCommand = (CompleteCommandType) userCommand;
 			checkCompleteTask(completeUserCommand.getTaskDescription());
-			
+			break;
 			
 
 		default:
@@ -881,21 +881,62 @@ public class Engine {
 	}
 	
 /************************ Mark a Task as complete *******************/
-	
 	private void checkCompleteTask(String input) {
-		ArrayList<Task> temp;
-		try {
-			temp = search(input);
-			if (temp.contains(input) && temp.size() == 1) { //input is exact to Taskdescription of said task
-				temp.get(0).isFinished();
-				UIHandler.getInstance().printToDisplay(strikeThroughText(input));
-			}
-		} catch (IOException e) {
+		Task mostRecentTask = new Task();
+		ArrayList<Task> tasksToBeCompleted = new ArrayList<Task>();
+		tasksToBeCompleted = searchForTask(input);
+		if (tasksToBeCompleted.size() == 0) {
+			UIHandler.getInstance().printToDisplay(MESSAGE_NO_ENTRY);
+		} else if (tasksToBeCompleted.size() == 1) {
+			Task targetTask = tasksToBeCompleted.get(0);
+			mostRecentTask = targetTask;
+			mostRecentTask.isFinished(); // marked as finished
+			markTaskDescriptionAsComplete(mostRecentTask);
+			
+			UIHandler.getInstance().printToDisplay(mostRecentTask.getTaskDescription() + " is marked as completed!" );
+	    } else if (tasksToBeCompleted.size() > 1) {
+	    	ArrayList<Task> temp;
+	    	temp = tasksToBeCompleted;
+	    	displayArrayList(temp);
 
-			e.printStackTrace();
+			UIHandler.getInstance().printToDisplay("specify an index to be deleted");
+			int[] inputForComplete = new int[20];
+
+			try {
+				inputForComplete = interp.askForAdditionalInformationForDelete();
+				if (inputForComplete.length == 0) {
+					UIHandler.getInstance().printToDisplay(NO_INDEX_SPECIFIED);
+				} else {
+					
+					for (int i = 0; i < inputForComplete.length; i++) {
+						Task taskToBeDeleted = temp.get(inputForComplete[i] - 1);
+
+						mostRecentTask = taskToBeDeleted;
+						mostRecentTask.isFinished(); // marked as finished
+						markTaskDescriptionAsComplete(mostRecentTask);
+						UIHandler.getInstance().printToDisplay(mostRecentTask.getTaskDescription() + " is marked as completed!" );
+					}
+				}
+			} catch (CancelDeleteException e) {
+				return;
+			}
+		} else {
+			UIHandler.getInstance().printToDisplay("No such task exists!");
 		}
 	}
-
+	
+	// some special effect to denote that the task has been complete
+    public void markTaskDescriptionAsComplete(Task input) {
+    	String originalInstruction = input.getTaskDescription();
+    	input.setInstruction(originalInstruction + " [DONE]");
+    }
+    
+    // to do.
+    public void unmarkTaskAsComplete(Task input) {
+    	
+    }
+    
+    
  	public String strikeThroughText(String input) {
  		String output;
  		AttributedString str_attribute = new AttributedString(input);
@@ -903,7 +944,4 @@ public class Engine {
  		output = str_attribute.toString();
  		return output;
  	}
- 	
- 	//to undo strikethrough just use undo command
-
 }

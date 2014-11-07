@@ -109,7 +109,7 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 			return new RedoCommandType();
 		} else if(userInput.matches("(display|view|ls).*")){
 			return interpretDisplayCommand(userInput);
-		} else if(userInput.matches("(\\c|\\complete).*")){
+		} else if(userInput.matches("(-c).*")){
 			return interpretCompleteCommand(userInput);
 		} else if(userInput.equals("exit")) {
 			return exitProgram();
