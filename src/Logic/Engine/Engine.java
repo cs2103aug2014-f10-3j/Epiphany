@@ -861,7 +861,6 @@ public class Engine {
 				return i;
 			}
 		}
-
 		return -1;
 	}
 
