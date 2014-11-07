@@ -1,10 +1,12 @@
 package Logic.Engine;
 
+import java.awt.font.TextAttribute;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.text.AttributedString;
 import java.text.ParseException;
 import java.util.*;
 
@@ -37,27 +39,27 @@ public class Engine {
 
 	/**************************************** Message Prompts ************************************************/
 
-	public static final String MESSAGE_WELCOME = "";
-	public static final String MESSAGE_WRONG_ENTRY = "Wrong entry, please re-enter input.";
-	public static final String MESSAGE_SORTED = "Tasks sorted alphabetically!";
-	public static final String MESSAGE_DELETE_INVALID = " %s, is already empty, please re-enter command.";
-	public static final String MESSAGE_NO_ENTRY = "No such entry exists in %s.";
-	public static final String MESSAGE_DELETE = "Deleted from %s  %s.";
-	public static final String MESSAGE_CLEAR_EMPTY = "%s ";
-	public static final String MESSAGE_ADD = "Task Added!";
-	public static final String MESSAGE_ADD_DUPLICATE = "This task already exists!";
-	public static final String MESSAGE_NOTHING_TO_DISPLAY_ERROR = "No items to display.";
-	public static final String MESSAGE_CLEAR = "All content deleted from %s.";
-	public static final String MESSAGE_DISPLAY = "%d. %s";
-	public static final String MESSAGE_EXIT = "Thank you for using %s, good bye!";
-	public static final String MESSAGE_SORT = "All lines are now sorted.";
-	public static final String MESSAGE_INVALID_SEARCH = "No results to display.";
-	public static final String MESSAGE_PROVIDE_ARGUMENT = "Argument missing, please re-enter command.";
-	public static final String MESSAGE_UNDO_ERROR = "Nothing to undo!";
-	public static final String MESSAGE_UNDO_SUCCESS = "Undone!";
-	public static final String MESSAGE_REDO_ERROR = "Nothing to redo!";
-	public static final String MESSAGE_REDO_SUCCESS = "Redone!";
-	public static final String ERROR_INVALID_PROJECT = "Project does not exist!";
+	private static final String MESSAGE_WELCOME = "";
+	private static final String MESSAGE_WRONG_ENTRY = "Wrong entry, please re-enter input.";
+	private static final String MESSAGE_SORTED = "Tasks sorted alphabetically!";
+	private static final String MESSAGE_DELETE_INVALID = " %s, is already empty, please re-enter command.";
+	private static final String MESSAGE_NO_ENTRY = "No such entry exists in %s.";
+	private static final String MESSAGE_DELETE = "Deleted from %s  %s.";
+	private static final String MESSAGE_CLEAR_EMPTY = "%s ";
+	private static final String MESSAGE_ADD = "Task Added!";
+	private static final String MESSAGE_ADD_DUPLICATE = "This task already exists!";
+	private static final String MESSAGE_NOTHING_TO_DISPLAY_ERROR = "No items to display.";
+	private static final String MESSAGE_CLEAR = "All content deleted from %s.";
+	private static final String MESSAGE_DISPLAY = "%d. %s";
+	private static final String MESSAGE_EXIT = "Thank you for using %s, good bye!";
+	private static final String MESSAGE_SORT = "All lines are now sorted.";
+	private static final String MESSAGE_INVALID_SEARCH = "No results to display.";
+	private static final String MESSAGE_PROVIDE_ARGUMENT = "Argument missing, please re-enter command.";
+	private static final String MESSAGE_UNDO_ERROR = "Nothing to undo!";
+	private static final String MESSAGE_UNDO_SUCCESS = "Undone!";
+	private static final String MESSAGE_REDO_ERROR = "Nothing to redo!";
+	private static final String MESSAGE_REDO_SUCCESS = "Redone!";
+	private static final String ERROR_INVALID_PROJECT = "Project does not exist!";
 	private static final String ERROR_WRONG_CMDTYPE = null;
 	private static final String ERROR_COMMAND_TYPE_NULL = null;
 	private static final String NO_INDEX_SPECIFIED = "No index has been specified!";
@@ -201,7 +203,7 @@ public class Engine {
 	 *
 	 */
 	public enum CommandTypesEnum {
-		ADD, DISPLAY, DELETE, CLEAR, EXIT, INVALID, SEARCH, EDIT, UNDO, REDO
+		ADD, DISPLAY, DELETE, CLEAR, EXIT, INVALID, SEARCH, EDIT, UNDO, REDO, COMPLETE
 	};
 
 	/**
@@ -229,6 +231,8 @@ public class Engine {
 			return CommandTypesEnum.UNDO;
 		} else if (commandType.getType().equalsIgnoreCase("redo")) {
 			return CommandTypesEnum.REDO;
+		} else if (commandType.getType().equalsIgnoreCase("complete")) {
+			return CommandTypesEnum.COMPLETE;
 		} else {
 			return null;
 		}
@@ -274,6 +278,12 @@ public class Engine {
 		case REDO:
 			redo();
 			break;
+			
+		case COMPLETE:
+			CompleteCommandType completeUserCommand = (CompleteCommandType) userCommand;
+			checkCompleteTask(completeUserCommand.getTaskDescription());
+			
+			
 
 		default:
 			throw new Error(ERROR_WRONG_CMDTYPE); // throw an error if the
@@ -869,5 +879,31 @@ public class Engine {
 		Project p = projectsList.get(index);
 		return p;
 	}
+	
+/************************ Mark a Task as complete *******************/
+	
+	private void checkCompleteTask(String input) {
+		ArrayList<Task> temp;
+		try {
+			temp = search(input);
+			if (temp.contains(input) && temp.size() == 1) { //input is exact to Taskdescription of said task
+				temp.get(0).isFinished();
+				UIHandler.getInstance().printToDisplay(strikeThroughText(input));
+			}
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
+	}
+
+ 	public String strikeThroughText(String input) {
+ 		String output;
+ 		AttributedString str_attribute = new AttributedString(input);
+ 		str_attribute.addAttribute(TextAttribute.STRIKETHROUGH, input.length());
+ 		output = str_attribute.toString();
+ 		return output;
+ 	}
+ 	
+ 	//to undo strikethrough just use undo command
 
 }
