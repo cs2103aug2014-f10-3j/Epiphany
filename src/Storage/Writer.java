@@ -85,9 +85,8 @@ public class Writer {
 		writer.close();
 	}
 
-	public static void updateProjectMasterList(String projectName) throws IOException{
-		File file = new File(
-				"../Epiphany/src/Storage/projectMasterList.txt");
+	public static void addToProjectMasterList(String projectName) throws IOException{
+		File file = new File("../Epiphany/src/Storage/projectMasterList.txt");
 		FileWriter f = new FileWriter(file, true);
 		BufferedWriter writer = new BufferedWriter(f);
 		writer.newLine();
@@ -95,8 +94,27 @@ public class Writer {
 		writer.close();
 	}
 	
-	public static void deleteProject(String projectName){
-		File f = new File("../Epiphany/src/Storage/Projects/" + projectName);
-		f.delete();
+	public static void updateProjectMasterList(String projectName, ArrayList<String> projectList) throws IOException{
+
+		//need to update master list
+		File file = new File("../Epiphany/src/Storage/projectMasterList.txt");
+
+		FileWriter f = new FileWriter(file);
+		BufferedWriter writer = new BufferedWriter(f);
+		//writer.newLine();
+		
+		for(String name : projectList){
+			writer.write(name);
+		}
+		writer.close();
+	}
+	
+	
+	public static void deleteProject(String projectName, ArrayList<String> projectList) throws IOException{
+		
+		File project = new File("../Epiphany/src/Storage/Projects/" + projectName);
+		project.delete();
+		updateProjectMasterList(projectName, projectList);
+	
 	}
 }

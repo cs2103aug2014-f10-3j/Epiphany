@@ -349,7 +349,7 @@ public class Engine {
 				temp.add(incomingTask);
 				projectsList.add(new Project(projectName, temp));
 
-				Writer.updateProjectMasterList(projectName);
+				Writer.addToProjectMasterList(projectName);
 			}
 		}
 
@@ -366,7 +366,7 @@ public class Engine {
 
 			projectsList.remove(indexOfProjectToDelete);
 			projectNames.remove(projectName);
-			Writer.deleteProject(projectName);
+			Writer.deleteProject(projectName, projectNames);
 			UIHandler.getInstance().printToDisplay(projectName + " has been removed. ");
 
 			return;
