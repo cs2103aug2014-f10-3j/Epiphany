@@ -278,6 +278,9 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 			}
 			userInput = userInput.substring(0,userInput.indexOf('#')-1);
 		}
+		if(userInput.length()<2){
+			throw new InvalidCommandException();
+		}
 		ArrayList<Date> dates = new ArrayList<Date>();
 		String taskDescription;
 		if(userInput.startsWith("\"")){
@@ -357,7 +360,7 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 			String[] stringIndeces = inputFromUser.split(",");
 			int[] intIndeces = new int[stringIndeces.length];
 			for (int i = 0; i < stringIndeces.length; i++) {
-				intIndeces[i] = Integer.parseInt(stringIndeces[i]);
+				intIndeces[i] = Integer.parseInt(stringIndeces[i].trim());
 				if(intIndeces[i]<1){
 					throw new NumberFormatException("Invalid input : Negative index");
 				}

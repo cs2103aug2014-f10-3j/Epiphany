@@ -553,8 +553,8 @@ public class Engine {
 	 */
 	private void displayOverall(String input) throws IOException {
 		if (input.equals("all")) {
-			// UIHandler.getInstance().resetDisplay();
-			if (projectsList.size() == 1 && projectsList.get(0).isEmpty()) {
+			
+			if (projectsList.size() == 1 && projectsList.get(0).isEmpty() || !isThereATask()) {
 				UIHandler.getInstance().printToDisplay(
 						MESSAGE_NOTHING_TO_DISPLAY_ERROR);
 			}
@@ -562,7 +562,7 @@ public class Engine {
 			displayAll();
 
 		} else if (projectNames.contains(input)) {
-			// UIHandler.getInstance().resetDisplay();
+			
 			displayProject(input);
 		} else {
 			UIHandler.getInstance().printToDisplay(
@@ -580,13 +580,12 @@ public class Engine {
 		ListByDate = new ArrayList<DisplayObject>();
 		ArrayList<Task> floating = new ArrayList<Task>();
 
-		// Loop Through List of Projects.
+		
 		for (String projectName : projectNames) {
 			ArrayList<Task> currProjectTasks = projectsList.get(
 					findIndex(projectName)).retrieveAllTasks();
 
-			// sort tasks into many arrayLIST which shall then be printed,
-			// according to date
+			
 			for (Task currTask : currProjectTasks) {
 
 				if (!currTask.hasDeadLine()) {
@@ -622,10 +621,7 @@ public class Engine {
 	}
 
 	private void displayAll() {
-		if (!isThereATask()) {
-			UIHandler.getInstance().printToDisplay(
-					MESSAGE_NOTHING_TO_DISPLAY_ERROR);
-		} else {
+	
 			for (DisplayObject disp : ListByDate) {
 
 				Date currDate = disp.getDate();
@@ -655,35 +651,10 @@ public class Engine {
 
 				}
 			}
-		}
+		
 	}
 
-/*	private void displayAll() {
-		for (DisplayObject disp : ListByDate) {
 
-			Date currDate = disp.getDate();
-
-			if (currDate == null) {
-				ArrayList<Task> listDisObj = disp.getList(); // Floating
-
-				if (!listDisObj.isEmpty()) {
-					UIHandler.getInstance().printToDisplay("----------------");
-					UIHandler.getInstance().printToDisplay("> " + "Bucket List:" + " |");
-					UIHandler.getInstance().printToDisplay("----------------");
-					displayArrayList(listDisObj);
-				}
-
-			} else {
-				UIHandler.getInstance().printToDisplay("------------------------");
-				UIHandler.getInstance().printToDisplay("> " + disp.dateToString() + " |");
-				UIHandler.getInstance().printToDisplay("------------------------");
-
-				displayArrayList(disp.getList());
-
-			}
-		}
-	}
-*/
 	// check if the format of the date created is correct
 
 	/**
