@@ -11,6 +11,9 @@ import Logic.Interpreter.DateInterpreter.*;
 import Logic.Interpreter.CommandType.*; 
 import Logic.Engine.*;
 import Logic.Exceptions.*;
+import jline.TerminalFactory;
+import jline.console.ConsoleReader;
+import jline.console.completer.StringsCompleter;
 
 /**
  * This class parses the input from the user. The intepreter draws on several helper classes to accept simple
@@ -61,6 +64,40 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 	 * @throws CancelEditException 
 	 */
 	void acceptUserInputUntilExit() throws IOException, CancelEditException, CancelDeleteException {
+		/*try {
+			ConsoleReader console = new ConsoleReader();
+			console.setPrompt("command: ");
+			console.addCompleter(new StringsCompleter(this.getCommandsList()));
+			String line = null;
+			while ((line = console.readLine()) != null) {
+				CommandType toPassToEngine;
+				try {
+					if(line.equals("clear")){
+						console.clearScreen();
+						continue;
+					} else if(line.length()<2){
+						throw new InvalidCommandException();
+					}
+					toPassToEngine = interpretCommand(line);
+					assert(toPassToEngine != null);
+					engine.executeCommand(toPassToEngine);
+				} catch (InvalidCommandException e) {
+					uiHandler.printToTerminal(MESSAGE_INVALID_COMMAND);
+				}
+				catch (ExitException e) {
+					System.exit(0);
+				}
+
+			}
+		} catch(IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				TerminalFactory.get().restore();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}*/
 		String userInput;
 		do{
 			uiHandler.printToTerminal(MESSAGE_COMMAND_PROMPT, "inline");
@@ -78,6 +115,19 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 			}
 		} while(!userInput.equalsIgnoreCase("exit"));
 		input.close();
+	}
+
+	private ArrayList<String> getCommandsList(){
+		ArrayList<String> commands = new ArrayList<String>();
+		commands.add("delete");
+		commands.add("edit");
+		commands.add("search");
+		commands.add("display");
+		commands.add("exit");
+		commands.add("undo");
+		commands.add("redo");
+		commands.add("-complete");
+		return commands;
 	}
 
 	/*public void acceptUserInput(String userInput) throws IOException{
@@ -109,7 +159,7 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 			return new RedoCommandType();
 		} else if(userInput.matches("(display|view|ls).*")){
 			return interpretDisplayCommand(userInput);
-		} else if(userInput.matches("(-c).*")){
+		} else if(userInput.matches("(-m).*")){
 			return interpretCompleteCommand(userInput);
 		} else if(userInput.equals("exit")) {
 			return exitProgram();
@@ -217,7 +267,7 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 	 * @throws InvalidCommandException 
 	 */
 	private CommandType interpretAddCommand(String userInput) throws InvalidCommandException {
-		if(!isValidTask(userInput)){
+		if(!userInput.startsWith("\"") && !isValidTask(userInput)){
 			throw new InvalidCommandException();
 		}
 		String projectName = "";
@@ -226,11 +276,22 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 			if(projectName.equals("default")){
 				throw new InvalidCommandException();
 			}
-			
 			userInput = userInput.substring(0,userInput.indexOf('#')-1);
 		}
 		ArrayList<Date> dates = new ArrayList<Date>();
-		String taskDescription = parseDate(userInput, dates);
+		String taskDescription;
+		if(userInput.startsWith("\"")){
+			try{
+				taskDescription = userInput.substring(1,userInput.lastIndexOf('\"'));
+				if(userInput.length()>userInput.lastIndexOf('\"')+1){
+					parseDate(userInput.substring(userInput.lastIndexOf('\"')+1), dates);
+				}
+			} catch (Exception e){
+				throw new InvalidCommandException();
+			}
+		} else{
+			taskDescription = parseDate(userInput, dates);
+		}
 		assert(taskDescription!=null);
 		if(dates.size()==0){
 			if(projectName.equals("")){
