@@ -234,7 +234,9 @@ public class Engine {
 			return CommandTypesEnum.REDO;
 		} else if (commandType.getType().equalsIgnoreCase("complete")) {
 			return CommandTypesEnum.COMPLETE;
-		} else {
+		}  else if (commandType.getType().equalsIgnoreCase("clear")) {
+			return CommandTypesEnum.CLEAR;
+		}else {
 			return null;
 		}
 	}
@@ -279,6 +281,10 @@ public class Engine {
 		case REDO:
 			redo();
 			break;
+		
+		case CLEAR:
+			clear();
+			break;
 
 		case COMPLETE:
 			CompleteCommandType completeUserCommand = (CompleteCommandType) userCommand;
@@ -286,10 +292,7 @@ public class Engine {
 			break;
 
 		default:
-			throw new Error(MESSAGE_ERROR_WRONG_CMDTYPE); // throw an error if
-															// the
-			// command is not recognized
-
+			throw new Error(MESSAGE_ERROR_WRONG_CMDTYPE); 
 		}
 	}
 
@@ -523,6 +526,7 @@ public class Engine {
 		}
 		UIHandler.getInstance().printToDisplay("\n");
 	}
+
 	private void displayArrayListForSearch(ArrayList<Task> projectList) {
 
 		if (projectList.isEmpty()) {
@@ -537,6 +541,7 @@ public class Engine {
 		}
 		UIHandler.getInstance().printToDisplay("\n");
 	}
+
 	/**
 	 * Displays all the Tasks within a specified project
 	 * 
@@ -581,6 +586,16 @@ public class Engine {
 					MESSAGE_NOTHING_TO_DISPLAY_ERROR);
 		}
 
+	}
+
+	private void clear() throws IOException {
+		for (int i = 0; i < projectNames.size(); i++) {
+			Project currProject = projectsList.get(i);
+			ArrayList<Task> currTaskList = currProject.retrieveAllTasks();
+			for (Task t : currTaskList) {
+				currProject.deleteTask(t);
+			}
+		}
 	}
 
 	/**
@@ -880,17 +895,16 @@ public class Engine {
 		if (input.isCompleted() == true) {
 			String originalInstruction = input.getTaskDescription();
 			input.setInstruction(originalInstruction + MESSAGE_MARKED_AS_DONE);
-			
+
 			String toDisplay = input.getTempTaskDescription()
 					+ MESSAGE_MARKED_AS_COMPLETE;
-					UIHandler.getInstance()
-					.printToDisplay(toDisplay);
+			UIHandler.getInstance().printToDisplay(toDisplay);
 		} else { // if false, undo the operation and display the original task
 					// description
 			input.setInstruction(input.getTempTaskDescription());
-			String toDisplay = input.getTempTaskDescription() + MESSAGE_MARKED_AS_ONGOING;
-			UIHandler.getInstance().printToDisplay(
-					toDisplay);
+			String toDisplay = input.getTempTaskDescription()
+					+ MESSAGE_MARKED_AS_ONGOING;
+			UIHandler.getInstance().printToDisplay(toDisplay);
 		}
 	}
 
@@ -941,7 +955,7 @@ public class Engine {
 	 *         description
 	 */
 	private ArrayList<Task> searchForTask(String taskDescription) {
-		
+
 		ArrayList<Task> positiveMatches = new ArrayList<Task>();
 		for (int i = 0; i < projectsList.size(); i++) {
 			ArrayList<Task> tasksInCurrProject = projectsList.get(i)
