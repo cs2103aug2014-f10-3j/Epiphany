@@ -359,7 +359,7 @@ public class Engine {
 				temp.add(incomingTask);
 				projectsList.add(new Project(projectName, temp));
 				// not sure about this line please look into it.
-				Writer.updateProjectMasterList(projectName);
+				Writer.updateProjectMasterList(projectName, projectNames);
 			}
 		}
 
