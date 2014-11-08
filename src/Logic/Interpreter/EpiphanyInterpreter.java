@@ -160,6 +160,8 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 			return new UndoCommandType();
 		} else if(userInput.equalsIgnoreCase("redo")){
 			return new RedoCommandType();
+		} else if(userInput.equalsIgnoreCase("reset")){
+			return new ResetCommandType();
 		} else if(userInput.matches("(display|view|ls).*")){
 			return interpretDisplayCommand(userInput);
 		} else if(userInput.matches("(-m).*")){
@@ -168,7 +170,7 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 			return exitProgram();
 		} else if(userInput.matches("(search|find).*")) {
 			return interpretSearchCommand(userInput);
-		} else if(userInput.matches("(delete|remove).*")) {
+		} else if(userInput.matches("(delete|remove|rm).*")) {
 			return interpretDeleteCommand(userInput);
 		} else if(userInput.matches("(edit).*")) {
 			return interpretEditCommand(userInput);
