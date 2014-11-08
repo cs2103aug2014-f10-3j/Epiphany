@@ -7,6 +7,7 @@ import java.util.Scanner;
 import java.util.Date; 
 import java.util.TreeSet;
 
+
 import Logic.Interpreter.DateInterpreter.*;
 import Logic.Interpreter.CommandType.*; 
 import Logic.Engine.*;
@@ -29,6 +30,8 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 	///all the string constants that are involved in displaying things to the user.
 	private static final String MESSAGE_COMMAND_PROMPT = "command: ";
 	private static final String MESSAGE_INVALID_COMMAND = "Invalid command!";
+	
+	private static final String DISPLAY_DATE_FORMAT = "%d-%d-%d";
 	private static final TreeSet<String> actionWords = new TreeSet<String>(); //dictionary
 	Engine engine;
 	Scanner input; //This scanner will deal with all input from user.
@@ -202,6 +205,7 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 	 * @return DisplayCommandType
 	 * @throws InvalidCommandException 
 	 */
+	@SuppressWarnings("deprecation")
 	private CommandType interpretDisplayCommand(String userInput) throws InvalidCommandException {
 		String[] commandTokens = userInput.split(" ");
 
@@ -215,6 +219,12 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 				return new DisplayCommandType(userInput.split("#")[1]);
 			} else if(commandTokens[1].equalsIgnoreCase("all")){
 				return new DisplayCommandType(commandTokens[1]);
+			} else{
+				ArrayList<Date> displayDate = new ArrayList<Date>();
+				parseDate(" by "+userInput.substring(userInput.indexOf(' ')+1), displayDate);
+				if(displayDate.size()>=1){
+					return new DisplayCommandType(String.format(DISPLAY_DATE_FORMAT, displayDate.get(0).getDate(),displayDate.get(0).getMonth(),displayDate.get(0).getYear()+1900));
+				}
 			}
 		}
 		throw new InvalidCommandException();
