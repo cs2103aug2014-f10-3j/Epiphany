@@ -18,6 +18,7 @@ public final class strtotime {
     private static final String REGEX_ADD_LONG_INTERVAL_COMMAND = ".*\\s(from)\\s.*";
 	private static final String REGEX_SPLIT_ADD_LONG_INTERVAL_COMMAND = "\\s(from)\\s(?!.*\\s(from)\\s)";
     private static final String REGEX_ADD_EDGE_CASE_COMMAND = ".*(this|next|tomorrow|today).*";
+    private static final String REGEX_NOT_ADD_EDGE_CASE_COMMAND = "(this|next|tomorrow|today).*";
 	private static final TreeSet<String> actionWords = new TreeSet<String>(); //dictionary
 
     public static String convert(String input, ArrayList<Date> d) throws InvalidCommandException {
@@ -42,7 +43,7 @@ public final class strtotime {
     		if(d.size()==2){
     			return tokens[0];
     		}
-    	} else if(input.matches(REGEX_ADD_EDGE_CASE_COMMAND)){
+    	} else if(input.matches(REGEX_ADD_EDGE_CASE_COMMAND) && !input.matches(REGEX_NOT_ADD_EDGE_CASE_COMMAND)){
     		String taskDescription;
     		if(input.contains("this")){
     			toInterpret = input.substring(input.lastIndexOf("this"));

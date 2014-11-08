@@ -19,10 +19,18 @@ public class DeleteCommandTypeTestCases {
 	
 	@Test
 	public void testDeleteCommandTypeWithProject() {
-		DeleteCommandType deelteCommand = new DeleteCommandType("This is a delete command", "Project Name");
-		assertEquals("delete", deelteCommand.getType());
-		assertEquals("This is a delete command", deelteCommand.getTaskDescription());
-		assertEquals("Project Name", deelteCommand.getProjectName());
+		DeleteCommandType deleteCommand = new DeleteCommandType("This is a delete command", "Project Name");
+		assertEquals("delete", deleteCommand.getType());
+		assertEquals("This is a delete command", deleteCommand.getTaskDescription());
+		assertEquals("Project Name", deleteCommand.getProjectName());
+	}
+	
+	@Test
+	public void testDeleteProjectCommandType() {
+		DeleteCommandType deleteCommand = new DeleteCommandType(null, "Project Name");
+		assertEquals("delete", deleteCommand.getType());
+		assertEquals(null, deleteCommand.getTaskDescription());
+		assertEquals("Project Name", deleteCommand.getProjectName());
 	}
 
 }

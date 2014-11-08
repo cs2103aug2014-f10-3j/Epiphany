@@ -183,6 +183,9 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 		}
 		String completeMe = userInput.substring(userInput.indexOf(' ') + 1);
 		if(completeMe.contains("#")){
+			if(completeMe.substring(completeMe.indexOf('#')+1).contains("#")){
+				throw new InvalidCommandException();
+			}
 			return new CompleteCommandType(completeMe.substring(0,completeMe.indexOf('#')-1),completeMe.substring(completeMe.indexOf('#')+1));
 		}
 		return new CompleteCommandType(completeMe);
@@ -194,6 +197,9 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 		}
 		String toEdit = userInput.substring(userInput.indexOf(' ') + 1); 
 		if(toEdit.contains("#")){
+			if(toEdit.substring(toEdit.indexOf('#')+1).contains("#")){
+				throw new InvalidCommandException();
+			}
 			return new EditCommandType(toEdit.substring(0,toEdit.indexOf('#')-1),toEdit.substring(toEdit.indexOf('#')+1));
 		}
 		return new EditCommandType(toEdit);
@@ -251,6 +257,9 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 		}
 		String findMe = userInput.substring(userInput.indexOf(' ') + 1);
 		if(findMe.contains("#")){
+			if(findMe.substring(findMe.indexOf('#')+1).contains("#")){
+				throw new InvalidCommandException();
+			}
 			return new SearchCommandType(findMe.substring(0,findMe.indexOf('#')-1),findMe.substring(findMe.indexOf('#')+1));
 		}
 		return new SearchCommandType(findMe);
@@ -262,6 +271,9 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 		}
 		String toDelete = userInput.substring(userInput.indexOf(' ') + 1); 
 		if(toDelete.contains("#")){
+			if(toDelete.substring(toDelete.indexOf('#')+1).contains("#")){
+				throw new InvalidCommandException();
+			}
 			if(toDelete.startsWith("#")){
 				return new DeleteCommandType(null, toDelete.substring(1));
 			}
@@ -282,6 +294,9 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 		}
 		String projectName = "";
 		if(userInput.contains("#")){
+			if(userInput.substring(userInput.indexOf('#')+1).contains("#")){
+				throw new InvalidCommandException();
+			}
 			projectName = userInput.substring(userInput.indexOf('#')+1);
 			if(projectName.equals("default")){
 				throw new InvalidCommandException();
@@ -377,7 +392,7 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 			}
 			return intIndeces;
 		} catch (NumberFormatException e){
-			uiHandler.printToTerminal("You have entered an invalid number. Press y to try again, press n to exit.");
+			uiHandler.printToTerminal("You have entered an invalid number. Press y to try again, press n to cancel.");
 			String userResponse = input.nextLine();
 			if(userResponse.equalsIgnoreCase("y")){
 				return askForAdditionalInformationForDelete();

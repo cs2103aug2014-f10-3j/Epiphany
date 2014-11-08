@@ -19,21 +19,25 @@ public class DeadlineDateConverterTest {
 	//private static final String COMMAND_PREFIX_IN = "";
 	
 	@Test
-	public void DateAndMonthMatcherTest() throws InvalidCommandException {
+	public void DateAndMonthWithTimeTest() throws InvalidCommandException {
 		Calendar cal = Calendar.getInstance();
 		ArrayList<Date> dates = new ArrayList<Date>();
-		strtotime.convert(COMMAND_PREFIX_BY+"26th July", dates);
+		strtotime.convert(COMMAND_PREFIX_BY+"26th July 14:20", dates);
 		cal.setTime(dates.get(0));
 		assertEquals(26, cal.get(Calendar.DAY_OF_MONTH));
 		assertEquals(6, cal.get(Calendar.MONTH));
-		strtotime.convert(COMMAND_PREFIX_BY+"26 July", dates);
+		assertEquals(14, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(20, cal.get(Calendar.MINUTE));
+		strtotime.convert(COMMAND_PREFIX_BY+"26 July 14:20", dates);
 		cal.setTime(dates.get(0));
 		assertEquals(26, cal.get(Calendar.DAY_OF_MONTH));
 		assertEquals(6, cal.get(Calendar.MONTH));
+		assertEquals(14, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(20, cal.get(Calendar.MINUTE));
 	}
 	
 	@Test
-	public void SoonMatcherTest() throws InvalidCommandException {
+	public void SoonTest() throws InvalidCommandException {
 		Calendar cal = Calendar.getInstance();
 		Calendar now = Calendar.getInstance();
 		ArrayList<Date> dates = new ArrayList<Date>();
@@ -51,7 +55,7 @@ public class DeadlineDateConverterTest {
 	}
 	
 	@Test
-	public void SoonMatcherWithTimeTest() throws InvalidCommandException {
+	public void SoonWithTimeTest() throws InvalidCommandException {
 		Calendar cal = Calendar.getInstance();
 		Calendar now = Calendar.getInstance();
 		ArrayList<Date> dates = new ArrayList<Date>();
@@ -133,7 +137,41 @@ public class DeadlineDateConverterTest {
 	}
 	
 	@Test
-	public void DateFormatTwoTest() throws InvalidCommandException {
+	public void DateFormatThreeWithTimeTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		strtotime.convert(COMMAND_PREFIX_BY+"26/7/2020 14:20",dates);
+		cal.setTime(dates.get(0));
+		assertEquals(26, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(6, cal.get(Calendar.MONTH));
+		assertEquals(2020, cal.get(Calendar.YEAR));
+		assertEquals(14, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(20, cal.get(Calendar.MINUTE));
+		strtotime.convert(COMMAND_PREFIX_BY+"26.7.2020 14:20",dates);
+		cal.setTime(dates.get(0));
+		assertEquals(26, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(6, cal.get(Calendar.MONTH));
+		assertEquals(2020, cal.get(Calendar.YEAR));
+		assertEquals(14, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(20, cal.get(Calendar.MINUTE));
+		strtotime.convert(COMMAND_PREFIX_BY+"26-7-2020 14:20",dates);
+		cal.setTime(dates.get(0));
+		assertEquals(26, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(6, cal.get(Calendar.MONTH));
+		assertEquals(2020, cal.get(Calendar.YEAR));
+		assertEquals(14, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(20, cal.get(Calendar.MINUTE));
+		strtotime.convert(COMMAND_PREFIX_BY+"26 7 2020 14:20",dates);
+		cal.setTime(dates.get(0));
+		assertEquals(26, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(6, cal.get(Calendar.MONTH));
+		assertEquals(2020, cal.get(Calendar.YEAR));
+		assertEquals(14, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(20, cal.get(Calendar.MINUTE));
+	}
+	
+	@Test
+	public void DateAndMonthTest() throws InvalidCommandException {
 		Calendar cal = Calendar.getInstance();
 		ArrayList<Date> dates = new ArrayList<Date>();
 		strtotime.convert(COMMAND_PREFIX_BY+"26/7",dates);

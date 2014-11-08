@@ -21,8 +21,10 @@ import Logic.Exceptions.InvalidCommandException;
 import Logic.Interpreter.EpiphanyInterpreter;
 import Logic.Interpreter.CommandType.AddCommandType;
 import Logic.Interpreter.CommandType.CommandType;
+import Logic.Interpreter.CommandType.CompleteCommandType;
 import Logic.Interpreter.CommandType.DeleteCommandType;
 import Logic.Interpreter.CommandType.DisplayCommandType;
+import Logic.Interpreter.CommandType.EditCommandType;
 import Logic.Interpreter.CommandType.SearchCommandType;
 import Logic.Interpreter.DateInterpreter.strtotime;
 
@@ -41,19 +43,19 @@ public class EpiphanyInterpreterTestCases {
 	    System.setOut(null);
 	    System.setErr(null);
 	}
-	
+
 	@Test
 	public void initializationTest() throws IOException, ParseException {
 		EpiphanyInterpreter.main(null);
 		String inputData = "exit\r\n";
 		System.setIn(new ByteArrayInputStream(inputData.getBytes()));
 		assertEquals("Exiting Program.", outContent.toString());
-		
+
 	}*/
-	
+
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
-	
+
 	@Test
 	public void interpretDisplayTest() throws IOException, ParseException, InvalidCommandException, ExitException{
 		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
@@ -63,7 +65,7 @@ public class EpiphanyInterpreterTestCases {
 		}
 		DisplayCommandType actualDisplayCommand = (DisplayCommandType) actualCommand;
 		assertEquals("all", actualDisplayCommand.getModifiers());
-		
+
 		actualCommand = interpreter.interpretCommand("view all");
 		if(!actualCommand.getType().equals("display")){
 			fail();
@@ -77,29 +79,36 @@ public class EpiphanyInterpreterTestCases {
 		}
 		actualDisplayCommand = (DisplayCommandType) actualCommand;
 		assertEquals("Project Name", actualDisplayCommand.getModifiers());
+
+		actualCommand = interpreter.interpretCommand("display 26/07/2014");
+		if(!actualCommand.getType().equals("display")){
+			fail();
+		}
+		actualDisplayCommand = (DisplayCommandType) actualCommand;
+		assertEquals("26-6-2014", actualDisplayCommand.getModifiers());
 	}
-	
+
 	@Test
 	public void displayInvalidModifierTest() throws IOException, ParseException, InvalidCommandException, ExitException{
 		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
 		thrown.expect(InvalidCommandException.class);
 		CommandType actualCommand = interpreter.interpretCommand("display something");
 	}
-	
+
 	@Test
 	public void displayTwoHashtagsTest() throws IOException, ParseException, InvalidCommandException, ExitException{
 		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
 		thrown.expect(InvalidCommandException.class);
 		CommandType actualCommand = interpreter.interpretCommand("display #something#YOLO#Error");
 	}
-	
+
 	@Test
 	public void interpretExitTest() throws IOException, ParseException, InvalidCommandException, ExitException{
 		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
 		thrown.expect(ExitException.class);
 		CommandType actualCommand = interpreter.interpretCommand("exit");
 	}
-	
+
 	@Test
 	public void interpretSearchTest() throws IOException, ParseException, InvalidCommandException, ExitException{
 		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
@@ -110,7 +119,7 @@ public class EpiphanyInterpreterTestCases {
 		SearchCommandType actualSearchCommand = (SearchCommandType) actualCommand;
 		assertEquals("something", actualSearchCommand.getTaskDescription());
 		assertEquals("", actualSearchCommand.getProjectName());
-		
+
 		actualCommand = interpreter.interpretCommand("search something #Project Name");
 		if(!actualCommand.getType().equals("search")){
 			fail();
@@ -118,11 +127,11 @@ public class EpiphanyInterpreterTestCases {
 		actualSearchCommand = (SearchCommandType) actualCommand;
 		assertEquals("something", actualSearchCommand.getTaskDescription());
 		assertEquals("Project Name", actualSearchCommand.getProjectName());
-		
+
 		thrown.expect(InvalidCommandException.class);
 		actualCommand = interpreter.interpretCommand("search");
 	}
-	
+
 	@Test
 	public void interpretDeleteTest() throws IOException, ParseException, InvalidCommandException, ExitException{
 		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
@@ -133,7 +142,7 @@ public class EpiphanyInterpreterTestCases {
 		DeleteCommandType actualDeleteCommand = (DeleteCommandType) actualCommand;
 		assertEquals("something", actualDeleteCommand.getTaskDescription());
 		assertEquals("default", actualDeleteCommand.getProjectName());
-		
+
 		actualCommand = interpreter.interpretCommand("delete something #Project Name");
 		if(!actualCommand.getType().equals("delete")){
 			fail();
@@ -141,11 +150,19 @@ public class EpiphanyInterpreterTestCases {
 		actualDeleteCommand = (DeleteCommandType) actualCommand;
 		assertEquals("something", actualDeleteCommand.getTaskDescription());
 		assertEquals("Project Name", actualDeleteCommand.getProjectName());
-		
+
+		actualCommand = interpreter.interpretCommand("delete #Project Name");
+		if(!actualCommand.getType().equals("delete")){
+			fail();
+		}
+		actualDeleteCommand = (DeleteCommandType) actualCommand;
+		assertEquals(null, actualDeleteCommand.getTaskDescription());
+		assertEquals("Project Name", actualDeleteCommand.getProjectName());
+
 		thrown.expect(InvalidCommandException.class);
 		actualCommand = interpreter.interpretCommand("delete");
 	}
-	
+
 	@Test
 	public void addFloatingTest() throws IOException, ParseException, InvalidCommandException, ExitException{
 		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
@@ -158,7 +175,7 @@ public class EpiphanyInterpreterTestCases {
 		assertEquals(null, actualAddCommand.getDateFrom());
 		assertEquals(null, actualAddCommand.getDateTo());
 		assertEquals("default", actualAddCommand.getProjectName());
-		
+
 		actualCommand = interpreter.interpretCommand("Complete something #Project Name");
 		if(!actualCommand.getType().equals("add")){
 			fail();
@@ -168,7 +185,7 @@ public class EpiphanyInterpreterTestCases {
 		assertEquals(null, actualAddCommand.getDateFrom());
 		assertEquals(null, actualAddCommand.getDateTo());
 		assertEquals("Project Name", actualAddCommand.getProjectName());
-		
+
 		thrown.expect(InvalidCommandException.class);
 		actualCommand = interpreter.interpretCommand("ansodn valid words");
 	}
@@ -183,7 +200,7 @@ public class EpiphanyInterpreterTestCases {
 		AddCommandType actualAddCommand = (AddCommandType) actualCommand;
 		assertEquals("Complete something", actualAddCommand.getDescription());
 		assertEquals("default", actualAddCommand.getProjectName());
-		
+
 		actualCommand = interpreter.interpretCommand("Complete something by 26th July #Project Name");
 		if(!actualCommand.getType().equals("add")){
 			fail();
@@ -192,7 +209,7 @@ public class EpiphanyInterpreterTestCases {
 		assertEquals("Complete something", actualAddCommand.getDescription());
 		assertEquals("Project Name", actualAddCommand.getProjectName());
 	}
-	
+
 	@Test
 	public void addIntervalTest() throws IOException, ParseException, InvalidCommandException, ExitException{
 		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
@@ -203,7 +220,7 @@ public class EpiphanyInterpreterTestCases {
 		AddCommandType actualAddCommand = (AddCommandType) actualCommand;
 		assertEquals("Complete something", actualAddCommand.getDescription());
 		assertEquals("default", actualAddCommand.getProjectName());
-		
+
 		actualCommand = interpreter.interpretCommand("Complete something on 26th July from 9:30 to 11:30 #Project Name");
 		if(!actualCommand.getType().equals("add")){
 			fail();
@@ -212,5 +229,104 @@ public class EpiphanyInterpreterTestCases {
 		assertEquals("Complete something", actualAddCommand.getDescription());
 		assertEquals("Project Name", actualAddCommand.getProjectName());
 	}
-	
+
+	@Test
+	public void addMiscTest() throws IOException, ParseException, InvalidCommandException, ExitException{
+		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
+		CommandType actualCommand = interpreter.interpretCommand("\"do something\"");
+		if(!actualCommand.getType().equals("add")){
+			fail();
+		}
+		AddCommandType actualAddCommand = (AddCommandType) actualCommand;
+		assertEquals("do something", actualAddCommand.getDescription());
+		assertEquals("default", actualAddCommand.getProjectName());
+
+		actualCommand = interpreter.interpretCommand("\"do something\" by 26/07");
+		if(!actualCommand.getType().equals("add")){
+			fail();
+		}
+		actualAddCommand = (AddCommandType) actualCommand;
+		assertEquals("do something", actualAddCommand.getDescription());
+		assertEquals("default", actualAddCommand.getProjectName());
+		assertEquals(26, actualAddCommand.getDateTo().getDate());
+		assertEquals(6, actualAddCommand.getDateTo().getMonth());
+
+		try{
+			actualCommand = interpreter.interpretCommand("do something #default");
+			assert(false);
+		} catch(InvalidCommandException e){
+			assert(true);
+		}
+		try{
+			actualCommand = interpreter.interpretCommand("d");
+			assert(false);
+		} catch(InvalidCommandException e){
+			assert(true);
+		}
+	}
+
+	@Test
+	public void undoTest() throws IOException, ParseException, InvalidCommandException, ExitException{
+		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
+		CommandType actualCommand = interpreter.interpretCommand("undo");
+		if(!actualCommand.getType().equals("undo")){
+			fail();
+		}
+	}
+
+	@Test
+	public void redoTest() throws IOException, ParseException, InvalidCommandException, ExitException{
+		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
+		CommandType actualCommand = interpreter.interpretCommand("redo");
+		if(!actualCommand.getType().equals("redo")){
+			fail();
+		}
+	}
+
+	@Test
+	public void completeTaskTest() throws IOException, ParseException, InvalidCommandException, ExitException{
+		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
+		CommandType actualCommand = interpreter.interpretCommand("-m something");
+		if(!actualCommand.getType().equals("complete")){
+			fail();
+		}
+		CompleteCommandType actualCompleteCommand = (CompleteCommandType) actualCommand;
+		assertEquals("something", actualCompleteCommand.getTaskDescription());
+		assertEquals("default", actualCompleteCommand.getProjectName());
+
+		actualCommand = interpreter.interpretCommand("-m something #Project Name");
+		if(!actualCommand.getType().equals("complete")){
+			fail();
+		}
+		actualCompleteCommand = (CompleteCommandType) actualCommand;
+		assertEquals("something", actualCompleteCommand.getTaskDescription());
+		assertEquals("Project Name", actualCompleteCommand.getProjectName());
+
+		thrown.expect(InvalidCommandException.class);
+		actualCommand = interpreter.interpretCommand("-m");
+	}
+
+	@Test
+	public void editTaskTest() throws IOException, ParseException, InvalidCommandException, ExitException{
+		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
+		CommandType actualCommand = interpreter.interpretCommand("edit something");
+		if(!actualCommand.getType().equals("edit")){
+			fail();
+		}
+		EditCommandType actualEditCommand = (EditCommandType) actualCommand;
+		assertEquals("something", actualEditCommand.getTaskDescription());
+		assertEquals("default", actualEditCommand.getProjectName());
+
+		actualCommand = interpreter.interpretCommand("edit something #Project Name");
+		if(!actualCommand.getType().equals("edit")){
+			fail();
+		}
+		actualEditCommand = (EditCommandType) actualCommand;
+		assertEquals("something", actualEditCommand.getTaskDescription());
+		assertEquals("Project Name", actualEditCommand.getProjectName());
+
+		thrown.expect(InvalidCommandException.class);
+		actualCommand = interpreter.interpretCommand("edit");
+	}
+
 }
