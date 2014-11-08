@@ -12,6 +12,7 @@ import java.util.*;
 
 import Logic.Exceptions.CancelDeleteException;
 import Logic.Exceptions.CancelEditException;
+import Logic.Exceptions.InvalidCommandException;
 import Logic.Interpreter.EpiphanyInterpreter;
 import Logic.Interpreter.UIHandler;
 import Logic.Interpreter.CommandType.*;
@@ -234,9 +235,9 @@ public class Engine {
 			return CommandTypesEnum.REDO;
 		} else if (commandType.getType().equalsIgnoreCase("complete")) {
 			return CommandTypesEnum.COMPLETE;
-		}  else if (commandType.getType().equalsIgnoreCase("clear")) {
+		} else if (commandType.getType().equalsIgnoreCase("clear")) {
 			return CommandTypesEnum.CLEAR;
-		}else {
+		} else {
 			return null;
 		}
 	}
@@ -281,7 +282,7 @@ public class Engine {
 		case REDO:
 			redo();
 			break;
-		
+
 		case CLEAR:
 			clear();
 			break;
@@ -292,7 +293,7 @@ public class Engine {
 			break;
 
 		default:
-			throw new Error(MESSAGE_ERROR_WRONG_CMDTYPE); 
+			throw new Error(MESSAGE_ERROR_WRONG_CMDTYPE);
 		}
 	}
 
@@ -398,11 +399,11 @@ public class Engine {
 					UIHandler.getInstance().printToDisplay(
 							MESSAGE_NO_INDEX_SPECIFIED);
 				} else {
-
-					for (int i = 0; i < tasksToDisplayForDelete.size(); i++) {
-						Task taskToBeDeleted = temp.get(input[i] - 1);
-
-						removeTaskFromProj(taskToBeDeleted);
+					for (int i = 0; i < input.length; i++) {
+						if (input[i] <= temp.size()) {
+							Task taskToBeDeleted = temp.get(input[i] - 1);
+							removeTaskFromProj(taskToBeDeleted);
+						}
 					}
 				}
 			} catch (CancelDeleteException e) {
@@ -874,12 +875,14 @@ public class Engine {
 					UIHandler.getInstance().printToDisplay(
 							MESSAGE_NO_INDEX_SPECIFIED);
 				} else {
-					for (int i = 0; i < temp.size(); i++) {
-						Task taskToBeDeleted = temp
-								.get(inputForComplete[i] - 1);
-						mostRecentTask = taskToBeDeleted;
-						updateBackend(mostRecentTask);
-						markTaskDescriptionAsComplete(mostRecentTask);
+					for (int i = 0; i < inputForComplete.length; i++) {
+						if (inputForComplete[i] <= temp.size()) {
+							Task taskToBeDeleted = temp
+									.get(inputForComplete[i] - 1);
+							mostRecentTask = taskToBeDeleted;
+							updateBackend(mostRecentTask);
+							markTaskDescriptionAsComplete(mostRecentTask);
+						}
 					}
 				}
 			} catch (CancelDeleteException e) {
