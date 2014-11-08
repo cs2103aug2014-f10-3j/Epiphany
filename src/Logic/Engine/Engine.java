@@ -825,20 +825,18 @@ public class Engine {
 		ArrayList<Task> tasksToBeCompleted = new ArrayList<Task>();
 		tasksToBeCompleted = searchForTask(input);
 
-		// case 1: if task cannot be found
+	
 		if (tasksToBeCompleted.size() == 0) {
 			UIHandler.getInstance().printToDisplay(MESSAGE_NO_ENTRY);
 
-			// case 2: exactly 1 task found
+		
 		} else if (tasksToBeCompleted.size() == 1) {
 			Task targetTask = tasksToBeCompleted.get(0);
 			mostRecentTask = targetTask;
-			//mostRecentTask.setStatus();
 			updateBackend(mostRecentTask);
-			//TODO
 			markTaskDescriptionAsComplete(mostRecentTask);
 
-			// case 3: more that 1 task found
+		
 		} else if (tasksToBeCompleted.size() > 1) {
 
 			ArrayList<Task> temp;
@@ -850,10 +848,7 @@ public class Engine {
 
 			try {
 				inputForComplete = interp
-						.askForAdditionalInformationForDelete(); // same
-																	// function
-																	// as
-																	// deleteObserver
+						.askForAdditionalInformationForDelete();
 				if (inputForComplete.length == 0) {
 					UIHandler.getInstance().printToDisplay(
 							MESSAGE_NO_INDEX_SPECIFIED);
