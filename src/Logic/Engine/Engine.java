@@ -62,11 +62,21 @@ public class Engine {
 	private static final String MESSAGE_ERROR_INVALID_PROJECT = "Project does not exist!";
 	private static final String MESSAGE_ERROR_WRONG_CMDTYPE = null;
 	private static final String MESSAGE_ERROR_COMMAND_TYPE_NULL = null;
+	private static final String MESSAGE_UPDATE_TASK_FOR_EDIT = "Please update your task";
+	private static final String MESSAGE_ERROR_UNABLE_TO_EDIT = "Cannot edit!";
 	private static final String MESSAGE_NO_INDEX_SPECIFIED = "No index has been specified!";
 	private static final String MESSAGE_FOR_DELETE = "Please enter the index number of the task you want to delete:";
 	private static final String MESSAGE_NOTHING_TO_DELETE = "Nothing to delete!";
 	private static final String MESSAGE_ERROR_INVALID_CMD = "This project name is invalid!";
-
+	private static final String MESSAGE_SPECIFY_INDEX_FOR_ISCOMPLETE = "Please specify an index to be marked as completed";
+	private static final String MESSAGE_SPECIFY_INDEX_FOR_EDIT = "Please specify an index you wish to edit";
+	private static final String MESSAGE_REMOVE_SUCCESS = " has been removed.";
+	private static final String MESSAGE_MARKED_AS_ONGOING = " marked as ongoing.";
+	private static final String MESSAGE_MARKED_AS_COMPLETE = " marked as complete.";
+	private static final String MESSAGE_ERROR_INVALID_TASK = " No such task exists!";
+	private static final String MESSAGE_MARKED_AS_DONE = " [DONE]";
+	
+	
 	/***************** Data Structures and Objects ********************/
 	private static EpiphanyInterpreter interp;
 	private static Engine engine;
@@ -348,8 +358,8 @@ public class Engine {
 				ArrayList<Task> temp = new ArrayList<Task>();
 				temp.add(incomingTask);
 				projectsList.add(new Project(projectName, temp));
-
-				Writer.addToProjectMasterList(projectName);
+				// not sure about this line please look into it.
+				Writer.updateProjectMasterList(projectName);
 			}
 		}
 
@@ -427,8 +437,7 @@ public class Engine {
 		if (!temp.isEmpty()) {
 			// DELETE OLD TASK
 			try {
-				UIHandler.getInstance().printToDisplay(
-						"Please enter the index of the task you want to edit");
+				UIHandler.getInstance().printToDisplay(MESSAGE_SPECIFY_INDEX_FOR_EDIT);
 
 				int input = interp.askForAdditionalInformationForEdit();
 
@@ -443,8 +452,7 @@ public class Engine {
 				currProject.deleteTask(taskToBeEdited);
 
 				// ADD NEW TASK
-				UIHandler.getInstance().printToDisplay(
-						"Please update your task");
+				UIHandler.getInstance().printToDisplay(MESSAGE_UPDATE_TASK_FOR_EDIT);
 
 				CommandType newUserCommand = interp.askForNewTaskForEdit();
 				executeCommand(newUserCommand);
@@ -454,7 +462,7 @@ public class Engine {
 			}
 
 		} else {
-			UIHandler.getInstance().printToDisplay("Cannot edit!");
+			UIHandler.getInstance().printToDisplay(MESSAGE_ERROR_UNABLE_TO_EDIT);
 		}
 
 		addToUndoStack("edit", historyTask.getProjectName(), null);
@@ -493,7 +501,6 @@ public class Engine {
 		ArrayList<Task> tempResultsForProject = new ArrayList<Task>();
 		ArrayList<Task> allInclusive = new ArrayList<Task>();
 		for (Project p : projectsList) {
-
 			tempResultsForProject = (p.searchForTask(searchPhrase));
 
 			if (!tempResultsForProject.isEmpty()) {
@@ -501,7 +508,6 @@ public class Engine {
 			}
 		}
 		displayArrayList(allInclusive);
-
 		return allInclusive;
 	}
 
@@ -839,6 +845,79 @@ public class Engine {
 			Task incomingTask) {
 		undoStack.push(new PastCommands(type, incomingTask, projectName));
 	}
+	
+	/************************ isComplete *************************/
+
+	/**
+	 * This method marks a task as complete and users can unmark the task by calling this method again
+	 * 
+	 * @param input
+	 */
+	private void checkCompleteTask(String input) {
+		Task mostRecentTask = new Task();
+		ArrayList<Task> tasksToBeCompleted = new ArrayList<Task>();
+		tasksToBeCompleted = searchForTask(input);
+		
+		// case 1: if task cannot be found
+		if (tasksToBeCompleted.size() == 0) {
+			UIHandler.getInstance().printToDisplay(MESSAGE_NO_ENTRY);
+			
+		// case 2: exactly 1 task found
+		} else if (tasksToBeCompleted.size() == 1) {
+			Task targetTask = tasksToBeCompleted.get(0);
+			mostRecentTask = targetTask;		
+			mostRecentTask.setStatus();			
+			markTaskDescriptionAsComplete(mostRecentTask); 
+			
+		// case 3: more that 1 task found
+		} else if (tasksToBeCompleted.size() > 1) {
+
+	    	ArrayList<Task> temp;
+	    	temp = tasksToBeCompleted;
+	    	displayArrayList(temp);
+			UIHandler.getInstance().printToDisplay(MESSAGE_SPECIFY_INDEX_FOR_ISCOMPLETE);
+			int[] inputForComplete = new int[20];
+
+			try {
+				inputForComplete = interp.askForAdditionalInformationForDelete(); // same function as deleteObserver
+				if (inputForComplete.length == 0) {
+					UIHandler.getInstance().printToDisplay(MESSAGE_NO_INDEX_SPECIFIED);
+				} else {
+					for (int i = 0; i < inputForComplete.length; i++) {
+						Task taskToBeDeleted = temp.get(inputForComplete[i] - 1);
+						mostRecentTask = taskToBeDeleted;
+						mostRecentTask.setStatus();						
+						markTaskDescriptionAsComplete(mostRecentTask);
+						}
+				}
+			} catch (CancelDeleteException e) {
+				return;
+			}
+		} else {
+			UIHandler.getInstance().printToDisplay(MESSAGE_ERROR_INVALID_TASK);
+		}
+	}
+	
+	
+	// some special effect to denote that the task has been complete
+    public void markTaskDescriptionAsComplete(Task input) {
+    	if (input.isCompleted() == true) {
+    		String originalInstruction = input.getTaskDescription();
+    		input.setInstruction(originalInstruction + MESSAGE_MARKED_AS_DONE);
+    		UIHandler.getInstance().printToDisplay(input.getTempTaskDescription() + MESSAGE_MARKED_AS_COMPLETE);
+    	} else { // if false, undo the operation and display the original task description
+    	    input.setInstruction(input.getTempTaskDescription());
+    		UIHandler.getInstance().printToDisplay(input.getTempTaskDescription() + MESSAGE_MARKED_AS_ONGOING);
+    	}
+    }
+    
+ 	public String strikeThroughText(String input) {
+ 		String output;
+ 		AttributedString str_attribute = new AttributedString(input);
+ 		str_attribute.addAttribute(TextAttribute.STRIKETHROUGH, input.length());
+ 		output = str_attribute.toString();
+ 		return output;
+ 	}
 
 	/********************************* Helper methods ********************************/
 	private void removeTaskFromProj(Task taskToBeDeleted) throws IOException {
@@ -856,9 +935,9 @@ public class Engine {
 			projectsList.remove(indexProject);
 			projectNames.remove(projectName);
 			Writer.deleteProject(projectName, projectNames);
-			UIHandler.getInstance().printToDisplay(projectName + " has been removed. ");
+			UIHandler.getInstance().printToDisplay(projectName + MESSAGE_REMOVE_SUCCESS);
 		} else {
-			UIHandler.getInstance().printToDisplay(taskToBeDeleted.getTaskDescription() + " has been removed. ");
+			UIHandler.getInstance().printToDisplay(taskToBeDeleted.getTaskDescription() + MESSAGE_REMOVE_SUCCESS);
 		}
 		addToUndoStack("delete", taskToBeDeleted.getProjectName(),taskToBeDeleted);
 	}
@@ -910,78 +989,4 @@ public class Engine {
 		Project p = projectsList.get(index);
 		return p;
 	}
-	
-	/************************ Mark a Task as complete *******************/
-	// this method supports undo and redo of marking a task as complete
-	
-	private void checkCompleteTask(String input) {
-		Task mostRecentTask = new Task();
-		ArrayList<Task> tasksToBeCompleted = new ArrayList<Task>();
-		tasksToBeCompleted = searchForTask(input);
-		if (tasksToBeCompleted.size() == 0) {
-			UIHandler.getInstance().printToDisplay(MESSAGE_NO_ENTRY);
-		} else if (tasksToBeCompleted.size() == 1) {
-			Task targetTask = tasksToBeCompleted.get(0);
-			mostRecentTask = targetTask;
-			
-			mostRecentTask.setStatus();
-			
-			markTaskDescriptionAsComplete(mostRecentTask);
-			
-			//UIHandler.getInstance().printToDisplay(mostRecentTask.getTempTaskDescription() + " is marked as completed!" );
-	    
-		} else if (tasksToBeCompleted.size() > 1) {
-	    	ArrayList<Task> temp;
-	    	temp = tasksToBeCompleted;
-	    	displayArrayList(temp);
-
-			UIHandler.getInstance().printToDisplay("specify an index to be deleted");
-			int[] inputForComplete = new int[20];
-
-			try {
-				inputForComplete = interp.askForAdditionalInformationForDelete(); // same function as deleteObserver
-				if (inputForComplete.length == 0) {
-					UIHandler.getInstance().printToDisplay(MESSAGE_NO_INDEX_SPECIFIED);
-				} else {
-					
-					for (int i = 0; i < inputForComplete.length; i++) {
-						Task taskToBeDeleted = temp.get(inputForComplete[i] - 1);
-
-						mostRecentTask = taskToBeDeleted;
-						//mostRecentTask.isFinished(); // marked as finished
-						
-						mostRecentTask.setStatus();
-						
-						markTaskDescriptionAsComplete(mostRecentTask);
-						//UIHandler.getInstance().printToDisplay(mostRecentTask.getTaskDescription() + " is marked as completed!" );
-					}
-				}
-			} catch (CancelDeleteException e) {
-				return;
-			}
-		} else {
-			UIHandler.getInstance().printToDisplay("No such task exists!");
-		}
-	}
-	
-	
-	// some special effect to denote that the task has been complete
-    public void markTaskDescriptionAsComplete(Task input) {
-    	if (input.isCompleted() == true) {
-    		String originalInstruction = input.getTaskDescription();
-    		input.setInstruction(originalInstruction + " [DONE]");
-    		UIHandler.getInstance().printToDisplay(input.getTempTaskDescription() + " is marked as completed!" );
-    	} else { // if false, undo the operation and display the original task description
-    	    input.setInstruction(input.getTempTaskDescription());
-    		UIHandler.getInstance().printToDisplay(input.getTempTaskDescription() + " is marked as ongoing!" );
-    	}
-    }
-    
- 	public String strikeThroughText(String input) {
- 		String output;
- 		AttributedString str_attribute = new AttributedString(input);
- 		str_attribute.addAttribute(TextAttribute.STRIKETHROUGH, input.length());
- 		output = str_attribute.toString();
- 		return output;
- 	}
 }
