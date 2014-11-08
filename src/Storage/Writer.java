@@ -101,10 +101,10 @@ public class Writer {
 
 		FileWriter f = new FileWriter(file);
 		BufferedWriter writer = new BufferedWriter(f);
-		//writer.newLine();
 		
 		for(String name : projectList){
 			writer.write(name);
+			writer.newLine();
 		}
 		writer.close();
 	}

@@ -316,14 +316,8 @@ public class Engine {
 	 */
 	private void add(String taskDescription, Date dateFrom, Date dateTo,
 			String projectName) throws IOException {
-/*
-		if(projectName.equals("default")){
-			UIHandler.getInstance().printToTerminal(MESSAGE_ERROR_INVALID_CMD);
-			return;
-		}
-*/		
-		Task incomingTask = new Task(taskDescription, dateFrom, dateTo,
-				projectName);
+
+		Task incomingTask = new Task(taskDescription, dateFrom, dateTo, projectName);
 
 		// Duplicate check.
 		if (projectNames.contains(projectName)) {
@@ -570,6 +564,7 @@ public class Engine {
 		} else if (projectNames.contains(input)) {
 			
 			displayProject(input);
+			
 		} else {
 			UIHandler.getInstance().printToDisplay(
 					MESSAGE_NOTHING_TO_DISPLAY_ERROR);
@@ -852,8 +847,9 @@ public class Engine {
 	 * This method marks a task as complete and users can unmark the task by calling this method again
 	 * 
 	 * @param input
+	 * @throws IOException 
 	 */
-	private void checkCompleteTask(String input) {
+	private void checkCompleteTask(String input) throws IOException {
 		Task mostRecentTask = new Task();
 		ArrayList<Task> tasksToBeCompleted = new ArrayList<Task>();
 		tasksToBeCompleted = searchForTask(input);
@@ -866,7 +862,10 @@ public class Engine {
 		} else if (tasksToBeCompleted.size() == 1) {
 			Task targetTask = tasksToBeCompleted.get(0);
 			mostRecentTask = targetTask;		
-			mostRecentTask.setStatus();			
+			
+			//need to update backend
+			updateBackend(mostRecentTask);
+			
 			markTaskDescriptionAsComplete(mostRecentTask); 
 			
 		// case 3: more that 1 task found
@@ -884,10 +883,9 @@ public class Engine {
 					UIHandler.getInstance().printToDisplay(MESSAGE_NO_INDEX_SPECIFIED);
 				} else {
 					for (int i = 0; i < inputForComplete.length; i++) {
-						Task taskToBeDeleted = temp.get(inputForComplete[i] - 1);
-						mostRecentTask = taskToBeDeleted;
-						mostRecentTask.setStatus();						
-						markTaskDescriptionAsComplete(mostRecentTask);
+						//	Task taskToBeDeleted = temp.get(inputForComplete[i] - 1);
+							updateBackend(mostRecentTask);				
+							markTaskDescriptionAsComplete(mostRecentTask);
 						}
 				}
 			} catch (CancelDeleteException e) {
@@ -896,6 +894,19 @@ public class Engine {
 		} else {
 			UIHandler.getInstance().printToDisplay(MESSAGE_ERROR_INVALID_TASK);
 		}
+	}
+
+	/**
+	 * Updates the completion status of a task and ensures that the backend is updated too.
+	 * @param mostRecentTask
+	 * @throws IOException
+	 */
+	private void updateBackend(Task mostRecentTask) throws IOException {
+		String pName = mostRecentTask.getProjectName();
+		int index = findIndex(pName);
+		projectsList.get(index).deleteTask(mostRecentTask);
+		mostRecentTask.setStatus();
+		projectsList.get(index).addTask(new Task(mostRecentTask.getTaskDescription(), mostRecentTask.getStartDate(), mostRecentTask.getDeadline(), mostRecentTask.getProjectName(), mostRecentTask.isCompleted()));
 	}
 	
 	

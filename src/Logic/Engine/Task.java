@@ -44,6 +44,22 @@ public class Task {
 			
 		}
 		
+		public Task(String instruction, Date from, Date deadLine, String ProjectName, boolean isCompleted) {
+			this.taskDescription = instruction;
+			this.from = from;
+			this.deadLine = deadLine;
+			this.projectName = ProjectName;
+			this.tempTaskDescription = taskDescription;
+			this.isCompleted = isCompleted;
+			
+			months = new String[12];
+			populateMonths();
+			
+			days = new String[7];
+			populateDays();
+			
+		}
+		
 		public Task(){
 			
 		}
@@ -158,11 +174,7 @@ public class Task {
 		}
 		
 		public void setStatus() { //to reverse the operation
-			if (this.isCompleted == false) {
-				this.isCompleted = true;
-			} else if (this.isCompleted = true) {
-				this.isCompleted = false;
-			}
+			this.isCompleted = !this.isCompleted; 
 		}
 		
 		public String getType(){
