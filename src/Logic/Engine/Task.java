@@ -222,6 +222,47 @@ public class Task {
 				if(this.hasInterval()){
 					if(isSingleDayTask(this.getStartDate(), this.deadLine)){
 						// print time diff
+						s = this.getTaskDescription() + " from " + formatToTime(this.getStartDate()) + " to " + formatToTime(this.getDeadline()) + this.completionStatus;
+					}else{
+						s =  this.getTaskDescription() + " from " + this.getStartDate().getDate() + " " + formatToMonth(this.getStartDate().getMonth()) + " to " + this.getDeadline().getDate() + " " + formatToMonth(this.getDeadline().getMonth()) + this.completionStatus;
+					}				
+				}else if(this.isFloating()){
+					s =  this.getTaskDescription() + this.completionStatus;
+				}else if(this.hasDeadLine()){
+					s = this.getTaskDescription()  + this.completionStatus;
+				}
+			}else{
+				if(this.hasInterval()){
+					if(isSingleDayTask(this.getStartDate(), this.deadLine)){
+						// print time diff
+						s = this.getTaskDescription() + " from " + formatToTime(this.getStartDate()) + " to " + formatToTime(this.getDeadline()) +  this.completionStatus;
+						s = addSpace(s);
+						s += "\t\t #" + this.getProjectName();	
+					}else{
+						s =  this.getTaskDescription() + " from " + this.getStartDate().getDate() + " " + formatToMonth(this.getStartDate().getMonth()) + " to " + this.getDeadline().getDate() + " " + formatToMonth(this.getDeadline().getMonth()) + this.completionStatus;
+						s = addSpace(s);
+						s += "\t\t #" + this.getProjectName();		
+					}
+				}else if(this.isFloating()){
+					s =  this.getTaskDescription() + this.completionStatus;
+					s = addSpace(s);
+					s += "\t\t #" + this.getProjectName();
+				}else if(this.hasDeadLine()){
+					s = this.getTaskDescription()  + this.completionStatus;
+					s = addSpace(s);
+					s += "\t\t #" + this.getProjectName();
+				}
+			}
+			return s;
+		}
+		@SuppressWarnings("deprecation")
+		public String printTaskForSearch(){
+			String s = null;
+			
+			if(this.getProjectName().equals("default")){
+				if(this.hasInterval()){
+					if(isSingleDayTask(this.getStartDate(), this.deadLine)){
+						// print time diff
 						s = this.getTaskDescription() + " from " + formatToTime(this.getStartDate()) + " to " + formatToTime(this.getDeadline()) + "\t" + this.deadLineToString() + this.completionStatus;
 					}else{
 						s =  this.getTaskDescription() + " from " + this.getStartDate().getDate() + " " + formatToMonth(this.getStartDate().getMonth()) + " to " + this.getDeadline().getDate() + " " + formatToMonth(this.getDeadline().getMonth()) + this.completionStatus;

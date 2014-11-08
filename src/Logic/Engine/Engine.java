@@ -534,14 +534,14 @@ public class Engine {
 		if (projectList.isEmpty()) {
 			UIHandler.getInstance().printToDisplay(MESSAGE_INVALID_SEARCH);
 		}
-
+		
 		int counter = 1;
 		for (Task t : projectList) {
 			UIHandler.getInstance().printToDisplay(
-					counter + ". " + t.printTaskForDisplay());
+					counter + ". " + t.printTaskForSearch());
 			counter++;
 		}
-		UIHandler.getInstance().printToDisplay("\n");
+	//	UIHandler.getInstance().printToDisplay("\n");
 	}
 
 	/**
