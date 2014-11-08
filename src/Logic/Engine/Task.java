@@ -2,8 +2,6 @@ package Logic.Engine;
 
 import java.util.Date;
 
-import Logic.Interpreter.UIHandler;
-
 
 /**
  * This class helps in the creation and management of tasks. 
@@ -19,6 +17,7 @@ public class Task {
 		private Date deadLine;
 		private String projectName;
 		private boolean isCompleted;
+		private String completionStatus;
 		private static String[] months;
 		private static String[] days;
 
@@ -35,6 +34,7 @@ public class Task {
 			this.deadLine = deadLine;
 			this.projectName = ProjectName;
 			this.tempTaskDescription = taskDescription;
+			this.completionStatus = "";
 			
 			months = new String[12];
 			populateMonths();
@@ -51,6 +51,12 @@ public class Task {
 			this.projectName = ProjectName;
 			this.tempTaskDescription = taskDescription;
 			this.isCompleted = isCompleted;
+			
+			if(this.isCompleted){
+				this.completionStatus = " [DONE]";
+			}else{
+				this.completionStatus = "";
+			}
 			
 			months = new String[12];
 			populateMonths();
@@ -173,10 +179,16 @@ public class Task {
 			return this.isCompleted;
 		}
 		
+		
 		public void setStatus() { //to reverse the operation
 			this.isCompleted = !this.isCompleted; 
+			if (this.isCompleted){
+				this.completionStatus = " [DONE]";
+			}else{
+				this.completionStatus = "";
+			}
 		}
-		
+
 		public String getType(){
 			if(!this.hasDeadLine()){
 				return "floating";
@@ -210,35 +222,33 @@ public class Task {
 				if(this.hasInterval()){
 					if(isSingleDayTask(this.getStartDate(), this.deadLine)){
 						// print time diff
-						s = this.getTaskDescription() + " from " + formatToTime(this.getStartDate()) + " to " + formatToTime(this.getDeadline());
+						s = this.getTaskDescription() + " from " + formatToTime(this.getStartDate()) + " to " + formatToTime(this.getDeadline()) + this.completionStatus;
 					}else{
-						s =  this.getTaskDescription() + " from " + this.getStartDate().getDate() + " " + formatToMonth(this.getStartDate().getMonth()) + " to " + this.getDeadline().getDate() + " " + formatToMonth(this.getDeadline().getMonth());
-					//	s = addSpace(s);
-					//	s += "\t\t #" + this.getProjectName();
+						s =  this.getTaskDescription() + " from " + this.getStartDate().getDate() + " " + formatToMonth(this.getStartDate().getMonth()) + " to " + this.getDeadline().getDate() + " " + formatToMonth(this.getDeadline().getMonth()) + this.completionStatus;
 					}				
 				}else if(this.isFloating()){
-					s =  this.getTaskDescription();
+					s =  this.getTaskDescription() + this.completionStatus;
 				}else if(this.hasDeadLine()){
-					s = this.getTaskDescription();
+					s = this.getTaskDescription() + this.completionStatus;
 				}
 			}else{
 				if(this.hasInterval()){
 					if(isSingleDayTask(this.getStartDate(), this.deadLine)){
 						// print time diff
-						s = this.getTaskDescription() + " from " + formatToTime(this.getStartDate()) + " to " + formatToTime(this.getDeadline());
+						s = this.getTaskDescription() + " from " + formatToTime(this.getStartDate()) + " to " + formatToTime(this.getDeadline()) + this.completionStatus;
 						s = addSpace(s);
 						s += "\t\t #" + this.getProjectName();	
 					}else{
-						s =  this.getTaskDescription() + " from " + this.getStartDate().getDate() + " " + formatToMonth(this.getStartDate().getMonth()) + " to " + this.getDeadline().getDate() + " " + formatToMonth(this.getDeadline().getMonth());
+						s =  this.getTaskDescription() + " from " + this.getStartDate().getDate() + " " + formatToMonth(this.getStartDate().getMonth()) + " to " + this.getDeadline().getDate() + " " + formatToMonth(this.getDeadline().getMonth()) + this.completionStatus;
 						s = addSpace(s);
 						s += "\t\t #" + this.getProjectName();		
 					}
 				}else if(this.isFloating()){
-					s =  this.getTaskDescription();
+					s =  this.getTaskDescription() + this.completionStatus;
 					s = addSpace(s);
 					s += "\t\t #" + this.getProjectName();
 				}else if(this.hasDeadLine()){
-					s = this.getTaskDescription();
+					s = this.getTaskDescription() + this.completionStatus;
 					s = addSpace(s);
 					s += "\t\t #" + this.getProjectName();
 				}
