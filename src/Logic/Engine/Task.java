@@ -222,7 +222,7 @@ public class Task {
 				if(this.hasInterval()){
 					if(isSingleDayTask(this.getStartDate(), this.deadLine)){
 						// print time diff
-						s = this.getTaskDescription() + " from " + formatToTime(this.getStartDate()) + " to " + formatToTime(this.getDeadline()) + "/t" + this.deadLineToString() + this.completionStatus;
+						s = this.getTaskDescription() + " from " + formatToTime(this.getStartDate()) + " to " + formatToTime(this.getDeadline()) + "\t" + this.deadLineToString() + this.completionStatus;
 					}else{
 						s =  this.getTaskDescription() + " from " + this.getStartDate().getDate() + " " + formatToMonth(this.getStartDate().getMonth()) + " to " + this.getDeadline().getDate() + " " + formatToMonth(this.getDeadline().getMonth()) + this.completionStatus;
 					}				
@@ -235,7 +235,7 @@ public class Task {
 				if(this.hasInterval()){
 					if(isSingleDayTask(this.getStartDate(), this.deadLine)){
 						// print time diff
-						s = this.getTaskDescription() + " from " + formatToTime(this.getStartDate()) + " to " + formatToTime(this.getDeadline()) + "/t" + this.deadLineToString() + this.completionStatus;
+						s = this.getTaskDescription() + " from " + formatToTime(this.getStartDate()) + " to " + formatToTime(this.getDeadline()) + "\t" + this.deadLineToString() + this.completionStatus;
 						s = addSpace(s);
 						s += "\t\t #" + this.getProjectName();	
 					}else{

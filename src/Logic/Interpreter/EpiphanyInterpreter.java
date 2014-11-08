@@ -65,8 +65,9 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 	 * @throws IOException 
 	 * @throws CancelDeleteException 
 	 * @throws CancelEditException 
+	 * @throws ParseException 
 	 */
-	void acceptUserInputUntilExit() throws IOException, CancelEditException, CancelDeleteException {
+	void acceptUserInputUntilExit() throws IOException, CancelEditException, CancelDeleteException, ParseException {
 		/*try {
 			ConsoleReader console = new ConsoleReader();
 			console.setPrompt("command: ");

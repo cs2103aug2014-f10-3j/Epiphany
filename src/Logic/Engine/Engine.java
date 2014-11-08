@@ -12,7 +12,6 @@ import java.util.*;
 
 import Logic.Exceptions.CancelDeleteException;
 import Logic.Exceptions.CancelEditException;
-import Logic.Exceptions.InvalidCommandException;
 import Logic.Interpreter.EpiphanyInterpreter;
 import Logic.Interpreter.UIHandler;
 import Logic.Interpreter.CommandType.*;
@@ -64,6 +63,7 @@ public class Engine {
 	private static final String MESSAGE_ERROR_INVALID_TASK = " No such task exists!";
 	private static final String MESSAGE_MARKED_AS_DONE = " [DONE]";
 	private static final int N = 999;
+	private static final String MESSAGE_RESET = "System restarted!";
 
 	/***************** Data Structures and Objects ********************/
 	private static EpiphanyInterpreter interp;
@@ -205,7 +205,7 @@ public class Engine {
 	 *
 	 */
 	public enum CommandTypesEnum {
-		ADD, DISPLAY, DELETE, CLEAR, EXIT, INVALID, SEARCH, EDIT, UNDO, REDO, COMPLETE
+		ADD, DISPLAY, DELETE, RESET, EXIT, INVALID, SEARCH, EDIT, UNDO, REDO, COMPLETE
 	};
 
 	/**
@@ -235,14 +235,14 @@ public class Engine {
 			return CommandTypesEnum.REDO;
 		} else if (commandType.getType().equalsIgnoreCase("complete")) {
 			return CommandTypesEnum.COMPLETE;
-		} else if (commandType.getType().equalsIgnoreCase("clear")) {
-			return CommandTypesEnum.CLEAR;
+		} else if (commandType.getType().equalsIgnoreCase("reset")) {
+			return CommandTypesEnum.RESET;
 		} else {
 			return null;
 		}
 	}
 
-	public void executeCommand(CommandType userCommand) throws IOException {
+	public void executeCommand(CommandType userCommand) throws IOException, ParseException {
 		CommandTypesEnum commandType = determineCommandType(userCommand);
 
 		switch (commandType) {
@@ -283,8 +283,8 @@ public class Engine {
 			redo();
 			break;
 
-		case CLEAR:
-			clear();
+		case RESET:
+			reset();
 			break;
 
 		case COMPLETE:
@@ -415,11 +415,12 @@ public class Engine {
 		}
 	}
 
-	/********************************* Edit Methods ***********************************/
+	/********************************* Edit Methods 
+	 * @throws ParseException ***********************************/
 
 	// convert to a task
 	private void edit(String taskDescription, String projectName)
-			throws IOException {
+			throws IOException, ParseException {
 
 		Task historyTask = new Task();
 
@@ -589,14 +590,18 @@ public class Engine {
 
 	}
 
-	private void clear() throws IOException {
+	private void reset() throws IOException, ParseException {
+		
 		for (int i = 0; i < projectNames.size(); i++) {
 			Project currProject = projectsList.get(i);
+		
 			ArrayList<Task> currTaskList = currProject.retrieveAllTasks();
 			for (Task t : currTaskList) {
 				currProject.deleteTask(t);
 			}
 		}
+		
+		UIHandler.getInstance().printToDisplay(MESSAGE_RESET);
 	}
 
 	/**

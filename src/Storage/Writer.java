@@ -117,4 +117,27 @@ public class Writer {
 		updateProjectMasterList(projectName, projectList);
 	
 	}
+	
+	public static void reset(ArrayList<String> list) throws IOException{
+		
+	
+		File file = new File("../Epiphany/src/Storage/projectMasterList.txt");
+		FileWriter f = new FileWriter(file);
+		BufferedWriter writer = new BufferedWriter(f);
+		
+		writer.write("default");
+		writer.newLine();
+		writer.close();
+		
+		for(String projectName : list){
+				File project = new File("../Epiphany/src/Storage/Projects/" + projectName);
+				project.delete();
+		}
+		
+	//	generateDefault();
+
+		
+		
+			
+	}
 }
