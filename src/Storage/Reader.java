@@ -51,17 +51,17 @@ public class Reader {
 				Date from = parseDate(taskComponents[2]);
 				Date to = parseDate(taskComponents[3]);
 				String projName = taskComponents[4];
-				// 5 reserved for completion status
-//				int UID = Integer.parseInt(taskComponents[6]);
-
+				
+				boolean completed = Boolean.valueOf(taskComponents[5]);
+				
 				Task t = null;
 
 				if (type.equals("deadline")) {
-					t = new Task(description, null, to, projName);
+					t = new Task(description, null, to, projName, completed);
 				} else if (type.equals("interval")) {
-					t = new Task(description, from, to, projName);
+					t = new Task(description, from, to, projName, completed);
 				} else if (type.equals("floating")) {
-					t = new Task(description, null, null, projName);
+					t = new Task(description, null, null, projName, completed);
 				}
 
 				temp.add(t);

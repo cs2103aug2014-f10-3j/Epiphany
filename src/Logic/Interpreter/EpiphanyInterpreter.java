@@ -377,7 +377,7 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 			}
 			return intIndeces;
 		} catch (NumberFormatException e){
-			uiHandler.printToTerminal("You have entered an invalid number. Press y to try again, press n to cancel delete.");
+			uiHandler.printToTerminal("You have entered an invalid number. Press y to try again, press n to exit.");
 			String userResponse = input.nextLine();
 			if(userResponse.equalsIgnoreCase("y")){
 				return askForAdditionalInformationForDelete();

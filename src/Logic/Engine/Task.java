@@ -222,20 +222,20 @@ public class Task {
 				if(this.hasInterval()){
 					if(isSingleDayTask(this.getStartDate(), this.deadLine)){
 						// print time diff
-						s = this.getTaskDescription() + " from " + formatToTime(this.getStartDate()) + " to " + formatToTime(this.getDeadline()) + this.completionStatus;
+						s = this.getTaskDescription() + " from " + formatToTime(this.getStartDate()) + " to " + formatToTime(this.getDeadline()) + "/t" + this.deadLineToString() + this.completionStatus;
 					}else{
 						s =  this.getTaskDescription() + " from " + this.getStartDate().getDate() + " " + formatToMonth(this.getStartDate().getMonth()) + " to " + this.getDeadline().getDate() + " " + formatToMonth(this.getDeadline().getMonth()) + this.completionStatus;
 					}				
 				}else if(this.isFloating()){
 					s =  this.getTaskDescription() + this.completionStatus;
 				}else if(this.hasDeadLine()){
-					s = this.getTaskDescription() + this.completionStatus;
+					s = this.getTaskDescription() + "\t" + this.deadLineToString() + this.completionStatus;
 				}
 			}else{
 				if(this.hasInterval()){
 					if(isSingleDayTask(this.getStartDate(), this.deadLine)){
 						// print time diff
-						s = this.getTaskDescription() + " from " + formatToTime(this.getStartDate()) + " to " + formatToTime(this.getDeadline()) + this.completionStatus;
+						s = this.getTaskDescription() + " from " + formatToTime(this.getStartDate()) + " to " + formatToTime(this.getDeadline()) + "/t" + this.deadLineToString() + this.completionStatus;
 						s = addSpace(s);
 						s += "\t\t #" + this.getProjectName();	
 					}else{
@@ -248,7 +248,7 @@ public class Task {
 					s = addSpace(s);
 					s += "\t\t #" + this.getProjectName();
 				}else if(this.hasDeadLine()){
-					s = this.getTaskDescription() + this.completionStatus;
+					s = this.getTaskDescription() + "\t" + this.deadLineToString() +this.completionStatus;
 					s = addSpace(s);
 					s += "\t\t #" + this.getProjectName();
 				}
@@ -262,7 +262,10 @@ public class Task {
 			String output = "null";
 			if(this.deadLine != null){
 				Date dLine = this.deadLine;
-				output = dLine.getDate() + " " + formatToMonth(dLine.getMonth()) + (dLine.getYear() + 1900);
+				output = dLine.getDate() + " " + formatToMonth(dLine.getMonth()) + " " + (dLine.getYear() + 1900);
+			}
+			else{
+				output = "";
 			}
 			return output;
 		}
@@ -273,7 +276,10 @@ public class Task {
 			String output = "null";
 			if(this.from != null){
 				Date startDate = this.from;
-				output = startDate.getDate() + " " + formatToMonth(startDate.getMonth()) + (startDate.getYear() + 1900);
+				output = startDate.getDate() + " " + formatToMonth(startDate.getMonth()) + " " + (startDate.getYear() + 1900);
+			}
+			else{
+				output = "";
 			}
 			return output;
 		}

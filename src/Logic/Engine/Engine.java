@@ -38,7 +38,7 @@ public class Engine {
 	/**************************************** Message Prompts ************************************************/
 
 	private static final String MESSAGE_WELCOME = "";
-	private static final String MESSAGE_NO_ENTRY = "No such entry exists in %s.";
+	private static final String MESSAGE_NO_ENTRY = "No such entry exists.";
 	private static final String MESSAGE_ADD = "Task Added!";
 	private static final String MESSAGE_ADD_DUPLICATE = "This task already exists!";
 	private static final String MESSAGE_NOTHING_TO_DISPLAY_ERROR = "No items to display.";
@@ -62,6 +62,7 @@ public class Engine {
 	private static final String MESSAGE_MARKED_AS_COMPLETE = " marked as complete.";
 	private static final String MESSAGE_ERROR_INVALID_TASK = " No such task exists!";
 	private static final String MESSAGE_MARKED_AS_DONE = " [DONE]";
+	private static final int N = 999;
 
 	/***************** Data Structures and Objects ********************/
 	private static EpiphanyInterpreter interp;
@@ -72,7 +73,6 @@ public class Engine {
 	private static Stack<PastCommands> redoStack;
 	private static ArrayList<DisplayObject> ListByDate;
 	private static String[] months;
-
 
 	private Engine() throws IOException, ParseException {
 		engine = this;
@@ -127,8 +127,6 @@ public class Engine {
 		months = new String[12];
 		populateMonths();
 	}
-	
-	
 
 	/**
 	 * Reads in relevant saved data and boots Epiphany Engine
@@ -308,7 +306,7 @@ public class Engine {
 	 */
 	private void add(String taskDescription, Date dateFrom, Date dateTo,
 			String projectName) throws IOException {
-	
+
 		Task incomingTask = new Task(taskDescription, dateFrom, dateTo,
 				projectName);
 
@@ -398,7 +396,7 @@ public class Engine {
 							MESSAGE_NO_INDEX_SPECIFIED);
 				} else {
 
-					for (int i = 0; i < input.length; i++) {
+					for (int i = 0; i < tasksToDisplayForDelete.size(); i++) {
 						Task taskToBeDeleted = temp.get(input[i] - 1);
 
 						removeTaskFromProj(taskToBeDeleted);
@@ -479,7 +477,7 @@ public class Engine {
 			int index = findIndex(projectName);
 			Project curr = projectsList.get(index);
 			ArrayList<Task> currList = curr.searchForTask(searchPhrase);
-			displayArrayList(currList);
+			displayArrayListForSearch(currList);
 		}
 	}
 
@@ -499,7 +497,7 @@ public class Engine {
 				allInclusive.addAll(tempResultsForProject);
 			}
 		}
-		displayArrayList(allInclusive);
+		displayArrayListForSearch(allInclusive);
 		return allInclusive;
 	}
 
@@ -525,7 +523,20 @@ public class Engine {
 		}
 		UIHandler.getInstance().printToDisplay("\n");
 	}
+	private void displayArrayListForSearch(ArrayList<Task> projectList) {
 
+		if (projectList.isEmpty()) {
+			UIHandler.getInstance().printToDisplay(MESSAGE_INVALID_SEARCH);
+		}
+
+		int counter = 1;
+		for (Task t : projectList) {
+			UIHandler.getInstance().printToDisplay(
+					counter + ". " + t.printTaskForDisplay());
+			counter++;
+		}
+		UIHandler.getInstance().printToDisplay("\n");
+	}
 	/**
 	 * Displays all the Tasks within a specified project
 	 * 
@@ -550,10 +561,9 @@ public class Engine {
 	 * @throws IOException
 	 */
 	private void displayOverall(String input) throws IOException {
-		if (input.matches("\\d+-\\d+-\\d+")){
+		if (input.matches("\\d+-\\d+-\\d+")) {
 			displayByDate(input);
-		}
-		else if (input.equals("all")) {
+		} else if (input.equals("all")) {
 
 			if (projectsList.size() == 1 && projectsList.get(0).isEmpty()
 					|| !isThereATask()) {
@@ -613,7 +623,6 @@ public class Engine {
 
 	private void displayAll() {
 
-	
 		for (DisplayObject disp : ListByDate) {
 
 			Date currDate = disp.getDate();
@@ -657,6 +666,7 @@ public class Engine {
 		}
 
 	}
+
 	private void displayByDate(String input) {
 
 		if (input.matches("\\d+-\\d+-\\d+")) {
@@ -685,7 +695,6 @@ public class Engine {
 		}
 	}
 
-	
 	/********************** Undo/Redo Methods ***********************************/
 	/**
 	 * The undo method helps to revert the most recent add, delete or edit
@@ -818,25 +827,22 @@ public class Engine {
 	 * calling this method again
 	 * 
 	 * @param input
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	private void checkCompleteTask(String input) throws IOException {
 		Task mostRecentTask = new Task();
 		ArrayList<Task> tasksToBeCompleted = new ArrayList<Task>();
 		tasksToBeCompleted = searchForTask(input);
 
-	
 		if (tasksToBeCompleted.size() == 0) {
 			UIHandler.getInstance().printToDisplay(MESSAGE_NO_ENTRY);
 
-		
 		} else if (tasksToBeCompleted.size() == 1) {
 			Task targetTask = tasksToBeCompleted.get(0);
 			mostRecentTask = targetTask;
 			updateBackend(mostRecentTask);
 			markTaskDescriptionAsComplete(mostRecentTask);
 
-		
 		} else if (tasksToBeCompleted.size() > 1) {
 
 			ArrayList<Task> temp;
@@ -844,7 +850,7 @@ public class Engine {
 			displayArrayList(temp);
 			UIHandler.getInstance().printToDisplay(
 					MESSAGE_SPECIFY_INDEX_FOR_ISCOMPLETE);
-			int[] inputForComplete = new int[20];
+			int[] inputForComplete = new int[N];
 
 			try {
 				inputForComplete = interp
@@ -853,7 +859,10 @@ public class Engine {
 					UIHandler.getInstance().printToDisplay(
 							MESSAGE_NO_INDEX_SPECIFIED);
 				} else {
-					for (int i = 0; i < inputForComplete.length; i++) {
+					for (int i = 0; i < temp.size(); i++) {
+						Task taskToBeDeleted = temp
+								.get(inputForComplete[i] - 1);
+						mostRecentTask = taskToBeDeleted;
 						updateBackend(mostRecentTask);
 						markTaskDescriptionAsComplete(mostRecentTask);
 					}
@@ -871,15 +880,17 @@ public class Engine {
 		if (input.isCompleted() == true) {
 			String originalInstruction = input.getTaskDescription();
 			input.setInstruction(originalInstruction + MESSAGE_MARKED_AS_DONE);
-			UIHandler.getInstance()
-					.printToDisplay(
-							input.getTempTaskDescription()
-									+ MESSAGE_MARKED_AS_COMPLETE);
+			
+			String toDisplay = input.getTempTaskDescription()
+					+ MESSAGE_MARKED_AS_COMPLETE;
+					UIHandler.getInstance()
+					.printToDisplay(toDisplay);
 		} else { // if false, undo the operation and display the original task
 					// description
 			input.setInstruction(input.getTempTaskDescription());
+			String toDisplay = input.getTempTaskDescription() + MESSAGE_MARKED_AS_ONGOING;
 			UIHandler.getInstance().printToDisplay(
-					input.getTempTaskDescription() + MESSAGE_MARKED_AS_ONGOING);
+					toDisplay);
 		}
 	}
 
@@ -919,12 +930,18 @@ public class Engine {
 		addToUndoStack("delete", taskToBeDeleted.getProjectName(),
 				taskToBeDeleted);
 	}
-/**
- * This methods helps to search for all tasks matching a certain task description
- * @param taskDescription is the description of the task we wish to find
- * @return and ArrayList containing all the tasks that match the task description
- */
+
+	/**
+	 * This methods helps to search for all tasks matching a certain task
+	 * description
+	 * 
+	 * @param taskDescription
+	 *            is the description of the task we wish to find
+	 * @return and ArrayList containing all the tasks that match the task
+	 *         description
+	 */
 	private ArrayList<Task> searchForTask(String taskDescription) {
+		
 		ArrayList<Task> positiveMatches = new ArrayList<Task>();
 		for (int i = 0; i < projectsList.size(); i++) {
 			ArrayList<Task> tasksInCurrProject = projectsList.get(i)
@@ -938,11 +955,14 @@ public class Engine {
 		}
 		return positiveMatches;
 	}
-/**
- * This method helps find the index of a project given its index
- * @param projectName is the name of the project whose index we wish to find
- * @return
- */
+
+	/**
+	 * This method helps find the index of a project given its index
+	 * 
+	 * @param projectName
+	 *            is the name of the project whose index we wish to find
+	 * @return
+	 */
 	private int findIndex(String projectName) {
 		for (int i = 0; i < projectNames.size(); i++) {
 			if (projectNames.get(i).equals(projectName)) {
@@ -968,11 +988,14 @@ public class Engine {
 
 		return true;
 	}
-/**
- * This method helps to check is a task's deadline has passed.
- * @param currTask is the task that is being compared
- * @return
- */
+
+	/**
+	 * This method helps to check is a task's deadline has passed.
+	 * 
+	 * @param currTask
+	 *            is the task that is being compared
+	 * @return
+	 */
 	private boolean isTaskOverDue(Task currTask) {
 		Date deadLineForCurrTask = currTask.getDeadline();
 		Date date = new Date();
@@ -982,8 +1005,11 @@ public class Engine {
 			return false;
 		}
 	}
+
 	/**
-	 * This method helps to find the index of the project given the name of a project
+	 * This method helps to find the index of the project given the name of a
+	 * project
+	 * 
 	 * @param projectName
 	 * @return
 	 */
@@ -993,8 +1019,10 @@ public class Engine {
 		Project p = projectsList.get(index);
 		return p;
 	}
+
 	/**
 	 * This method helps to check if the program contains at least one task
+	 * 
 	 * @return true if a task exists
 	 */
 	private boolean isThereATask() {
@@ -1009,6 +1037,7 @@ public class Engine {
 		}
 		return false;
 	}
+
 	/**
 	 * This method helps to check if a DisplayTask object exists for the given
 	 * date
@@ -1028,10 +1057,11 @@ public class Engine {
 		}
 		return -1;
 	}
-/**
- * This method helps to set the date in the format used internally within the program
 
- */
+	/**
+	 * This method helps to set the date in the format used internally within
+	 * the program
+	 */
 	private Date getDate(int year, int month, int day) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTimeInMillis(0);
@@ -1039,8 +1069,10 @@ public class Engine {
 		Date date = cal.getTime(); // get back a Date object
 		return date;
 	}
+
 	/**
-	 * This method helps to compare two dates. Helps in sorting them out when they are displayed.
+	 * This method helps to compare two dates. Helps in sorting them out when
+	 * they are displayed.
 	 */
 	public int compareDate(Task task1, Task task2) {
 		if (task1.getDeadline() == null && task2.getDeadline() == null) {
@@ -1055,29 +1087,43 @@ public class Engine {
 
 		return 0;
 	}
+
 	/**
-	 * Updates the completion status of a task and ensures that the backend is updated too.
+	 * Updates the completion status of a task and ensures that the backend is
+	 * updated too.
+	 * 
 	 * @param mostRecentTask
 	 * @throws IOException
 	 */
 	private void updateBackend(Task mostRecentTask) throws IOException {
 		String pName = mostRecentTask.getProjectName();
 		int index = findIndex(pName);
-		projectsList.get(index).deleteTask(mostRecentTask);
-		mostRecentTask.setStatus();
-		projectsList.get(index).addTask(new Task(mostRecentTask.getTaskDescription(), mostRecentTask.getStartDate(), mostRecentTask.getDeadline(), mostRecentTask.getProjectName(), mostRecentTask.isCompleted()));
+		if (index < -1) {
+			UIHandler.getInstance().printToDisplay("error");
+		} else {
+			projectsList.get(index).deleteTask(mostRecentTask);
+			mostRecentTask.setStatus();
+			projectsList.get(index).addTask(
+					new Task(mostRecentTask.getTaskDescription(),
+							mostRecentTask.getStartDate(), mostRecentTask
+									.getDeadline(), mostRecentTask
+									.getProjectName(), mostRecentTask
+									.isCompleted()));
+		}
 	}
+
 	/**
 	 * This method helps to parse the date input into a more readable string
+	 * 
 	 * @param input
 	 * @return
 	 */
 	private String parseDate(String input) {
 		String[] components = input.split("-");
 		String date = components[0];
-		String month =  components[1];
-		String year =  components[2];
-		
+		String month = components[1];
+		String year = components[2];
+
 		return date + " " + convertToMonth(month) + " " + year;
 	}
 
