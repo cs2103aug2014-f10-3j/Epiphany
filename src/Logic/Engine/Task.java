@@ -214,7 +214,7 @@ public class Task {
 			}
 			return s;
 		}
-		
+		@SuppressWarnings("deprecation")
 		public String printTaskForDisplay(){
 			String s = null;
 			
@@ -257,6 +257,7 @@ public class Task {
 		}
 		
 		// DD MMM YYYY, 
+		@SuppressWarnings("deprecation")
 		public String deadLineToString() {
 			String output = "null";
 			if(this.deadLine != null){
@@ -267,6 +268,7 @@ public class Task {
 		}
 		
 		// DD MMM YYYY, 
+		@SuppressWarnings("deprecation")
 		public String startDateToString() {
 			String output = "null";
 			if(this.from != null){
@@ -275,7 +277,7 @@ public class Task {
 			}
 			return output;
 		}
-		
+		@SuppressWarnings("deprecation")
 		public String getDeadLineDay(){
 			return formatToDay(this.deadLine.getDay());
 		}
@@ -314,7 +316,7 @@ public class Task {
 		private static String formatToDay(int input){
 			return days[input];
 		}
-		
+		@SuppressWarnings("deprecation")
 		private static String formatToTime(Date d){
 			String output = "";
 			int hour = d.getHours();
@@ -347,6 +349,7 @@ public class Task {
 			
 		}
 		
+		@SuppressWarnings("deprecation")
 		private static boolean isSingleDayTask(Date d1, Date d2){
 			return (d1.getDate() == d2.getDate() && d1.getMonth() == d2.getMonth() && d1.getYear() == d2.getYear());
 		}
