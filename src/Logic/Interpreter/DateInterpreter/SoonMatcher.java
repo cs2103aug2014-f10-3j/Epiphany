@@ -20,6 +20,8 @@ class SoonMatcher implements Matcher {
         }
         if (today.matcher(input).matches()) {
             Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY,23);
+            calendar.set(Calendar.MINUTE,59);
             return calendar.getTime();
         }
         if (yesterday.matcher(input).matches()) {
