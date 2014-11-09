@@ -14,6 +14,7 @@ public class PastCommands {
 	private Project project;
 	private String projectName;
 	
+	
 /*************Constructors*************/
 	public PastCommands(String type, Task t, String projectName){
 		this.type = type;
@@ -25,6 +26,7 @@ public class PastCommands {
 		// mainly for delete
 		this.type = type;
 		this.project = project;
+		
 	}
 	
 	public PastCommands(String type, String projectName){
