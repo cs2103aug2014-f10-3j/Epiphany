@@ -7,6 +7,8 @@ import java.text.ParseException;
 import java.util.HashMap;
 import java.awt.font.TextAttribute;
 
+import org.fusesource.jansi.AnsiConsole;
+
 //import GUIBackup.EpiphanyUI;
 
 /**
@@ -27,6 +29,7 @@ public class UIHandler{
 	//public static EpiphanyUI ui;
 
 	private UIHandler() throws IOException, ParseException, FontFormatException {
+		 AnsiConsole.systemInstall();
 		uiHandler=this;
 		//ui = new EpiphanyUI();
 		colors = new HashMap<String, String>();

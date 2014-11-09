@@ -10,6 +10,9 @@ import java.util.TreeSet;
 
 
 
+
+
+
 import Logic.Interpreter.DateInterpreter.*;
 import Logic.Interpreter.CommandType.*; 
 import Logic.Engine.*;
@@ -33,12 +36,14 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 	//References to objects that we will need to perform commands that the user enters.
 	Engine engine;
 	Scanner input; //This scanner will deal with all input from user.
+	ConsoleReader console;
 	UIHandler uiHandler; 
 
 	public EpiphanyInterpreter() throws IOException, ParseException
 	{
 		engine = Engine.getInstance();
 		input = new Scanner(System.in);
+		console = new ConsoleReader();
 		uiHandler = UIHandler.getInstance();
 		this.populateDictionary(); //populates the actionWords TreeSet with valid English words.
 	}
@@ -66,9 +71,9 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 	 * @throws ParseException 
 	 */
 	void acceptUserInputUntilExit() throws IOException, CancelEditException, CancelDeleteException, ParseException {
-		/*try {
-			ConsoleReader console = new ConsoleReader();
-			console.setPrompt("MESSAGE_COMMAND_PROMPT");
+		try {
+			engine.executeCommand(new DisplayCommandType());
+			console.setPrompt(MESSAGE_COMMAND_PROMPT);
 			console.addCompleter(new StringsCompleter(this.getCommandsList()));
 			String line = null;
 			while ((line = console.readLine()) != null) {
@@ -82,7 +87,16 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 					}
 					toPassToEngine = interpretCommand(line);
 					assert(toPassToEngine != null);
+					console.setPrompt("");
+					console.clearScreen();
+					console.setPrompt(MESSAGE_COMMAND_PROMPT);
+					//console.flush();
 					engine.executeCommand(toPassToEngine);
+					//console.flush();
+					if(!toPassToEngine.getType().equals("display")){
+						uiHandler.printToTerminal("");
+						engine.executeCommand(new DisplayCommandType());
+					}
 				} catch (InvalidCommandException e) {
 					uiHandler.printToTerminal(MESSAGE_INVALID_COMMAND);
 				}
@@ -99,8 +113,8 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 			} catch(Exception e) {
 				e.printStackTrace();
 			}
-		}*/
-		String userInput;
+		}
+		/*String userInput;
 		do{
 			uiHandler.resetToDefault();
 			uiHandler.printToTerminal(MESSAGE_COMMAND_PROMPT, "inline");
@@ -117,7 +131,7 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 				System.exit(0);
 			}
 		} while(!userInput.equalsIgnoreCase("exit"));
-		input.close();
+		input.close();*/
 	}
 
 	/**
@@ -417,9 +431,10 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 	 * When delete is called we will perform a search for the given key, tasks that contain this
 	 * key will be enumerated to the user.
 	 * This function asks the user for the indexes of the tasks to be deleted (from the enumerated list)
+	 * @throws IOException 
 	 */
-	public int[] askForAdditionalInformationForDelete() throws CancelDeleteException {
-		String inputFromUser = input.nextLine();
+	public int[] askForAdditionalInformationForDelete() throws CancelDeleteException, IOException {
+		String inputFromUser = console.readLine();
 		try{
 			//the user can enter multiple indexed separated by commas, the system will delete them all.
 			String[] stringIndeces = inputFromUser.split(",");
@@ -430,11 +445,12 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 					throw new NumberFormatException("Invalid input : Negative index");
 				}
 			}
+			console.clearScreen();
 			return intIndeces;
 		} catch (NumberFormatException e){
 			//if the user enters an invalid number (or something other than the number), then we ask if he wants to try again.
 			uiHandler.printToTerminal("You have entered an invalid number. Press y to try again, press n to cancel.");
-			String userResponse = input.nextLine();
+			String userResponse = console.readLine();
 			if(userResponse.equalsIgnoreCase("y")){
 				return askForAdditionalInformationForDelete();
 			} else{
@@ -448,18 +464,19 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 	 * key will be enumerated to the user.
 	 * This function asks the user for the index of the task to be edited (from the enumerated list)
 	 */
-	public int askForAdditionalInformationForEdit() throws CancelEditException {
-		String inputFromUser = input.nextLine();
+	public int askForAdditionalInformationForEdit() throws CancelEditException, IOException {
+		String inputFromUser = console.readLine();
 		try{
 			int indexFromUser = Integer.parseInt(inputFromUser);
 			if(indexFromUser<1){
 				throw new NumberFormatException("Invalid input : Negative index");
 			}
+			console.clearScreen();
 			return indexFromUser;
 		} catch (NumberFormatException e){
 			//if the user enters an invalid number (or something other than the number), then we ask if he wants to try again.
 			uiHandler.printToTerminal("You have entered an invalid number. Press y to try again, press n to cancel edit.");
-			String userResponse = input.nextLine();
+			String userResponse = console.readLine();
 			if(userResponse.equalsIgnoreCase("y")){
 				return askForAdditionalInformationForEdit();
 			} else{
@@ -472,9 +489,10 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 	 * When we have selected to task to be edited, we then delete it and add
 	 * a new task in its place, this function accepts the new task from the user.
 	 * @return CommandType
+	 * @throws IOException 
 	 */
-	public CommandType askForNewTaskForEdit() throws CancelEditException {
-		String inputFromUser = input.nextLine();
+	public CommandType askForNewTaskForEdit() throws CancelEditException, IOException {
+		String inputFromUser = console.readLine();
 		CommandType toPassToEngine;
 		try {
 			toPassToEngine = interpretAddCommand(inputFromUser);
@@ -483,7 +501,7 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 		} catch (InvalidCommandException e) {
 			//if the user enters an invalid task , then we ask if he wants to try again.
 			uiHandler.printToTerminal("You have entered an invalid task. Press y to try again, press n to cancel edit.");
-			String userResponse = input.nextLine();
+			String userResponse = console.readLine();
 			if(userResponse.equalsIgnoreCase("y")){
 				return askForNewTaskForEdit();
 			} else{
