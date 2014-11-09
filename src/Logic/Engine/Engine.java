@@ -235,14 +235,14 @@ public class Engine {
 			return CommandTypesEnum.REDO;
 		} else if (commandType.getType().equalsIgnoreCase("complete")) {
 			return CommandTypesEnum.COMPLETE;
-		} else if (commandType.getType().equalsIgnoreCase("reset")) {
+		}  else if (commandType.getType().equalsIgnoreCase("reset")) {
 			return CommandTypesEnum.RESET;
-		} else {
+		}else {
 			return null;
 		}
 	}
 
-	public void executeCommand(CommandType userCommand) throws IOException, ParseException {
+	public void executeCommand(CommandType userCommand) throws IOException {
 		CommandTypesEnum commandType = determineCommandType(userCommand);
 
 		switch (commandType) {
@@ -282,7 +282,7 @@ public class Engine {
 		case REDO:
 			redo();
 			break;
-
+		
 		case RESET:
 			reset();
 			break;
@@ -293,7 +293,7 @@ public class Engine {
 			break;
 
 		default:
-			throw new Error(MESSAGE_ERROR_WRONG_CMDTYPE);
+			throw new Error(MESSAGE_ERROR_WRONG_CMDTYPE); 
 		}
 	}
 
@@ -353,7 +353,7 @@ public class Engine {
 		}
 
 		UIHandler.getInstance().printToDisplay(MESSAGE_ADD);
-		addToUndoStack("add", projectName, incomingTask);
+		addToUndoStack("add", projectName, incomingTask, incomingTask.getParity());
 	}
 
 	/********************** Delete Methods ***********************************/
@@ -362,14 +362,25 @@ public class Engine {
 			throws IOException {
 		if (taskDescription == null && !projectName.equals("default")) {
 			// Deleting a project instead.
+			Project projToDelete = projectsList.get(findIndex(projectName));
+			ArrayList<Task> tasksToDelete = projToDelete.retrieveAllTasks();
+			
+			for(Task t : tasksToDelete){
+				t.flipParity();
+				removeTaskFromProj(t);
+			}
+			
+		//	UIHandler.getInstance().printToDisplay(MESSAGE_FOR_DELETE);
+
+			/*
 			int indexOfProjectToDelete = findIndex(projectName);
 
 			projectsList.remove(indexOfProjectToDelete);
 			projectNames.remove(projectName);
 			Writer.deleteProject(projectName, projectNames);
-			UIHandler.getInstance().printToDisplay(
-					projectName + " has been removed. ");
-
+			UIHandler.getInstance().printToDisplay(projectName + " has been removed. ");
+			*/
+		
 			return;
 		}
 
@@ -414,13 +425,93 @@ public class Engine {
 			UIHandler.getInstance().printToDisplay("No such task exists!");
 		}
 	}
+	
+	private void deleteForRedo(String taskDescription, String projectName)
+			throws IOException {
+		if (taskDescription == null && !projectName.equals("default")) {
+			// Deleting a project instead.
+			Project projToDelete = projectsList.get(findIndex(projectName));
+			ArrayList<Task> tasksToDelete = projToDelete.retrieveAllTasks();
+			
+			for(Task t : tasksToDelete){
+				t.flipParity();
+				removeTaskFromProj(t);
+			}
+			
+		//	UIHandler.getInstance().printToDisplay(MESSAGE_FOR_DELETE);
 
-	/********************************* Edit Methods 
-	 * @throws ParseException ***********************************/
+			/*
+			int indexOfProjectToDelete = findIndex(projectName);
+
+			projectsList.remove(indexOfProjectToDelete);
+			projectNames.remove(projectName);
+			Writer.deleteProject(projectName, projectNames);
+			UIHandler.getInstance().printToDisplay(projectName + " has been removed. ");
+			*/
+		
+			return;
+		}
+		
+		int index = findIndex(projectName);
+		ArrayList<Task> taskList = projectsList.get(index).retrieveAllTasks();
+		
+		for(Task t : taskList){
+			if(t.getTaskDescription().equals(taskDescription)){
+				removeTaskFromProj(t);
+			}
+		}
+		
+		/*
+
+		ArrayList<Task> tasksToDisplayForDelete = searchForTask(taskDescription);
+
+		if (tasksToDisplayForDelete.size() == 0) {
+			UIHandler.getInstance().printToDisplay(MESSAGE_NOTHING_TO_DELETE);
+
+		} else if (tasksToDisplayForDelete.size() == 1) {
+
+			Task taskToBeDeleted = tasksToDisplayForDelete.get(0);
+			removeTaskFromProj(taskToBeDeleted);
+
+		} else if (tasksToDisplayForDelete.size() > 1) {
+			/*
+			ArrayList<Task> temp;
+
+			temp = tasksToDisplayForDelete;
+			displayArrayList(tasksToDisplayForDelete);
+
+			UIHandler.getInstance().printToDisplay(MESSAGE_FOR_DELETE);
+
+			try {
+				int[] input = interp.askForAdditionalInformationForDelete();
+
+				if (input.length == 0) {
+					UIHandler.getInstance().printToDisplay(
+							MESSAGE_NO_INDEX_SPECIFIED);
+				} else {
+
+					for (int i = 0; i < input.length; i++) {
+						Task taskToBeDeleted = temp.get(input[i] - 1);
+
+						removeTaskFromProj(taskToBeDeleted);
+					}
+				}
+				
+			} catch (CancelDeleteException e) {
+				return;
+			}
+		} else {
+			UIHandler.getInstance().printToDisplay("No such task exists!");
+		}
+		
+		*/
+	}
+
+	/********************************* Edit Methods ***********************************/
 
 	// convert to a task
 	private void edit(String taskDescription, String projectName)
-			throws IOException, ParseException {
+			throws IOException {
 
 		Task historyTask = new Task();
 
@@ -460,7 +551,7 @@ public class Engine {
 					.printToDisplay(MESSAGE_ERROR_UNABLE_TO_EDIT);
 		}
 
-		addToUndoStack("edit", historyTask.getProjectName(), null);
+		addToUndoStack("edit", historyTask.getProjectName(), null, false);
 	}
 
 	/********************** Search Methods ***********************************/
@@ -523,7 +614,7 @@ public class Engine {
 		int counter = 1;
 		for (Task t : projectList) {
 			UIHandler.getInstance().printToDisplay(
-					counter + ". " + t.printTaskForDisplay());
+					counter + ". " + t.printTaskForSearch();
 			counter++;
 		}
 		UIHandler.getInstance().printToDisplay("\n");
@@ -534,14 +625,14 @@ public class Engine {
 		if (projectList.isEmpty()) {
 			UIHandler.getInstance().printToDisplay(MESSAGE_INVALID_SEARCH);
 		}
-		
+
 		int counter = 1;
 		for (Task t : projectList) {
 			UIHandler.getInstance().printToDisplay(
-					counter + ". " + t.printTaskForSearch());
+					counter + ". " + t.printTaskForDisplay());
 			counter++;
 		}
-	//	UIHandler.getInstance().printToDisplay("\n");
+		UIHandler.getInstance().printToDisplay("\n");
 	}
 
 	/**
@@ -733,8 +824,30 @@ public class Engine {
 			String typeOfCommand = mostRecent.getType();
 			Task task = mostRecent.getTask();
 			if (!projectNames.contains(mostRecent.getProjectName())) {
-				UIHandler.getInstance().printToDisplay(
-						MESSAGE_ERROR_INVALID_PROJECT);
+			//	UIHandler.getInstance().printToDisplay(MESSAGE_ERROR_INVALID_PROJECT);
+				
+				Task mostRecentTask = mostRecent.getTask();
+				add(mostRecentTask.getTaskDescription(), mostRecentTask.getStartDate(), mostRecentTask.getDeadline(), mostRecentTask.getProjectName());
+				undoStack.pop();
+				redoStack.push(mostRecent);
+				
+				PastCommands top = undoStack.peek();
+				
+				if(top.getTask().getParity()){
+					// is a project
+					while(top.getType().equals("delete") && top.getProjectName().equals(mostRecentTask.getProjectName())){
+						PastCommands recent = undoStack.pop();
+						redoStack.push(recent);
+						Task toAdd = recent.getTask();
+						
+						add(toAdd.getTaskDescription(), toAdd.getStartDate(), toAdd.getDeadline(), toAdd.getProjectName());
+						undoStack.pop();
+						if(undoStack.isEmpty()){
+							break;
+						}
+						top = undoStack.peek();
+					}
+				}
 
 			} else {
 				if (typeOfCommand.equals("add")) {
@@ -743,9 +856,31 @@ public class Engine {
 					redoStack.push(mostRecent);
 
 				} else if (typeOfCommand.equals("delete")) {
-					Project p = findProject(mostRecent.getProjectName());
-					p.addTask(task);
+					Task mostRecentTask = mostRecent.getTask();
+					add(mostRecentTask.getTaskDescription(), mostRecentTask.getStartDate(), mostRecentTask.getDeadline(), mostRecentTask.getProjectName());
+					undoStack.pop();
 					redoStack.push(mostRecent);
+					if(!undoStack.isEmpty()){
+						PastCommands top = undoStack.peek();
+	
+						while(top.getType().equals("delete")){
+							
+							if(!top.getProjectName().equals(mostRecentTask.getProjectName())){
+								return;
+							}
+							
+							PastCommands recent = undoStack.pop();
+							redoStack.push(recent);
+							Task toAdd = recent.getTask();
+							
+							add(toAdd.getTaskDescription(), toAdd.getStartDate(), toAdd.getDeadline(), toAdd.getProjectName());
+							undoStack.pop();
+							if(undoStack.isEmpty()){
+								break;
+							}
+							top = undoStack.peek();
+						}
+					}
 
 				} else if (typeOfCommand.equals("edit")) {
 
@@ -794,20 +929,57 @@ public class Engine {
 				// undo add
 				if (projectNames.contains(task.getProjectName())) {
 					// Match found
-
+					
 					int index = findIndex(task.getProjectName());
 					Project p = projectsList.get(index);
 					p.addTask(task);
-
+			
 				}
+				
 			} else if (type.equals("delete")) {
 				if (projectNames.contains(task.getProjectName())) {
 					// Match found
-
+					/*
 					int index = findIndex(task.getProjectName());
 					Project p = projectsList.get(index);
 					p.deleteTask(task);
+					 */
+									
+					Task toAdd = mostRecent.getTask();
+					deleteForRedo(toAdd.getTaskDescription(), toAdd.getProjectName());
+					if(!undoStack.isEmpty()){
+						undoStack.pop();
+					}
+					if(!redoStack.isEmpty()){
+						PastCommands top = redoStack.peek();
 
+						if(top.getTask().getParity()){
+							while(top.getType().equals("delete") && top.getProjectName().equals(toAdd.getProjectName())){
+								Task recent = redoStack.pop().getTask();
+								delete(recent.getTaskDescription(), recent.getProjectName());
+								if(!undoStack.isEmpty()){
+									undoStack.pop();
+								}
+								if(redoStack.isEmpty()){
+									return;
+								}
+								top = redoStack.peek();
+							}
+
+						}else{
+							while(top.getType().equals("delete")){
+								Task recent = redoStack.pop().getTask();
+								deleteForRedo(recent.getTaskDescription(), recent.getProjectName());
+								if(!undoStack.isEmpty()){
+									undoStack.pop();
+								}							
+								if(redoStack.isEmpty()){
+									return;
+								}
+								top = redoStack.peek();
+							}
+						}
+					}
 				}
 			} else if (type.equals("edit")) {
 				PastCommands existingTask = redoStack.pop(); // (now add) del
@@ -836,8 +1008,7 @@ public class Engine {
 		}
 	}
 
-	private void addToUndoStack(String type, String projectName,
-			Task incomingTask) {
+	private void addToUndoStack(String type, String projectName, Task incomingTask, boolean parity) {
 		undoStack.push(new PastCommands(type, incomingTask, projectName));
 	}
 
@@ -942,6 +1113,7 @@ public class Engine {
 			projectsList.remove(indexProject);
 			projectNames.remove(projectName);
 			Writer.deleteProject(projectName, projectNames);
+			UIHandler.getInstance().printToDisplay(taskToBeDeleted.getTaskDescription() + " has been removed");
 			UIHandler.getInstance().printToDisplay(
 					projectName + MESSAGE_REMOVE_SUCCESS);
 		} else {
@@ -949,8 +1121,8 @@ public class Engine {
 					taskToBeDeleted.getTaskDescription()
 							+ MESSAGE_REMOVE_SUCCESS);
 		}
-		addToUndoStack("delete", taskToBeDeleted.getProjectName(),
-				taskToBeDeleted);
+		
+		addToUndoStack("delete", taskToBeDeleted.getProjectName(), taskToBeDeleted, taskToBeDeleted.getParity());
 	}
 
 	/**
