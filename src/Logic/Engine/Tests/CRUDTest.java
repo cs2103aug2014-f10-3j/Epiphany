@@ -7,19 +7,14 @@ import java.text.ParseException;
 
 import org.junit.Test;
 
-import com.sun.javafx.tk.Toolkit.Task;
-
 import Logic.Engine.Engine;
-import Logic.Interpreter.EpiphanyInterpreter;
 import Logic.Interpreter.CommandType.AddCommandType;
-import Logic.Interpreter.CommandType.CompleteCommandType;
 import Logic.Interpreter.CommandType.DeleteCommandType;
 import Logic.Interpreter.CommandType.DisplayCommandType;
 import Logic.Interpreter.CommandType.RedoCommandType;
 import Logic.Interpreter.CommandType.ResetCommandType;
 import Logic.Interpreter.CommandType.SearchCommandType;
 import Logic.Interpreter.CommandType.UndoCommandType;
-import Logic.Engine.*;
 
 public class CRUDTest {
 	public static final String TASK_DESCRIPTION_FLOATING = "finish tutorial 5";

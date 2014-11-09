@@ -19,7 +19,6 @@ public class ProjectTestCases {
 	
 	
 	/*********Test Attributes*******************/
-	private String projectName;
 	private ArrayList<Task> deadLineListExpected;
 	private ArrayList<Task> intervalListExpected;
 	private ArrayList<Task> floatingListExpected;
@@ -142,59 +141,24 @@ public class ProjectTestCases {
 	
 	/**********************Sorting Compartors***********************************/		
 
-	
-	/**
-	 * This method helps compare two dates.
-	 * Task with earlier deadline is put first.
-	 * @author Moazzam
-	 *
-	 */
-	private class deadlineComparator implements Comparator<Task> {
-		public int compare(Task one, Task two) {
-			return one.getDeadline().compareTo(two.getDeadline());
-		}
-	}
-	
-	/**
-	 * Puts the task with earlier start date first.
-	 * @author amit
-	 *
-	 */
-	private class intervalComparator implements Comparator<Task> {
-		public int compare(Task one, Task two) {
-			return one.getStartDate().compareTo(two.getStartDate());
-		}
-	}
-	
-	/**
-	 * Sorts tasks alphabetically(by task description)
-	 * @author amit
-	 *
-	 */
-	private class floatingComparator implements Comparator<Task> {
-		public int compare(Task one, Task two) {
-			return one.getTaskDescription().compareTo(two.getTaskDescription());
-		}
-	}
-	
-private class dateComparator implements Comparator<Task> {
-	public int compare(Task task1, Task task2) {
-		if (task1.getDeadline() == null && task2.getDeadline() == null) {
+	private class dateComparator implements Comparator<Task> {
+		public int compare(Task task1, Task task2) {
+			if (task1.getDeadline() == null && task2.getDeadline() == null) {
+				return 0;
+			} else if (task1.getDeadline() != null
+					&& task2.getDeadline() == null) {
+				return 1;
+			} else if (task1.getDeadline() == null
+					&& task2.getDeadline() != null) {
+				return -1;
+			} else if (task1.getDeadline() != null && task2.getDeadline() != null) {
+				return task1.getDeadline().compareTo(task2.getDeadline());
+			}
+			
 			return 0;
-		} else if (task1.getDeadline() != null
-				&& task2.getDeadline() == null) {
-			return 1;
-		} else if (task1.getDeadline() == null
-				&& task2.getDeadline() != null) {
-			return -1;
-		} else if (task1.getDeadline() != null && task2.getDeadline() != null) {
-			return task1.getDeadline().compareTo(task2.getDeadline());
 		}
-		
-		return 0;
-	}
-
-} 
+	
+	} 
 
 	
 }

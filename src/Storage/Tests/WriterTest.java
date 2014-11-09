@@ -3,7 +3,6 @@ package Storage.Tests;
 import static org.junit.Assert.*;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -20,7 +19,6 @@ import Storage.Writer;
 
 public class WriterTest {
 	/***********Test Attributes********/
-	private String fileName;
 	private ArrayList<Task> dLineList;
 	private ArrayList<Task> interList;
 	private ArrayList<Task> floatList;

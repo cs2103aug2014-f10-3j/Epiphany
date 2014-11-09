@@ -2,10 +2,6 @@ package Logic.Engine.Tests;
 
 import static org.junit.Assert.*;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-
 import org.junit.Test;
 
 import Logic.Engine.Task;
@@ -13,6 +9,7 @@ import Logic.Engine.Task;
 public class TaskTestCases {
 	
 	/*****Test Attributes********/
+	/*
 	private static String taskDescription;
 	private static String duplicateTaskDescription; // backup of taskDescription, cannot be mutated							
 	private static Date from;
@@ -20,11 +17,12 @@ public class TaskTestCases {
 	private static String projectName;
 	private static boolean isCompleted;
 	private static String completionStatus;
-	private static String[] months;
-	private static String[] days;
-	private static boolean parity;
-	private static HashMap<String, String> colors;
-	private String color;
+	*/
+//	private static String[] months;
+//	private static String[] days;
+//	private static boolean parity;
+//	private static HashMap<String, String> colors;
+//	private String color;
 	
 	/*******Test Object************/
 	static Task testTask;
@@ -68,7 +66,7 @@ public class TaskTestCases {
 	
 	
 	/********Other Methods*********/
-	
+	/*
 	private void populateDays() {
 		days[0] = "Sunday";
 		days[1] = "Monday";
@@ -102,4 +100,5 @@ public class TaskTestCases {
 		colors.put("white", "\033[37m");
 		colors.put("reset", "\033[0m");
 	}
+	*/
 }

@@ -8,19 +8,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import Logic.Engine.Project;
 import Logic.Engine.Task;
 import Storage.Reader;
-import Storage.Writer;
 
 public class ReaderTest {
-	private String fileName;
 	private ArrayList<Task> dLineList;
 	private ArrayList<Task> interList;
 	private ArrayList<Task> floatList;
@@ -48,7 +42,7 @@ public class ReaderTest {
 		floatList.add(floatingTaskExpected);
 		
 		
-		Writer w = new Writer("CS2103", dLineList, interList, floatList);
+	//	Writer w = new Writer("CS2103", dLineList, interList, floatList);
 		
 		ArrayList<String> projectNames = new ArrayList<String>();
 		projectNames.add("CS2103");
