@@ -117,7 +117,7 @@ public class Writer {
 		updateProjectMasterList(projectName, projectList);
 	
 	}
-	
+
 	public static void reset(ArrayList<String> list) throws IOException{
 		
 	
@@ -134,10 +134,6 @@ public class Writer {
 				project.delete();
 		}
 		
-	//	generateDefault();
-
-		
-		
-			
+	//	generateDefault();	
 	}
 }

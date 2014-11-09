@@ -20,6 +20,8 @@ public class Task {
 		private String completionStatus;
 		private static String[] months;
 		private static String[] days;
+		private boolean parity;
+
 
 		/**
 		 * Overloaded constructors for the creation of tasks are shown below. They differ in the 
@@ -35,7 +37,9 @@ public class Task {
 			this.projectName = ProjectName;
 			this.tempTaskDescription = taskDescription;
 			this.completionStatus = "";
-			
+			this.parity = false;
+
+
 			months = new String[12];
 			populateMonths();
 			
@@ -120,6 +124,10 @@ public class Task {
 			return this.tempTaskDescription;
 		}
 
+		public boolean getParity(){
+			return this.parity;
+		}
+
 		public Date getStartDate() {
 			return this.from;
 		}
@@ -172,6 +180,10 @@ public class Task {
 
 		public void setProjectName(String newProjectName) {
 			this.projectName = newProjectName;
+		}
+
+		public void flipParity(){
+			this.parity = !this.parity;
 		}
 
 		public boolean isFinished() {
