@@ -1,6 +1,9 @@
 package Logic.Engine;
 
 import java.util.Date;
+import java.util.HashMap;
+
+import Logic.Interpreter.UIHandler;
 
 /**
  * This class helps in the creation and management of tasks. Each task contains
@@ -21,7 +24,9 @@ public class Task {
 	private static String[] months;
 	private static String[] days;
 	private boolean parity;
-
+	private static HashMap<String, String> colors;
+	private String color;
+	
 	/**
 	 * Overloaded constructors for the creation of tasks are shown below. They
 	 * differ in the type of arguments that they receive.
@@ -33,6 +38,7 @@ public class Task {
 	 *            stores the name of the project that the task belongs to
 	 */
 	public Task(String instruction, Date from, Date deadLine, String ProjectName) {
+		populateColors();
 		this.taskDescription = instruction;
 		this.from = from;
 		this.deadLine = deadLine;
@@ -40,6 +46,7 @@ public class Task {
 		this.tempTaskDescription = taskDescription;
 		this.completionStatus = "";
 		this.parity = false;
+		this.color = colors.get("reset");
 
 		months = new String[12];
 		populateMonths();
@@ -49,19 +56,28 @@ public class Task {
 
 	}
 
-	public Task(String instruction, Date from, Date deadLine,
-			String ProjectName, boolean isCompleted) {
+	public Task(String instruction, Date from, Date deadLine, String ProjectName, boolean isCompleted) {
+		populateColors();
+
 		this.taskDescription = instruction;
 		this.from = from;
 		this.deadLine = deadLine;
 		this.projectName = ProjectName;
 		this.tempTaskDescription = taskDescription;
 		this.isCompleted = isCompleted;
+		this.parity = false;
+		this.color = colors.get("reset");
+
 
 		if (this.isCompleted) {
 			this.completionStatus = " [DONE]";
+			this.color = colors.get("green");
+			//this.completionStatus = "\033[31m"; // changed to green
+			//UIHandler.getInstance().resetToBlack();
+			
 		} else {
 			this.completionStatus = "";
+			this.color = colors.get("reset");
 		}
 
 		months = new String[12];
@@ -69,6 +85,8 @@ public class Task {
 
 		days = new String[7];
 		populateDays();
+		
+
 
 	}
 
@@ -196,11 +214,18 @@ public class Task {
 
 	public void setStatus() { // to reverse the operation
 		this.isCompleted = !this.isCompleted;
+		
 		if (this.isCompleted) {
 			this.completionStatus = " [DONE]";
+			this.color = colors.get("green");
 		} else {
 			this.completionStatus = "";
+			this.color = colors.get("reset");
 		}
+	}
+	
+	public void setOverdue(){
+		this.color = colors.get("red");
 	}
 
 	public String getType() {
@@ -324,7 +349,7 @@ public class Task {
 				}
 			}
 		}
-		return s;
+		return this.color + s;
 	}
 
 	
@@ -446,8 +471,17 @@ public class Task {
 
 		return s;
 	}
-
-
-
-
+	
+	private static void populateColors(){
+		colors = new HashMap<String, String>();
+		colors.put("green", "\033[32m");
+		colors.put("red", "\033[31m");
+		colors.put("black", "\033[30m");
+		colors.put("white", "\033[37m");
+		colors.put("reset", "\033[0m");
 	}
+
+
+
+
+}

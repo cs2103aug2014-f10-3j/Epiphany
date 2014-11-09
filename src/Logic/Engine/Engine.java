@@ -307,11 +307,9 @@ public class Engine {
 	 *            is the command that the interpreter send in.
 	 * @throws IOException
 	 */
-	private void add(String taskDescription, Date dateFrom, Date dateTo,
-			String projectName) throws IOException {
+	private void add(String taskDescription, Date dateFrom, Date dateTo,String projectName) throws IOException {
 
-		Task incomingTask = new Task(taskDescription, dateFrom, dateTo,
-				projectName);
+		Task incomingTask = new Task(taskDescription, dateFrom, dateTo, projectName, false);
 
 		// Duplicate check.
 		if (projectNames.contains(projectName)) {
@@ -616,6 +614,7 @@ public class Engine {
 			UIHandler.getInstance().printToDisplay(
 					counter + ". " + t.printTaskForDisplay("display"));
 			counter++;
+			UIHandler.getInstance().resetToDefault();
 		}
 		UIHandler.getInstance().printToDisplay("\n");
 	}
@@ -714,7 +713,12 @@ public class Engine {
 				if (!currTask.hasDeadLine()) {
 					floating.add(currTask);
 				} else if (isTaskOverDue(currTask)) {
+					
+				//	currTask.setInstruction("\033[31m" + currTask.getTaskDescription()); // added red colour 
+					
+					currTask.setOverdue();
 					overdue.add(currTask);
+					
 
 				} else if (checkIndexOfDeadlineObject(currTask) >= 0) {
 
@@ -746,11 +750,11 @@ public class Engine {
 				if (!listDisObj.isEmpty()) {
 					if (listDisObj.get(0).hasDeadLine()) {
 						UIHandler.getInstance().printToDisplay(
-								"----------------");
+								"------------");
 						UIHandler.getInstance().printToDisplay(
 								"> " + "Overdue:" + " |");
 						UIHandler.getInstance().printToDisplay(
-								"----------------");
+								"------------");
 						displayArrayList(listDisObj);
 
 					} else {
@@ -1073,7 +1077,7 @@ public class Engine {
 	public void markTaskDescriptionAsComplete(Task input) {
 		if (input.isCompleted() == true) {
 			String originalInstruction = input.getTaskDescription();
-			input.setInstruction(originalInstruction + MESSAGE_MARKED_AS_DONE);
+			//input.setInstruction("\033[1;32m" + originalInstruction); // set it to green to denote Done
 
 			String toDisplay = input.getTempTaskDescription()
 					+ MESSAGE_MARKED_AS_COMPLETE;
@@ -1298,11 +1302,7 @@ public class Engine {
 			projectsList.get(index).deleteTask(mostRecentTask);
 			mostRecentTask.setStatus();
 			projectsList.get(index).addTask(
-					new Task(mostRecentTask.getTaskDescription(),
-							mostRecentTask.getStartDate(), mostRecentTask
-									.getDeadline(), mostRecentTask
-									.getProjectName(), mostRecentTask
-									.isCompleted()));
+					new Task(mostRecentTask.getTaskDescription(), mostRecentTask.getStartDate(), mostRecentTask.getDeadline(), mostRecentTask.getProjectName(), mostRecentTask.isCompleted()));
 		}
 	}
 
