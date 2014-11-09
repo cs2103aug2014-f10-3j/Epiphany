@@ -947,9 +947,11 @@ public class Engine {
 						.retrieveAllTasks();
 				for (int j = 0; j < tasksInCurrentProject.size(); j++) {
 					Task currTask = tasksInCurrentProject.get(j);
+					if(currTask.hasDeadLine()){
 					if (isDateEqual(dateToBeDisplayedBy, currTask.getDeadline())) {
 
 						toBeDisplayed.add(currTask);
+					}else{continue;}
 					}
 				}
 			}
