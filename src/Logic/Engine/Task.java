@@ -431,9 +431,11 @@ public class Task {
 
 		if (hour < 12) {
 			// am
-			if (minutes == 0) {
+			if (hour == 0) {
+				output = "12am";
+			} else if(minutes == 0) {
 				output = hour + "am";
-			} else {
+			}else {
 				output = hour + ":" + minutes + "am";
 			}
 

@@ -84,7 +84,7 @@ public class Writer {
 		writer.flush();
 		writer.close();
 	}
-
+	
 	public static void addToProjectMasterList(String projectName) throws IOException{
 		File file = new File("../Epiphany/src/Storage/projectMasterList.txt");
 		FileWriter f = new FileWriter(file, true);

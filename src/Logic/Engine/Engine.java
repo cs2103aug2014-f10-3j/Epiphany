@@ -1036,7 +1036,7 @@ public class Engine {
 		} else if (tasksToBeCompleted.size() == 1) {
 			Task targetTask = tasksToBeCompleted.get(0);
 			mostRecentTask = targetTask;
-			updateBackend(mostRecentTask);
+			updateBackEnd(mostRecentTask);
 			markTaskDescriptionAsComplete(mostRecentTask);
 
 		} else if (tasksToBeCompleted.size() > 1) {
@@ -1060,7 +1060,7 @@ public class Engine {
 							Task taskToBeDeleted = temp
 									.get(inputForComplete[i] - 1);
 							mostRecentTask = taskToBeDeleted;
-							updateBackend(mostRecentTask);
+							updateBackEnd(mostRecentTask);
 							markTaskDescriptionAsComplete(mostRecentTask);
 						}
 					}
@@ -1076,17 +1076,15 @@ public class Engine {
 	// some special effect to denote that the task has been complete
 	public void markTaskDescriptionAsComplete(Task input) {
 		if (input.isCompleted() == true) {
-			String originalInstruction = input.getTaskDescription();
+		//	String originalInstruction = input.getTaskDescription();
 			//input.setInstruction("\033[1;32m" + originalInstruction); // set it to green to denote Done
 
-			String toDisplay = input.getTempTaskDescription()
-					+ MESSAGE_MARKED_AS_COMPLETE;
+			String toDisplay = input.getTempTaskDescription() + MESSAGE_MARKED_AS_COMPLETE;
 			UIHandler.getInstance().printToDisplay(toDisplay);
 		} else { // if false, undo the operation and display the original task
 					// description
 			input.setInstruction(input.getTempTaskDescription());
-			String toDisplay = input.getTempTaskDescription()
-					+ MESSAGE_MARKED_AS_ONGOING;
+			String toDisplay = input.getTempTaskDescription() + MESSAGE_MARKED_AS_ONGOING;
 			UIHandler.getInstance().printToDisplay(toDisplay);
 		}
 	}
@@ -1293,18 +1291,46 @@ public class Engine {
 	 * @param mostRecentTask
 	 * @throws IOException
 	 */
-	private void updateBackend(Task mostRecentTask) throws IOException {
+	private void updateBackEnd(Task mostRecentTask) throws IOException {
 		String pName = mostRecentTask.getProjectName();
 		int index = findIndex(pName);
 		if (index < -1) {
 			UIHandler.getInstance().printToDisplay("error");
 		} else {
-			projectsList.get(index).deleteTask(mostRecentTask);
-			mostRecentTask.setStatus();
-			projectsList.get(index).addTask(
-					new Task(mostRecentTask.getTaskDescription(), mostRecentTask.getStartDate(), mostRecentTask.getDeadline(), mostRecentTask.getProjectName(), mostRecentTask.isCompleted()));
+			completeTaskFromProj(mostRecentTask);
+			
+		//	mostRecentTask.setStatus(); // flips completion status
+		//	projectsList.get(index).addTask(new Task(mostRecentTask.getTaskDescription(), mostRecentTask.getStartDate(), mostRecentTask.getDeadline(), mostRecentTask.getProjectName(), mostRecentTask.isCompleted()));
 		}
 	}
+	
+	private void completeTaskFromProj(Task taskToBeDeleted) throws IOException {
+		String projectName = taskToBeDeleted.getProjectName();
+		int indexProject = findIndex(projectName);
+
+		Project currProject = projectsList.get(indexProject);
+
+		currProject.deleteTask(taskToBeDeleted);
+		ArrayList<Task> taskList = currProject.retrieveAllTasks();
+
+		if (taskList.isEmpty()
+				&& !currProject.getProjectName().equals("default")) {
+
+			// UIHandler.getInstance().printToDisplay(currProject.getProjectName()
+			// + " has been removed. ");
+			projectsList.remove(indexProject);
+			projectNames.remove(projectName);
+			Writer.deleteProject(projectName, projectNames);
+		//	UIHandler.getInstance().printToDisplay(taskToBeDeleted.getTaskDescription() + " has been removed");
+		//	UIHandler.getInstance().printToDisplay(projectName + MESSAGE_REMOVE_SUCCESS);
+		} else {
+		//	UIHandler.getInstance().printToDisplay(taskToBeDeleted.getTaskDescription() + MESSAGE_REMOVE_SUCCESS);
+		}
+		
+		addToUndoStack("delete", taskToBeDeleted.getProjectName(), taskToBeDeleted, taskToBeDeleted.getParity());
+	}
+	
+	
 
 	/**
 	 * This method helps to parse the date input into a more readable string
