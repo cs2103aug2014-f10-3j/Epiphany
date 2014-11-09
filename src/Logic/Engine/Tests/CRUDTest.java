@@ -7,6 +7,7 @@ import java.text.ParseException;
 
 import org.junit.Test;
 
+
 import Logic.Engine.Engine;
 import Logic.Interpreter.CommandType.AddCommandType;
 import Logic.Interpreter.CommandType.DeleteCommandType;
@@ -15,6 +16,15 @@ import Logic.Interpreter.CommandType.RedoCommandType;
 import Logic.Interpreter.CommandType.ResetCommandType;
 import Logic.Interpreter.CommandType.SearchCommandType;
 import Logic.Interpreter.CommandType.UndoCommandType;
+
+
+
+/**
+ * This class tests the various operations that are used in Engine.
+ * 
+ * 
+ */
+//@author A0110924R
 
 public class CRUDTest {
 	public static final String TASK_DESCRIPTION_FLOATING = "finish tutorial 5";
@@ -43,7 +53,7 @@ public class CRUDTest {
 		
 		E.executeCommand(resetCommandType);*/
 	/******************************** Testing for add ********************************/
-
+	//@author A0110924R
 	@SuppressWarnings("static-access")
 	@Test
 	public void testAddFloating() throws IOException, ParseException {
@@ -64,7 +74,7 @@ public class CRUDTest {
 
 		E.executeCommand(resetCommandType);
 	}
-
+	//@author A0110924R
 	@SuppressWarnings("static-access")
 	@Test
 	public void testAddDeadline() throws IOException, ParseException {
@@ -86,7 +96,7 @@ public class CRUDTest {
 
 		E.executeCommand(resetCommandType);
 	}
-
+	//@author A0110924R
 	@SuppressWarnings("static-access")
 	@Test
 	public void testAddInterval() throws IOException, ParseException {
@@ -106,7 +116,7 @@ public class CRUDTest {
 
 		E.executeCommand(resetCommandType);
 	}
-
+	//@author A0110924R
 	@SuppressWarnings("static-access")
 	@Test
 	public void testAddProject() throws IOException, ParseException {
@@ -130,7 +140,7 @@ public class CRUDTest {
 	}
 
 	/******************************** Testing of Delete ********************************/
-
+	//@author A0110924R
 	@Test
 	public void testDelete() throws IOException, ParseException {
 
@@ -152,7 +162,7 @@ public class CRUDTest {
 		}
 		E.executeCommand(resetCommandType);
 	}
-
+	//@author A0110924R
 	@Test
 	public void testDeleteProject() throws IOException, ParseException {
 
@@ -179,7 +189,7 @@ public class CRUDTest {
 	}
 
 	/******************************** Testing of Search ********************************/
-
+	//@author weiyang
 	@SuppressWarnings("static-access")
 	@Test
 	public void searchTest() throws IOException, ParseException {
@@ -206,6 +216,7 @@ public class CRUDTest {
 		E.executeCommand(resetCommandType);
 	}
 	/******************************** Testing of Display ********************************/
+	//@author A0110924R
 	@Test
 	public void testDisplay() throws IOException, ParseException {
 		Engine E = Engine.getInstance();
@@ -280,6 +291,7 @@ public class CRUDTest {
 
 		E.executeCommand(resetCommandType);
 	}*/
+	//@author A0110924R
 	@SuppressWarnings("static-access")
 	@Test
 	public void testUndoForAdd() throws IOException, ParseException {
@@ -304,6 +316,7 @@ public class CRUDTest {
 	}
 
 	/******************************** Testing of Redo ********************************/
+	//@author A0110924R
 	@SuppressWarnings("static-access")
 	@Test
 	public void testRedo() throws IOException, ParseException {

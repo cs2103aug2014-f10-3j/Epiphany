@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Date;
 
 /**
- * This class is used to instantiate objects that need would then be displayed
- * @author Moazzam
- *
+ * This class is used to instantiate objects that assist in the display operation.
+ * 
  */
+//@author A0110924R
 public class DisplayObject {
 	
 		
