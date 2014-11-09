@@ -1,3 +1,4 @@
+//@author A0118905A
 package Logic.Interpreter;
 
 import java.io.*; 
@@ -6,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Date; 
 import java.util.TreeSet;
+
 
 
 import Logic.Interpreter.DateInterpreter.*;
@@ -17,22 +19,18 @@ import jline.console.ConsoleReader;
 import jline.console.completer.StringsCompleter;
 
 /**
- * This class parses the input from the user. The intepreter draws on several helper classes to accept simple
- * and natural English, parses it and passes it onto the Engine Class via the CommandType Interface. 
+ * This class contains the main method to run Epiphany. It accepts input from users and parses the input and subsequently
+ * creates a CommandType(command pattern) and passes it to the Engine class which then executes to command appropriately.
+ * This process loops until the user enters 'exit'.
  * 
- * This class follows the Observer pattern by implementing deleteObserver.
- * @author Amit and Abdulla
- *
+ * This class follows the Observer pattern by implementing deleteObserver and editObserver.
  */
-
-
 public class EpiphanyInterpreter implements deleteObserver, editObserver{
 	///all the string constants that are involved in displaying things to the user.
 	private static final String MESSAGE_COMMAND_PROMPT = "command: ";
 	private static final String MESSAGE_INVALID_COMMAND = "Invalid command!";
-	
-	private static final String DISPLAY_DATE_FORMAT = "%d-%d-%d";
-	private static final TreeSet<String> actionWords = new TreeSet<String>(); //dictionary
+	private static final TreeSet<String> actionWords = new TreeSet<String>(); //Contains a list of supported English words.
+	//References to objects that we will need to perform commands that the user enters.
 	Engine engine;
 	Scanner input; //This scanner will deal with all input from user.
 	UIHandler uiHandler; 
@@ -42,7 +40,7 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 		engine = Engine.getInstance();
 		input = new Scanner(System.in);
 		uiHandler = UIHandler.getInstance();
-		this.populateDictionary(); //adds an English dictionary
+		this.populateDictionary(); //populates the actionWords TreeSet with valid English words.
 	}
 
 	/**
@@ -61,7 +59,7 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 
 	/**
 	 * This method accepts the user inputs until the 'exit' command is entered. None of the actual
-	 * operations are carried out in this function - all the operations are left to the 'route' function.
+	 * operations are carried out in this function - all the operations are left to the Engine.
 	 * @throws IOException 
 	 * @throws CancelDeleteException 
 	 * @throws CancelEditException 
@@ -70,7 +68,7 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 	void acceptUserInputUntilExit() throws IOException, CancelEditException, CancelDeleteException, ParseException {
 		/*try {
 			ConsoleReader console = new ConsoleReader();
-			console.setPrompt("command: ");
+			console.setPrompt("MESSAGE_COMMAND_PROMPT");
 			console.addCompleter(new StringsCompleter(this.getCommandsList()));
 			String line = null;
 			while ((line = console.readLine()) != null) {
@@ -104,6 +102,7 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 		}*/
 		String userInput;
 		do{
+			uiHandler.resetToDefault();
 			uiHandler.printToTerminal(MESSAGE_COMMAND_PROMPT, "inline");
 			userInput = input.nextLine();
 			CommandType toPassToEngine;
@@ -121,6 +120,10 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 		input.close();
 	}
 
+	/**
+	 * This returns a list of commands that the system supports, which will be used for auto-complete purposes.
+	 * @return ArrayList of supported commands (String)
+	 */
 	private ArrayList<String> getCommandsList(){
 		ArrayList<String> commands = new ArrayList<String>();
 		commands.add("delete");
@@ -130,26 +133,13 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 		commands.add("exit");
 		commands.add("undo");
 		commands.add("redo");
-		commands.add("-complete");
+		commands.add("-m");
 		return commands;
 	}
 
-	/*public void acceptUserInput(String userInput) throws IOException{
-		CommandType toPassToEngine;
-		try {
-			toPassToEngine = interpretCommand(userInput);
-			assert(toPassToEngine != null);
-			engine.executeCommand(toPassToEngine);
-		} catch (InvalidCommandException e) {
-			uiHandler.printToTerminal(MESSAGE_INVALID_COMMAND);
-		}
-		catch (ExitException e) {
-			System.exit(0);
-		}
-	}*/
-
 	/**
-	 * This function recognizes the type of input by user.
+	 * This function recognizes the type of input by user, and then redirects to the appropriate function to
+	 * handle interpretation of that typr of command.
 	 * @param userInput
 	 * @return CommandType of the input.
 	 * @throws InvalidCommandException 
@@ -180,13 +170,23 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 		} 
 	}
 
+	/**
+	 * This function handles to interpretation of 'complete task' commands and returns the standardized complete command according to CommandType Interface.
+	 * @param userInput
+	 * @return
+	 * @throws InvalidCommandException
+	 */
 	private CommandType interpretCompleteCommand(String userInput) throws InvalidCommandException {
 		if(userInput.indexOf(' ')==-1){
+			//the complete command must have some modifiers. ie "-m" would be invalid.
 			throw new InvalidCommandException();
 		}
+		//the modifier is the task description (can be a part of) of the task to mark as completed.
 		String completeMe = userInput.substring(userInput.indexOf(' ') + 1);
 		if(completeMe.contains("#")){
+			//if the command contains # it means that the user has specified a particular project to carry this command out in.
 			if(completeMe.substring(completeMe.indexOf('#')+1).contains("#")){
+				//the command can have only one project (and by extension only one #).
 				throw new InvalidCommandException();
 			}
 			return new CompleteCommandType(completeMe.substring(0,completeMe.indexOf('#')-1),completeMe.substring(completeMe.indexOf('#')+1));
@@ -194,13 +194,23 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 		return new CompleteCommandType(completeMe);
 	}
 
+	/**
+	 * This function handles to interpretation of 'edit task' commands and returns the standardized edit command according to CommandType Interface.
+	 * @param userInput
+	 * @return
+	 * @throws InvalidCommandException
+	 */
 	private CommandType interpretEditCommand(String userInput) throws InvalidCommandException {
 		if(userInput.indexOf(' ')==-1){
+			//the edit command must have some modifiers. ie "edit" would be invalid.
 			throw new InvalidCommandException();
 		}
+		//the modifier is the task description (can be a part of) of the task to edit.
 		String toEdit = userInput.substring(userInput.indexOf(' ') + 1); 
 		if(toEdit.contains("#")){
+			//if the command contains # it means that the user has specified a particular project to carry this command out in.
 			if(toEdit.substring(toEdit.indexOf('#')+1).contains("#")){
+				//the command can have only one project (and by extension only one #).
 				throw new InvalidCommandException();
 			}
 			return new EditCommandType(toEdit.substring(0,toEdit.indexOf('#')-1),toEdit.substring(toEdit.indexOf('#')+1));
@@ -209,7 +219,7 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 	}
 
 	/**
-	 * This function returns the standardized display command according to CommandType Interface. 
+	 * This function handles to interpretation of 'display' commands and returns the standardized display command according to CommandType Interface.
 	 * @param userInput
 	 * @return DisplayCommandType
 	 * @throws InvalidCommandException 
@@ -217,22 +227,26 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 	@SuppressWarnings("deprecation")
 	private CommandType interpretDisplayCommand(String userInput) throws InvalidCommandException {
 		String[] commandTokens = userInput.split(" ");
-
 		if(commandTokens.length == 1){
+			// if the user enters just "display", he wants to display all tasks across all projects and times.
 			return new DisplayCommandType();
 		}else if(commandTokens.length >= 2){
 			if(commandTokens[1].startsWith("#")){
+				// if the user enters just "display #projectName", he wants to display all tasks in a particular project.
 				if(commandTokens[1].substring(1).contains("#")){
+					//the command can have only one project (and by extension only one #).
 					throw new InvalidCommandException();
 				}
 				return new DisplayCommandType(userInput.split("#")[1]);
 			} else if(commandTokens[1].equalsIgnoreCase("all")){
+				// if the user enters just "display all", he wants to display all tasks across all projects and times.
 				return new DisplayCommandType(commandTokens[1]);
 			} else{
+				// if the user enters just "display some date", he wants to display all tasks on a particular date.
 				ArrayList<Date> displayDate = new ArrayList<Date>();
 				parseDate(" by "+userInput.substring(userInput.indexOf(' ')+1), displayDate);
 				if(displayDate.size()>=1){
-					return new DisplayCommandType(String.format(DISPLAY_DATE_FORMAT, displayDate.get(0).getDate(),displayDate.get(0).getMonth(),displayDate.get(0).getYear()+1900));
+					return new DisplayCommandType(String.format("%d-%d-%d", displayDate.get(0).getDate(),displayDate.get(0).getMonth(),displayDate.get(0).getYear()+1900));
 				}
 			}
 		}
@@ -240,8 +254,8 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 	}
 
 	/**
-	 * Exits program. Duh
-	 * @return CommandType(matters it does not, hmm)
+	 * Exits the program.
+	 * @return CommandType(this function will never return anything).
 	 * @throws ExitException 
 	 */
 	private CommandType exitProgram() throws ExitException {
@@ -256,11 +270,15 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 	 */
 	private CommandType interpretSearchCommand(String userInput) throws InvalidCommandException {
 		if(userInput.indexOf(' ')==-1){
+			//the search command must have some modifiers. ie "search" would be invalid.
 			throw new InvalidCommandException();
 		}
+		//the modifier is the task description (can be a part of) of the task to search for.
 		String findMe = userInput.substring(userInput.indexOf(' ') + 1);
 		if(findMe.contains("#")){
+			//if the command contains # it means that the user has specified a particular project to carry this command out in.
 			if(findMe.substring(findMe.indexOf('#')+1).contains("#")){
+				//the command can have only one project (and by extension only one #).
 				throw new InvalidCommandException();
 			}
 			return new SearchCommandType(findMe.substring(0,findMe.indexOf('#')-1),findMe.substring(findMe.indexOf('#')+1));
@@ -270,11 +288,15 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 
 	private CommandType interpretDeleteCommand(String userInput) throws InvalidCommandException {
 		if(userInput.indexOf(' ')==-1){
+			//the delete command must have some modifiers. ie "delete" would be invalid.
 			throw new InvalidCommandException();
 		}
+		//the modifier is the task description (can be a part of) of the task to search for.
 		String toDelete = userInput.substring(userInput.indexOf(' ') + 1); 
 		if(toDelete.contains("#")){
+			//if the command contains # it means that the user has specified a particular project to carry this command out in.
 			if(toDelete.substring(toDelete.indexOf('#')+1).contains("#")){
+				//the command can have only one project (and by extension only one #).
 				throw new InvalidCommandException();
 			}
 			if(toDelete.startsWith("#")){
@@ -293,25 +315,32 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 	 */
 	private CommandType interpretAddCommand(String userInput) throws InvalidCommandException {
 		if(!userInput.startsWith("\"") && !isValidTask(userInput)){
+			//unless the task description is within double quotes, the first word should be a valid English word.
 			throw new InvalidCommandException();
 		}
 		String projectName = "";
 		if(userInput.contains("#")){
+			//if the command contains # it means that the user has specified a particular project to add this task to.
 			if(userInput.substring(userInput.indexOf('#')+1).contains("#")){
+				//a task can be added to only one project.
 				throw new InvalidCommandException();
 			}
 			projectName = userInput.substring(userInput.indexOf('#')+1);
 			if(projectName.equals("default")){
+				//a user can't explicitly add things to the "default" project. that is reserved for task without any project.
 				throw new InvalidCommandException();
 			}
 			userInput = userInput.substring(0,userInput.indexOf('#')-1);
 		}
 		if(userInput.length()<2){
+			//there can be no task descriptions smaller that 3 letters.
 			throw new InvalidCommandException();
 		}
 		ArrayList<Date> dates = new ArrayList<Date>();
 		String taskDescription;
 		if(userInput.startsWith("\"")){
+			//it is possible that the user has entered the task description without double quotes. The command would be invalid if there
+			//is no closing quote.
 			try{
 				taskDescription = userInput.substring(1,userInput.lastIndexOf('\"'));
 				if(userInput.length()>userInput.lastIndexOf('\"')+1){
@@ -321,16 +350,21 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 				throw new InvalidCommandException();
 			}
 		} else{
+			//parseDate adds the dates the user entered in his command to the dates ArrayList and additionally returns the appropriate
+			//task description after removing the parsed dates.
 			taskDescription = parseDate(userInput, dates);
 		}
+		//task desciption can never be null at this point. parseDate throws an InvalidCommandException that does not allow this.
 		assert(taskDescription!=null);
 		if(dates.size()==0){
+			//user has entered a floating task.
 			if(projectName.equals("")){
 				return new AddCommandType(taskDescription);
 			} else{
 				return new AddCommandType(taskDescription, null, projectName);
 			}
 		} else if(dates.size()==1){
+			//the user has entered a deadline task.
 			if(projectName.equals("")){
 				return new AddCommandType(taskDescription, dates.get(0));
 			} else{
@@ -338,6 +372,7 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 			}
 
 		} else{
+			//user has entered a timed task.
 			if(projectName.equals("")){
 				return new AddCommandType(taskDescription, dates.get(0), dates.get(1));
 			} else{
@@ -351,6 +386,7 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 	 * @param string
 	 */
 	private boolean isValidTask(String taskDescription) {
+		//if the first word is not a valid English word, then it is considered gibberish.
 		return actionWords.contains(taskDescription.split(" ")[0].toLowerCase());
 	}
 
@@ -380,11 +416,12 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 	/**
 	 * When delete is called we will perform a search for the given key, tasks that contain this
 	 * key will be enumerated to the user.
-	 * This function asks the user for the index of the task to be deleted (from the enumerated list)
+	 * This function asks the user for the indexes of the tasks to be deleted (from the enumerated list)
 	 */
 	public int[] askForAdditionalInformationForDelete() throws CancelDeleteException {
 		String inputFromUser = input.nextLine();
 		try{
+			//the user can enter multiple indexed separated by commas, the system will delete them all.
 			String[] stringIndeces = inputFromUser.split(",");
 			int[] intIndeces = new int[stringIndeces.length];
 			for (int i = 0; i < stringIndeces.length; i++) {
@@ -395,6 +432,7 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 			}
 			return intIndeces;
 		} catch (NumberFormatException e){
+			//if the user enters an invalid number (or something other than the number), then we ask if he wants to try again.
 			uiHandler.printToTerminal("You have entered an invalid number. Press y to try again, press n to cancel.");
 			String userResponse = input.nextLine();
 			if(userResponse.equalsIgnoreCase("y")){
@@ -419,6 +457,7 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 			}
 			return indexFromUser;
 		} catch (NumberFormatException e){
+			//if the user enters an invalid number (or something other than the number), then we ask if he wants to try again.
 			uiHandler.printToTerminal("You have entered an invalid number. Press y to try again, press n to cancel edit.");
 			String userResponse = input.nextLine();
 			if(userResponse.equalsIgnoreCase("y")){
@@ -442,6 +481,7 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 			assert(toPassToEngine != null);
 			return toPassToEngine;
 		} catch (InvalidCommandException e) {
+			//if the user enters an invalid task , then we ask if he wants to try again.
 			uiHandler.printToTerminal("You have entered an invalid task. Press y to try again, press n to cancel edit.");
 			String userResponse = input.nextLine();
 			if(userResponse.equalsIgnoreCase("y")){
