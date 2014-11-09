@@ -318,7 +318,7 @@ public class Engine {
 
 			// need to check if this incoming task already exists.
 			if (proj.containsTask(incomingTask)) {
-				UIHandler.getInstance().printToDisplay(MESSAGE_ADD_DUPLICATE);
+				UIHandler.getInstance().printToDisplayRed(MESSAGE_ADD_DUPLICATE);
 				return;
 			}
 		}
@@ -349,7 +349,7 @@ public class Engine {
 			}
 		}
 
-		UIHandler.getInstance().printToDisplay(MESSAGE_ADD);
+		UIHandler.getInstance().printToDisplayGreen(MESSAGE_ADD);
 		addToUndoStack("add", projectName, incomingTask, incomingTask.getParity());
 	}
 
@@ -384,7 +384,7 @@ public class Engine {
 		ArrayList<Task> tasksToDisplayForDelete = searchForTask(taskDescription);
 
 		if (tasksToDisplayForDelete.size() == 0) {
-			UIHandler.getInstance().printToDisplay(MESSAGE_NOTHING_TO_DELETE);
+			UIHandler.getInstance().printToDisplayRed(MESSAGE_NOTHING_TO_DELETE);
 
 		} else if (tasksToDisplayForDelete.size() == 1) {
 
@@ -404,7 +404,7 @@ public class Engine {
 				int[] input = interp.askForAdditionalInformationForDelete();
 
 				if (input.length == 0) {
-					UIHandler.getInstance().printToDisplay(
+					UIHandler.getInstance().printToDisplayRed(
 							MESSAGE_NO_INDEX_SPECIFIED);
 				} else {
 					for (int i = 0; i < input.length; i++) {
@@ -419,7 +419,7 @@ public class Engine {
 			}
 
 		} else {
-			UIHandler.getInstance().printToDisplay("No such task exists!");
+			UIHandler.getInstance().printToDisplayRed("No such task exists!");
 		}
 	}
 	
@@ -546,7 +546,7 @@ public class Engine {
 
 		} else {
 			UIHandler.getInstance()
-					.printToDisplay(MESSAGE_ERROR_UNABLE_TO_EDIT);
+					.printToDisplayRed(MESSAGE_ERROR_UNABLE_TO_EDIT);
 		}
 
 		addToUndoStack("edit", historyTask.getProjectName(), null, false);
@@ -606,7 +606,7 @@ public class Engine {
 	private void displayArrayList(ArrayList<Task> projectList) {
 
 		if (projectList.isEmpty()) {
-			UIHandler.getInstance().printToDisplay(MESSAGE_INVALID_SEARCH);
+			UIHandler.getInstance().printToDisplayRed(MESSAGE_INVALID_SEARCH);
 		}
 
 		int counter = 1;
@@ -622,7 +622,7 @@ public class Engine {
 	private void displayArrayListForSearch(ArrayList<Task> projectList) {
 
 		if (projectList.isEmpty()) {
-			UIHandler.getInstance().printToDisplay(MESSAGE_INVALID_SEARCH);
+			UIHandler.getInstance().printToDisplayRed(MESSAGE_INVALID_SEARCH);
 		}
 
 		int counter = 1;
@@ -749,11 +749,11 @@ public class Engine {
 
 				if (!listDisObj.isEmpty()) {
 					if (listDisObj.get(0).hasDeadLine()) {
-						UIHandler.getInstance().printToDisplay(
+						UIHandler.getInstance().printToDisplayRed(
 								"------------");
-						UIHandler.getInstance().printToDisplay(
+						UIHandler.getInstance().printToDisplayRed(
 								"> " + "Overdue:" + " |");
-						UIHandler.getInstance().printToDisplay(
+						UIHandler.getInstance().printToDisplayRed(
 								"------------");
 						displayArrayList(listDisObj);
 
@@ -821,7 +821,7 @@ public class Engine {
 	private void undo() throws IOException {
 
 		if (undoStack.isEmpty()) {
-			UIHandler.getInstance().printToDisplay(MESSAGE_UNDO_ERROR);
+			UIHandler.getInstance().printToDisplayRed(MESSAGE_UNDO_ERROR);
 		} else {
 			PastCommands mostRecent = undoStack.pop();
 
@@ -913,7 +913,7 @@ public class Engine {
 					redoStack.push(mostRecent);
 				}
 
-				UIHandler.getInstance().printToDisplay(MESSAGE_UNDO_SUCCESS);
+				UIHandler.getInstance().printToDisplayGreen(MESSAGE_UNDO_SUCCESS);
 			}
 		}
 	}
@@ -921,7 +921,7 @@ public class Engine {
 	private void redo() throws IOException {
 
 		if (redoStack.isEmpty()) {
-			UIHandler.getInstance().printToDisplay(MESSAGE_REDO_ERROR);
+			UIHandler.getInstance().printToDisplayRed(MESSAGE_REDO_ERROR);
 		} else {
 			PastCommands mostRecent = redoStack.pop();
 
@@ -1008,7 +1008,7 @@ public class Engine {
 
 			}
 
-			UIHandler.getInstance().printToDisplay(MESSAGE_REDO_SUCCESS);
+			UIHandler.getInstance().printToDisplayGreen(MESSAGE_REDO_SUCCESS);
 		}
 	}
 
@@ -1031,7 +1031,7 @@ public class Engine {
 		tasksToBeCompleted = searchForTask(input);
 
 		if (tasksToBeCompleted.size() == 0) {
-			UIHandler.getInstance().printToDisplay(MESSAGE_NO_ENTRY);
+			UIHandler.getInstance().printToDisplayRed(MESSAGE_NO_ENTRY);
 
 		} else if (tasksToBeCompleted.size() == 1) {
 			Task targetTask = tasksToBeCompleted.get(0);
@@ -1052,7 +1052,7 @@ public class Engine {
 				inputForComplete = interp
 						.askForAdditionalInformationForDelete();
 				if (inputForComplete.length == 0) {
-					UIHandler.getInstance().printToDisplay(
+					UIHandler.getInstance().printToDisplayRed(
 							MESSAGE_NO_INDEX_SPECIFIED);
 				} else {
 					for (int i = 0; i < inputForComplete.length; i++) {
@@ -1069,7 +1069,7 @@ public class Engine {
 				return;
 			}
 		} else {
-			UIHandler.getInstance().printToDisplay(MESSAGE_ERROR_INVALID_TASK);
+			UIHandler.getInstance().printToDisplayRed(MESSAGE_ERROR_INVALID_TASK);
 		}
 	}
 
@@ -1079,13 +1079,13 @@ public class Engine {
 		//	String originalInstruction = input.getTaskDescription();
 			//input.setInstruction("\033[1;32m" + originalInstruction); // set it to green to denote Done
 
-			String toDisplay = input.getTempTaskDescription() + MESSAGE_MARKED_AS_COMPLETE;
-			UIHandler.getInstance().printToDisplay(toDisplay);
+			String toDisplay = input.getTempTaskDescription() + MESSAGE_MARKED_AS_ONGOING;
+			UIHandler.getInstance().printToDisplayGreen(toDisplay);
 		} else { // if false, undo the operation and display the original task
 					// description
 			input.setInstruction(input.getTempTaskDescription());
-			String toDisplay = input.getTempTaskDescription() + MESSAGE_MARKED_AS_ONGOING;
-			UIHandler.getInstance().printToDisplay(toDisplay);
+			String toDisplay = input.getTempTaskDescription() + MESSAGE_MARKED_AS_COMPLETE;
+			UIHandler.getInstance().printToDisplayGreen(toDisplay);
 		}
 	}
 
@@ -1115,11 +1115,11 @@ public class Engine {
 			projectsList.remove(indexProject);
 			projectNames.remove(projectName);
 			Writer.deleteProject(projectName, projectNames);
-			UIHandler.getInstance().printToDisplay(taskToBeDeleted.getTaskDescription() + " has been removed");
-			UIHandler.getInstance().printToDisplay(
+			UIHandler.getInstance().printToDisplayGreen(taskToBeDeleted.getTaskDescription() + " has been removed");
+			UIHandler.getInstance().printToDisplayGreen(
 					projectName + MESSAGE_REMOVE_SUCCESS);
 		} else {
-			UIHandler.getInstance().printToDisplay(
+			UIHandler.getInstance().printToDisplayGreen(
 					taskToBeDeleted.getTaskDescription()
 							+ MESSAGE_REMOVE_SUCCESS);
 		}
@@ -1295,7 +1295,7 @@ public class Engine {
 		String pName = mostRecentTask.getProjectName();
 		int index = findIndex(pName);
 		if (index < -1) {
-			UIHandler.getInstance().printToDisplay("error");
+			UIHandler.getInstance().printToDisplayRed("error");
 		} else {
 			completeTaskFromProj(mostRecentTask);
 			

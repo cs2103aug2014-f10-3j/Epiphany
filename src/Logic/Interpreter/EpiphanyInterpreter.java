@@ -93,12 +93,17 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 					//console.flush();
 					engine.executeCommand(toPassToEngine);
 					//console.flush();
-					if(!toPassToEngine.getType().equals("display")){
+					if(!toPassToEngine.getType().equals("display") && !toPassToEngine.getType().equals("search")){
 						uiHandler.printToTerminal("");
 						engine.executeCommand(new DisplayCommandType());
 					}
 				} catch (InvalidCommandException e) {
-					uiHandler.printToTerminal(MESSAGE_INVALID_COMMAND);
+					console.setPrompt("");
+					console.clearScreen();
+					console.setPrompt(MESSAGE_COMMAND_PROMPT);
+					uiHandler.printToDisplayRed(MESSAGE_INVALID_COMMAND);
+					uiHandler.printToTerminal("");
+					engine.executeCommand(new DisplayCommandType());
 				}
 				catch (ExitException e) {
 					System.exit(0);
@@ -147,6 +152,7 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 		commands.add("exit");
 		commands.add("undo");
 		commands.add("redo");
+		commands.add("reset");
 		commands.add("-m");
 		return commands;
 	}
