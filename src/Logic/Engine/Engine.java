@@ -614,7 +614,7 @@ public class Engine {
 		int counter = 1;
 		for (Task t : projectList) {
 			UIHandler.getInstance().printToDisplay(
-					counter + ". " + t.printTaskForSearch());
+					counter + ". " + t.printTaskForDisplay("display"));
 			counter++;
 		}
 		UIHandler.getInstance().printToDisplay("\n");
@@ -629,7 +629,7 @@ public class Engine {
 		int counter = 1;
 		for (Task t : projectList) {
 			UIHandler.getInstance().printToDisplay(
-					counter + ". " + t.printTaskForDisplay());
+					counter + ". " + t.printTaskForDisplay("search"));
 			counter++;
 		}
 		UIHandler.getInstance().printToDisplay("\n");
