@@ -1079,12 +1079,12 @@ public class Engine {
 		//	String originalInstruction = input.getTaskDescription();
 			//input.setInstruction("\033[1;32m" + originalInstruction); // set it to green to denote Done
 
-			String toDisplay = input.getTempTaskDescription() + MESSAGE_MARKED_AS_ONGOING;
+			String toDisplay = input.getDuplicateTaskDescription() + MESSAGE_MARKED_AS_ONGOING;
 			UIHandler.getInstance().printToDisplayGreen(toDisplay);
 		} else { // if false, undo the operation and display the original task
 					// description
-			input.setInstruction(input.getTempTaskDescription());
-			String toDisplay = input.getTempTaskDescription() + MESSAGE_MARKED_AS_COMPLETE;
+			input.setInstruction(input.getDuplicateTaskDescription());
+			String toDisplay = input.getDuplicateTaskDescription() + MESSAGE_MARKED_AS_COMPLETE;
 			UIHandler.getInstance().printToDisplayGreen(toDisplay);
 		}
 	}
