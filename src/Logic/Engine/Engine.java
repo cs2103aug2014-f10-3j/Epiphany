@@ -1,5 +1,4 @@
 package Logic.Engine;
-
 import java.awt.font.TextAttribute;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,13 +7,21 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.text.AttributedString;
 import java.text.ParseException;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Stack;
 import Logic.Exceptions.CancelDeleteException;
 import Logic.Exceptions.CancelEditException;
 import Logic.Interpreter.EpiphanyInterpreter;
 import Logic.Interpreter.UIHandler;
-import Logic.Interpreter.CommandType.*;
+import Logic.Interpreter.CommandType.CompleteCommandType;
+import Logic.Interpreter.CommandType.UndoCommandType;
+import Logic.Interpreter.CommandType.RedoCommandType;
+import Logic.Interpreter.CommandType.CommandType;
+
+
+
 import Storage.Writer;
 import Storage.Reader;
 
@@ -60,7 +67,6 @@ public class Engine {
 	private static final String MESSAGE_MARKED_AS_ONGOING = " marked as ongoing.";
 	private static final String MESSAGE_MARKED_AS_COMPLETE = " marked as complete.";
 	private static final String MESSAGE_ERROR_INVALID_TASK = " No such task exists!";
-	private static final String MESSAGE_MARKED_AS_DONE = " [DONE]";
 	private static final int N = 999;
 	private static final String MESSAGE_RESET = "System restarted!";
 
@@ -71,7 +77,7 @@ public class Engine {
 	public static ArrayList<Project> projectsList;
 	private static Stack<PastCommands> undoStack;
 	private static Stack<PastCommands> redoStack;
-	private static ArrayList<DisplayObject> ListByDate;
+	public static ArrayList<DisplayObject> ListByDate;
 	private static String[] months;
 
 	private Engine() throws IOException, ParseException {
