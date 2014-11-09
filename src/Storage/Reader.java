@@ -83,6 +83,7 @@ public class Reader {
 		}
 		sc.close();
 	}
+	
 	private static Date parseDate(String input) throws ParseException {
 		Date date = new Date();
 
@@ -95,6 +96,14 @@ public class Reader {
 		}
 
 		return date;
+	}
+	
+	public ArrayList<String> getProjectNames(){
+		return this.projectNames;
+	}
+	
+	public ArrayList<Project> getProjectList(){
+		return this.projectsList;
 	}
 
 }

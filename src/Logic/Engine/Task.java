@@ -14,8 +14,7 @@ import Logic.Interpreter.UIHandler;
  */
 public class Task {
 	private String taskDescription;
-	private String tempTaskDescription; // backup of taskDescription, cannot be
-	// mutated
+	private String duplicateTaskDescription; // backup of taskDescription, cannot be mutated							
 	private Date from;
 	private Date deadLine;
 	private String projectName;
@@ -26,7 +25,7 @@ public class Task {
 	private boolean parity;
 	private static HashMap<String, String> colors;
 	private String color;
-
+	
 	/**
 	 * Overloaded constructors for the creation of tasks are shown below. They
 	 * differ in the type of arguments that they receive.
@@ -43,7 +42,7 @@ public class Task {
 		this.from = from;
 		this.deadLine = deadLine;
 		this.projectName = ProjectName;
-		this.tempTaskDescription = taskDescription;
+		this.duplicateTaskDescription = taskDescription;
 		this.completionStatus = "";
 		this.parity = false;
 		this.color = colors.get("reset");
@@ -63,7 +62,7 @@ public class Task {
 		this.from = from;
 		this.deadLine = deadLine;
 		this.projectName = ProjectName;
-		this.tempTaskDescription = taskDescription;
+		this.duplicateTaskDescription = taskDescription;
 		this.isCompleted = isCompleted;
 		this.parity = false;
 		this.color = colors.get("reset");
@@ -74,7 +73,7 @@ public class Task {
 			this.color = colors.get("green");
 			//this.completionStatus = "\033[31m"; // changed to green
 			//UIHandler.getInstance().resetToBlack();
-
+			
 		} else {
 			this.completionStatus = "";
 			this.color = colors.get("reset");
@@ -85,7 +84,7 @@ public class Task {
 
 		days = new String[7];
 		populateDays();
-
+		
 
 
 	}
@@ -94,54 +93,15 @@ public class Task {
 
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (o instanceof Task) {
-			Task t = (Task) o;
-			if (!t.getTaskDescription().equals(this.getTaskDescription())) {
-				return false;
-			}
-
-			if (this.getDeadline() != null && t.getDeadline() != null) {
-				return this.getDeadline().equals(t.getDeadline());
-			}
-			if ((this.getDeadline() == null && t.getDeadline() != null)) {
-				return false;
-			}
-			if ((this.getDeadline() != null && t.getDeadline() == null)) {
-				return false;
-			}
-
-			if (this.getStartDate() != null && t.getStartDate() != null) {
-				return this.getStartDate().equals(t.getStartDate());
-			}
-			if ((this.getStartDate() == null && t.getStartDate() != null)) {
-				return false;
-			}
-			if ((this.getStartDate() != null && t.getStartDate() == null)) {
-				return false;
-			}
-
-			if (!t.getType().equals(this.getType())) {
-				return false;
-			}
-			if (!t.getProjectName().equals(this.getProjectName())) {
-				return false;
-			}
-			return true;
-
-		}
-		return false;
-
-	}
+	
 
 	/********************** Getters ******************************/
 	public String getTaskDescription() {
 		return this.taskDescription;
 	}
 
-	public String getTempTaskDescription() {
-		return this.tempTaskDescription;
+	public String getDuplicateTaskDescription() {
+		return this.duplicateTaskDescription;
 	}
 
 	public boolean getParity() {
@@ -214,7 +174,7 @@ public class Task {
 
 	public void setStatus() { // to reverse the operation
 		this.isCompleted = !this.isCompleted;
-
+		
 		if (this.isCompleted) {
 			this.completionStatus = " [DONE]";
 			this.color = colors.get("green");
@@ -223,7 +183,7 @@ public class Task {
 			this.color = colors.get("reset");
 		}
 	}
-
+	
 	public void setOverdue(){
 		this.color = colors.get("red");
 	}
@@ -294,15 +254,10 @@ public class Task {
 				s = this.getTaskDescription() + this.completionStatus;
 			} else if (this.hasDeadLine()) {
 				if (command.equals("search")) {
-					s = this.getTaskDescription() + " by "
-							+ formatToTime(this.getDeadline()) + "\t"
-							+ this.deadLineToString()
-							+ this.completionStatus;
-
+					s = this.getTaskDescription() + "\t"
+							+ this.deadLineToString() + this.completionStatus;
 				} else if (command.equals("display")) {
-					s = this.getTaskDescription() + " by "
-							+ formatToTime(this.getDeadline()) + "\t"
-							+ this.completionStatus;
+					s = this.getTaskDescription() + this.completionStatus;
 				}
 			}
 		} else {
@@ -343,18 +298,12 @@ public class Task {
 				s += "\t\t #" + this.getProjectName();
 			} else if (this.hasDeadLine()) {
 				if (command.equals("search")) {
-					s = this.getTaskDescription() + " by "
-							+ formatToTime(this.getDeadline()) + "\t"
-							+ this.deadLineToString()
-							+ this.completionStatus;
+					s = this.getTaskDescription() + "\t"
+							+ this.deadLineToString() + this.completionStatus;
 					s = addSpace(s);
 					s += "\t\t #" + this.getProjectName();
 				} else if (command.equals("display")) {
-
-					s = this.getTaskDescription() + " by "
-							+ formatToTime(this.getDeadline()) + "\t"
-							+ this.completionStatus;
-					
+					s = this.getTaskDescription() + this.completionStatus;
 					s = addSpace(s);
 					s += "\t\t #" + this.getProjectName();
 				}
@@ -363,7 +312,7 @@ public class Task {
 		return this.color + s;
 	}
 
-
+	
 
 	// DD MMM YYYY,
 	@SuppressWarnings("deprecation")
@@ -484,7 +433,7 @@ public class Task {
 
 		return s;
 	}
-
+	
 	private static void populateColors(){
 		colors = new HashMap<String, String>();
 		colors.put("green", "\033[32m");
@@ -492,6 +441,47 @@ public class Task {
 		colors.put("black", "\033[30m");
 		colors.put("white", "\033[37m");
 		colors.put("reset", "\033[0m");
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof Task) {
+			Task t = (Task) o;
+			if (!t.getTaskDescription().equals(this.getTaskDescription())) {
+				return false;
+			}
+
+			if (this.getDeadline() != null && t.getDeadline() != null) {
+				return this.getDeadline().equals(t.getDeadline());
+			}
+			if ((this.getDeadline() == null && t.getDeadline() != null)) {
+				return false;
+			}
+			if ((this.getDeadline() != null && t.getDeadline() == null)) {
+				return false;
+			}
+
+			if (this.getStartDate() != null && t.getStartDate() != null) {
+				return this.getStartDate().equals(t.getStartDate());
+			}
+			if ((this.getStartDate() == null && t.getStartDate() != null)) {
+				return false;
+			}
+			if ((this.getStartDate() != null && t.getStartDate() == null)) {
+				return false;
+			}
+
+			if (!t.getType().equals(this.getType())) {
+				return false;
+			}
+			if (!t.getProjectName().equals(this.getProjectName())) {
+				return false;
+			}
+			return true;
+
+		}
+		return false;
+
 	}
 
 

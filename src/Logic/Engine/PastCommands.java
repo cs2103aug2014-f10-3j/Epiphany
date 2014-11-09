@@ -2,7 +2,7 @@ package Logic.Engine;
 
 
 /**
- * This class exits to denote information about a past command.
+ * This class exists to denote information about a past command.
  * @author amit
  *
  */
@@ -51,10 +51,5 @@ public class PastCommands {
 	public String getProjectName(){
 		return this.projectName;
 	}
-	
-	public boolean isProjectOnly(){
-		return (project == null) ? false : true;
-	}
-
-	
+		
 }

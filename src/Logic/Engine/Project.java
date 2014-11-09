@@ -160,19 +160,7 @@ public class Project {
 			
 			return results;
 		}
-		
-		/**
-		 * This method edits an existing task by swapping it with a new one.
-		 * @param before
-		 * @param after
-		 * @throws IOException
-		 * @author amit
-		 */
-		public void editTask(Task before, Task after) throws IOException{
-			this.deleteTask(before);
-			this.addTask(after);
-		}
-		
+				
 		/**
 		 * This method returns a list of all the tasks in this project.
 		 * The list is sorted by date and thus an impending task will be prioritized.

@@ -15,15 +15,25 @@ import Logic.Engine.Project;
 import Logic.Engine.Task;
 
 public class ProjectTestCases {
-	ArrayList<Task> deadlineListExpected;
-	ArrayList<Task> intervalListExpected;
-	ArrayList<Task> floatingListExpected;
-	Task deadlineTask;
-	Task intervalTask;
-	Task floatingTask;
+	//To test, make an actual project and test it against an expected set of results.
 	
-	public ProjectTestCases(){
-		deadlineListExpected = new ArrayList<Task>();
+	
+	/*********Test Attributes*******************/
+	private String projectName;
+	private ArrayList<Task> deadLineListExpected;
+	private ArrayList<Task> intervalListExpected;
+	private ArrayList<Task> floatingListExpected;
+	Task deadLineTaskExpected;
+	Task intervalTaskExpected;
+	Task floatingTaskExpected;
+	
+	/***************To be tested on***********/
+	static Project testProj;
+	
+	
+	public ProjectTestCases() throws IOException{
+		// Need to initialize DS.
+		deadLineListExpected = new ArrayList<Task>();
 		intervalListExpected = new ArrayList<Task>();
 		floatingListExpected = new ArrayList<Task>();
 		
@@ -31,108 +41,160 @@ public class ProjectTestCases {
 		Calendar.getInstance().set(2000, 12, 12);
 		Date d2 = Calendar.getInstance().getTime();
 		
-		intervalTask = new Task("DAMITH", d1, d2, "CS2103");
-		deadlineTask = new Task("DAMOTH", null, d2, "CS2103");
-		floatingTask = new Task("DAMITH", null, null, "CS2103");
+		intervalTaskExpected = new Task("FLY DAMITH", d1, d2, "CS2103");
+		deadLineTaskExpected = new Task("FLY RABBIT", null, d2, "CS2103");
+		floatingTaskExpected = new Task("FLY RENEGADE", null, null, "CS2103");
+		
+		deadLineListExpected.add(deadLineTaskExpected);
+		intervalListExpected.add(intervalTaskExpected);
+		floatingListExpected.add(floatingTaskExpected);
+		
+		testProj = new Project("CS2103", new ArrayList<Task>());
+		
 	}
 	
 	@Test
 	public void testAddTask() throws IOException{
-		Project test = initializeTest();
+		populateTestProj();
 		
-		assertEquals(deadlineListExpected, test.getDeadlineList());
-		assertEquals(intervalListExpected, test.getIntervalList());
-		assertEquals(floatingListExpected, test.getFloatingList());
+		assertEquals(deadLineListExpected, testProj.getDeadlineList());
+		assertEquals(intervalListExpected, testProj.getIntervalList());
+		assertEquals(floatingListExpected, testProj.getFloatingList());
+	}
 
+	private void populateTestProj() throws IOException {
+		testProj.addTask(deadLineTaskExpected);
+		testProj.addTask(floatingTaskExpected);
+		testProj.addTask(intervalTaskExpected);
 	}
 	
 	@Test
 	public void testDeleteTask() throws IOException{
-		Project test = initializeTest();
+		testProj.deleteTask(deadLineTaskExpected);
+		testProj.deleteTask(floatingTaskExpected);
+		testProj.deleteTask(intervalTaskExpected);
 		
-		test.deleteTask(deadlineTask);
-		deadlineListExpected.remove(deadlineTask);
-		
-		assertEquals(deadlineListExpected, test.getDeadlineList());
-
-	}
-	
-	/*
-	@Test
-	public void testEditTask() throws IOException{
-		Project test = initializeTest();
-	
-
-	}
-	*/
-	
-	@Test
-	public void testSearchTasks() throws IOException{
-		Project test = initializeTest();
-
-		ArrayList<Task> searchResults = test.searchForTask("DAMITH");
-		ArrayList<Task> expectedList = new ArrayList<Task>();
-		expectedList.add(intervalTask);
-		expectedList.add(floatingTask);
-		
-		assertEquals(searchResults, expectedList);
-	}
-	
-	@Test
-	public void testDisplay() throws IOException{
-		Project test = initializeTest();
-		test.addTask(intervalTask);
-		test.addTask(floatingTask);
-		
-		ArrayList<Task> displayResults = test.retrieveAllTasks();
-		
-		
-		ArrayList<Task> expectedList = new ArrayList<Task>();
-		expectedList.add(deadlineTask);
-		expectedList.add(intervalTask);
-		expectedList.add(floatingTask);
-		Collections.sort(expectedList, new dateComparator());
-		
-		assertEquals(displayResults, expectedList);
-		
-	}
-	
-	private Project initializeTest() throws IOException {
-		ArrayList<Task> testList = new ArrayList<Task>();
-		testList.add(deadlineTask);
-		Project test = new Project("CS2103", testList);
-		
-		deadlineListExpected.clear();
+		deadLineListExpected.clear();
 		intervalListExpected.clear();
 		floatingListExpected.clear();
 		
-		deadlineListExpected.add(deadlineTask);
-		intervalListExpected.add(intervalTask);
-		floatingListExpected.add(floatingTask);
-		
-		test.addTask(intervalTask);
-		test.addTask(floatingTask);
-		return test;
+		assertEquals(deadLineListExpected, testProj.getDeadlineList());
+		assertEquals(intervalListExpected, testProj.getIntervalList());
+		assertEquals(floatingListExpected, testProj.getFloatingList());
 	}
 	
-	private class dateComparator implements Comparator<Task>{
-		public int compare(Task task1, Task task2) {
-			if(task1.getDeadline() == null && task2.getDeadline() == null){
-				return 0;
-			}else if(task1.getDeadline() != null && task2.getDeadline() == null){
-				return 1;
-			}else if(task1.getDeadline() == null && task2.getDeadline() !=null){
-				return -1;
-			}else if(task1.getDeadline().before(task2.getStartDate())){
-				return 1;
-			}else if(task1.getDeadline().equals(task2.getStartDate())){
-				return 0;
-			}else{
-				return -1;
-			}
-		}
+	@Test
+	public void testSearchForTask() throws IOException{
+		populateTestProj();
+		ArrayList<Task> expectedList = new ArrayList<Task>();
+		
+		expectedList.add(deadLineTaskExpected);
+		expectedList.add(intervalTaskExpected);
+		expectedList.add(floatingTaskExpected);
+		
+		assertEquals(expectedList, testProj.searchForTask("FLY"));
+	}
+	
+	@Test
+	public void testRetrieve() throws IOException{
+		populateTestProj();
+
+		ArrayList<Task> expectedList = new ArrayList<Task>();
+		
+		expectedList.add(deadLineTaskExpected);
+		expectedList.add(intervalTaskExpected);
+		expectedList.add(floatingTaskExpected);
+		
+		Collections.sort(expectedList, new dateComparator());
+		
+		assertEquals(expectedList, testProj.retrieveAllTasks());
 		
 	}
+	
+	@Test
+	public void testGetProjectName(){
+		assertEquals("CS2103", testProj.getProjectName());
+	}
+	
+	@Test
+	public void testContainsTask() throws IOException{
+		populateTestProj();
+		Task t = new Task("FLY RENEGADE", null, null, "CS2103");
+
+		assertEquals(true, testProj.containsTask(t));
+	}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/**********************Sorting Compartors***********************************/		
+
+	
+	/**
+	 * This method helps compare two dates.
+	 * Task with earlier deadline is put first.
+	 * @author Moazzam
+	 *
+	 */
+	private class deadlineComparator implements Comparator<Task> {
+		public int compare(Task one, Task two) {
+			return one.getDeadline().compareTo(two.getDeadline());
+		}
+	}
+	
+	/**
+	 * Puts the task with earlier start date first.
+	 * @author amit
+	 *
+	 */
+	private class intervalComparator implements Comparator<Task> {
+		public int compare(Task one, Task two) {
+			return one.getStartDate().compareTo(two.getStartDate());
+		}
+	}
+	
+	/**
+	 * Sorts tasks alphabetically(by task description)
+	 * @author amit
+	 *
+	 */
+	private class floatingComparator implements Comparator<Task> {
+		public int compare(Task one, Task two) {
+			return one.getTaskDescription().compareTo(two.getTaskDescription());
+		}
+	}
+	
+private class dateComparator implements Comparator<Task> {
+	public int compare(Task task1, Task task2) {
+		if (task1.getDeadline() == null && task2.getDeadline() == null) {
+			return 0;
+		} else if (task1.getDeadline() != null
+				&& task2.getDeadline() == null) {
+			return 1;
+		} else if (task1.getDeadline() == null
+				&& task2.getDeadline() != null) {
+			return -1;
+		} else if (task1.getDeadline() != null && task2.getDeadline() != null) {
+			return task1.getDeadline().compareTo(task2.getDeadline());
+		}
+		
+		return 0;
+	}
+
+} 
 
 	
 }
