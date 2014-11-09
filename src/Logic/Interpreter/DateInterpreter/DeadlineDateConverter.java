@@ -83,7 +83,7 @@ public final class DeadlineDateConverter {
     }
     
 
-    public DeadlineDateConverter() throws UnsupportedOperationException{
+    private DeadlineDateConverter() throws UnsupportedOperationException{
         throw new UnsupportedOperationException("cannot instantiate");
     }
 }

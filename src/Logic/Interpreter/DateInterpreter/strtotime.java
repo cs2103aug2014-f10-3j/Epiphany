@@ -88,7 +88,7 @@ public final class strtotime {
     }
     
 
-    public strtotime() throws UnsupportedOperationException{
+    private strtotime() throws UnsupportedOperationException{
         throw new UnsupportedOperationException("cannot instantiate");
     }
     

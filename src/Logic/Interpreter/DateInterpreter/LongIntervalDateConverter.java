@@ -36,7 +36,7 @@ public class LongIntervalDateConverter {
 	}
 
 
-	public LongIntervalDateConverter() throws UnsupportedOperationException{
+	private LongIntervalDateConverter() throws UnsupportedOperationException{
 		throw new UnsupportedOperationException("cannot instantiate");
 	}
 }

@@ -90,7 +90,7 @@ public class ShortIntervalDateConverter {
 	}
 
 
-	public ShortIntervalDateConverter() throws UnsupportedOperationException{
+	private ShortIntervalDateConverter() throws UnsupportedOperationException{
 		throw new UnsupportedOperationException("cannot instantiate");
 	}
 }
