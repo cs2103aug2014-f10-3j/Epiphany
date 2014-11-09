@@ -1,3 +1,4 @@
+//@author A0118905A
 package Logic.Interpreter.DateInterpreter;
 
 import java.io.File;
@@ -16,6 +17,8 @@ public final class DeadlineDateConverter {
 
     private static final List<Matcher> matchers;
 	
+    //List of date matcher classes that we will exhaustively use to determine weather
+    //the input contains a deadline style date.
     static {
     	matchers = new LinkedList<Matcher>();
 
@@ -64,14 +67,12 @@ public final class DeadlineDateConverter {
         matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("MMM dd'th'")));
     }
 
-    /*public static void registerMatcher(Matcher matcher) {
-        matchers.add(0, matcher);
-    }*/
-
 
     public static void convert(String input, ArrayList<Date> d) throws InvalidCommandException {
+    	//the format for deadline dates is "<date>"
     	d.clear();
     	String toInterpret = input;
+    	//cycle through all of the matchers and if any one of them succeeds, then we have a winner.
         for (Matcher matcher : matchers) {
             Date date = matcher.tryConvert(toInterpret);
             if (date != null) {
