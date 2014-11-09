@@ -3,7 +3,9 @@ package Logic.Engine;
 
 /**
  * This class exists to denote information about a past command.
- * @author amit
+ * PastCommands is generally used by the undo and redo functions in Engine to
+ * keep track of commands executed by the user.
+ * @author A0119264E
  *
  */
 public class PastCommands {
@@ -23,7 +25,6 @@ public class PastCommands {
 	}
 	
 	public PastCommands(String type, Project project){
-		// mainly for delete
 		this.type = type;
 		this.project = project;
 		

@@ -9,14 +9,14 @@ import Storage.Writer;
 /**
  * This class is used to create and modify projects that are created by the Engine. 
  * A project contains a project name and an list of Tasks. 
- * @author amit
+ * @author A0119264E
  */
 public class Project {
 		private String projectName;
-		private ArrayList<Task> deadLineList;
-		private ArrayList<Task> intervalList;
-		private ArrayList<Task> floatingList;
-		private Writer writer;
+		private ArrayList<Task> deadLineList; // for tasks with a deadline
+		private ArrayList<Task> intervalList; // for tasks that run within an interval
+		private ArrayList<Task> floatingList; // for tasks that have no imminent deadline
+		private Writer writer; // Writer obj to update backend
 
 /**********************Constructors ***********************************/
 		/**
@@ -57,10 +57,11 @@ public class Project {
 		}
 		
 		public boolean isEmpty(){
-			if(this.floatingList.isEmpty() && this.deadLineList.isEmpty() && this.intervalList.isEmpty())
+			if(this.floatingList.isEmpty() && this.deadLineList.isEmpty() && this.intervalList.isEmpty()){
 				return true;
-			else
+			}else{
 				return false;
+			}
 		}
 		
 		/**
@@ -76,9 +77,6 @@ public class Project {
 			}
 		}
 		
-		
-		
-
 /**********************Mutators***********************************/		
 
 		/**
@@ -88,7 +86,7 @@ public class Project {
 		 * 3) Tasks with no deadline, sorted alphabetically.
 		 * @param t
 		 * @throws IOException 
-		 * @author amit
+		 * @author A0119264E
 		 */
 		public void addTask(Task t) throws IOException{
 			assert(t.hasTask()); // ensures that we have a valid task.
@@ -97,26 +95,28 @@ public class Project {
 				// Add to the second section
 				intervalList.add(t);
 				Collections.sort(intervalList, new intervalComparator());
-
+				
 			}else if(t.hasDeadLine()){
 				// Add to the first section
 				deadLineList.add(t);
 				Collections.sort(deadLineList, new deadlineComparator());
+				
 			}else{
 				//Is a floating task. Add to last section.
 				floatingList.add(t);
 				Collections.sort(floatingList, new floatingComparator());
+				
 			}
 			
-			// Task added. Repopulate txt file.
-			writer.writeToFile();
+			writer.writeToFile(); 		// Task added. Repopulate txt file.
+
 		} 
 		
 		/**
 		 * This method removes the specified task from this project, regardless of the type of project it is.
 		 * @param t
 		 * @throws IOException
-		 * @author amit
+		 * @author A0119264E
 		 */
 		public void deleteTask(Task t) throws IOException{
 			if(deadLineList.contains(t)){
@@ -127,15 +127,15 @@ public class Project {
 				floatingList.remove(t);
 			}
 			
-			// Update text file.
-			writer.writeToFile();
+			writer.writeToFile(); 			// Update text file.
+
 		}
 		
 		/**
-		 * This method takes in a string and results a list of any task descriptions that contain(even in part) the search string.
+		 * This method takes in a string and results in a list of any task descriptions that contain(even in part) the search string.
 		 * @param input
 		 * @return ArrayList<Task>
-		 * @author amit
+		 * @author A0119264E
 		 */
 		public ArrayList<Task> searchForTask(String input){
 			ArrayList<Task> results = new ArrayList<Task>();
@@ -165,7 +165,7 @@ public class Project {
 		 * This method returns a list of all the tasks in this project.
 		 * The list is sorted by date and thus an impending task will be prioritized.
 		 * @return ArrayList<Task>
-		 * @author amit
+		 * @author A0119264E
 		 */
 		public ArrayList<Task> retrieveAllTasks(){
 			ArrayList<Task> results = new ArrayList<Task>();
@@ -198,7 +198,7 @@ public class Project {
 		 * @param items
 		 *            is the ArrayList of items that is inside this project
 		 * @throws IOException
-		 * @author amit
+		 * @author A0119264E
 		 */
 		public void createNewFile() throws IOException {
 			writer.writeToFile();
@@ -223,7 +223,7 @@ public class Project {
 		/**
 		 * This method helps compare two dates.
 		 * Task with earlier deadline is put first.
-		 * @author Moazzam
+		 * @author A0110924R
 		 *
 		 */
 		private class deadlineComparator implements Comparator<Task> {
@@ -234,7 +234,7 @@ public class Project {
 		
 		/**
 		 * Puts the task with earlier start date first.
-		 * @author amit
+		 * @author A0119264E
 		 *
 		 */
 		private class intervalComparator implements Comparator<Task> {
@@ -245,7 +245,7 @@ public class Project {
 		
 		/**
 		 * Sorts tasks alphabetically(by task description)
-		 * @author amit
+		 * @author A0119264E
 		 *
 		 */
 		private class floatingComparator implements Comparator<Task> {
@@ -254,6 +254,11 @@ public class Project {
 			}
 		}
 		
+		/**
+		 * To compare 2 dates in a task.
+		 * @author A0119264E
+		 *
+		 */
 	private class dateComparator implements Comparator<Task> {
 		public int compare(Task task1, Task task2) {
 			if (task1.getDeadline() == null && task2.getDeadline() == null) {

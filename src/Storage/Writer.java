@@ -10,9 +10,9 @@ import Logic.Engine.Task;
 
 /**
  * This class belongs to the Storage component of the overall architecture.
- * Responsible for writing tasks to txt file.
+ * Responsible for writing tasks to the backend.
  * 
- * @author amit
+ * @author A0119264E
  *
  */
 public class Writer {
@@ -24,8 +24,7 @@ public class Writer {
 
 	/***************** Constructor ***********************/
 
-	public Writer(String fileName, ArrayList<Task> dLineList,
-			ArrayList<Task> interList, ArrayList<Task> floatList) {
+	public Writer(String fileName, ArrayList<Task> dLineList, ArrayList<Task> interList, ArrayList<Task> floatList) {
 		this.fileName = fileName;
 		this.dLineList = dLineList;
 		this.interList = interList;
@@ -74,6 +73,10 @@ public class Writer {
 		writer.close();
 	}
 
+	/**
+	 * Creates the default project
+	 * @throws IOException
+	 */
 	public static void generateDefault() throws IOException {
 		File file = new File(
 				"../Epiphany/src/Storage/projectMasterList.txt");
@@ -118,9 +121,14 @@ public class Writer {
 	
 	}
 
+	/**
+	 * Resets the project. 
+	 * @param list
+	 * @throws IOException
+	 */
 	public static void reset(ArrayList<String> list) throws IOException{
+		// Could be improved. Hard File Deletion non-existent.
 		
-	
 		File file = new File("../Epiphany/src/Storage/projectMasterList.txt");
 		FileWriter f = new FileWriter(file);
 		BufferedWriter writer = new BufferedWriter(f);
@@ -133,7 +141,5 @@ public class Writer {
 				File project = new File("../Epiphany/src/Storage/Projects/" + projectName);
 				project.delete();
 		}
-		
-	//	generateDefault();	
 	}
 }

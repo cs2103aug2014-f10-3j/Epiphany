@@ -16,9 +16,9 @@ import Logic.Engine.Task;
 
 /**
  * This class belongs to the Storage component of the overall architecture.
- * Responsible for writing tasks to txt file.
+ * Responsible for reading tasks from the backend.
  * 
- * @author amit
+ * @author A0119264E
  *
  */
 public class Reader {
@@ -35,6 +35,11 @@ public class Reader {
 
 	/***************** Methods ***********************/
 
+	/**
+	 * Reads in all the data regarding projects
+	 * @throws IOException
+	 * @throws ParseException
+	 */
 	public void readProjectData() throws IOException, ParseException {
 		for (String fileName : projectNames) {
 			ArrayList<Task> temp = new ArrayList<Task>();
@@ -75,6 +80,10 @@ public class Reader {
 
 	}
 
+	/**
+	 * Reads in the list of projects.
+	 * @throws FileNotFoundException
+	 */
 	public void readProjectTitles() throws FileNotFoundException {
 		Scanner sc = new Scanner(new File("../Epiphany/src/Storage/projectMasterList.txt"));
 		while (sc.hasNextLine()) {
@@ -88,8 +97,7 @@ public class Reader {
 		Date date = new Date();
 
 		if (!input.equals("null")) {
-			SimpleDateFormat sdf = new SimpleDateFormat(
-					"EEE MMM dd HH:mm:ss zzz yyyy");
+			SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
 			date = sdf.parse(input);
 		} else {
 			return null;

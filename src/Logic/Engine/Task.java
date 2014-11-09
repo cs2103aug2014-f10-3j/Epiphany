@@ -3,16 +3,16 @@ package Logic.Engine;
 import java.util.Date;
 import java.util.HashMap;
 
-import Logic.Interpreter.UIHandler;
-
 /**
  * This class helps in the creation and management of tasks. Each task contains
  * a task description, a deadline of class Date, a projectName and a boolean
  * variable to check if the task has been completed.
  * 
- * @author amit
+ * @author A0119264E
  */
 public class Task {
+	
+	/***************Attributes**********************/
 	private String taskDescription;
 	private String duplicateTaskDescription; // backup of taskDescription, cannot be mutated							
 	private Date from;
@@ -22,9 +22,12 @@ public class Task {
 	private String completionStatus;
 	private static String[] months;
 	private static String[] days;
-	private boolean parity;
+	private boolean parity; // to help undo/redo tracking
 	private static HashMap<String, String> colors;
 	private String color;
+	
+	
+	/***************Constructors**********************/
 	
 	/**
 	 * Overloaded constructors for the creation of tasks are shown below. They
@@ -71,8 +74,6 @@ public class Task {
 		if (this.isCompleted) {
 			this.completionStatus = " [DONE]";
 			this.color = colors.get("green");
-			//this.completionStatus = "\033[31m"; // changed to green
-			//UIHandler.getInstance().resetToBlack();
 			
 		} else {
 			this.completionStatus = "";
@@ -84,16 +85,11 @@ public class Task {
 
 		days = new String[7];
 		populateDays();
-		
-
-
 	}
 
 	public Task() {
 
 	}
-
-	
 
 	/********************** Getters ******************************/
 	public String getTaskDescription() {
@@ -171,8 +167,11 @@ public class Task {
 		this.isCompleted = true;
 		return this.isCompleted;
 	}
-
-	public void setStatus() { // to reverse the operation
+	
+	/**
+	 * Marks/Unmarks a task as completed.
+	 */
+	public void setStatus() { 
 		this.isCompleted = !this.isCompleted;
 		
 		if (this.isCompleted) {
@@ -184,6 +183,9 @@ public class Task {
 		}
 	}
 	
+	/**
+	 * Mark this task as overdue
+	 */
 	public void setOverdue(){
 		this.color = colors.get("red");
 	}
@@ -205,23 +207,21 @@ public class Task {
 		String s = null;
 
 		if (this.from == null && this.deadLine != null) {
-			s = this.getType() + "~" + this.getTaskDescription() + "~" + "null"
-					+ "~" + this.getDeadline().toString() + "~"
-					+ this.getProjectName() + "~" + this.isCompleted();
+			s = this.getType() + "~" + this.getTaskDescription() + "~" + "null" + "~" + this.getDeadline().toString() + "~" + this.getProjectName() + "~" + this.isCompleted();
 		} else if (this.from == null && this.deadLine == null) {
-			s = this.getType() + "~" + this.getTaskDescription() + "~" + "null"
-					+ "~" + "null" + "~" + this.getProjectName() + "~"
-					+ this.isCompleted();
+			s = this.getType() + "~" + this.getTaskDescription() + "~" + "null" + "~" + "null" + "~" + this.getProjectName() + "~" + this.isCompleted();
 		} else if (this.from != null && this.deadLine != null) {
-			s = this.getType() + "~" + this.getTaskDescription() + "~"
-					+ this.getStartDate().toString() + "~"
-					+ this.getDeadline().toString() + "~"
-					+ this.getProjectName() + "~" + this.isCompleted();
+			s = this.getType() + "~" + this.getTaskDescription() + "~" + this.getStartDate().toString() + "~" + this.getDeadline().toString() + "~" + this.getProjectName() + "~" + this.isCompleted();
 		}
 		return s;
 	}
 
 	@SuppressWarnings("deprecation")
+	/**
+	 * Parses this Task into the appropriate format for printing
+	 * @param command
+	 * @return
+	 */
 	public String printTaskForDisplay(String command) {
 		String s = null;
 
@@ -424,6 +424,11 @@ public class Task {
 				.getYear() == d2.getYear());
 	}
 
+	/**
+	 * Method to maitain consistent spacing for project names during display
+	 * @param s
+	 * @return
+	 */
 	private static String addSpace(String s) {
 		int numOfSpaces = 40 - s.length();
 
@@ -434,6 +439,10 @@ public class Task {
 		return s;
 	}
 	
+	/**
+	 * A Dictionary of colors.
+	 * Keys being the color names and the values their respective ANSI color codes
+	 */
 	private static void populateColors(){
 		colors = new HashMap<String, String>();
 		colors.put("green", "\033[32m");
