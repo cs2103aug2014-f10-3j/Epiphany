@@ -79,10 +79,7 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 			while ((line = console.readLine()) != null) {
 				CommandType toPassToEngine;
 				try {
-					if(line.equals("clear")){
-						console.clearScreen();
-						continue;
-					} else if(line.length()<2){
+					if(line.length()<2){
 						throw new InvalidCommandException();
 					}
 					toPassToEngine = interpretCommand(line);

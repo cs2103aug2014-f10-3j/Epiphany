@@ -115,6 +115,11 @@ public class UIHandler{
 		System.out.println("\033[31m" + input); // red when overdue
 		System.out.print("\033[0m"); // to reset terminal to default black colour
 	}
+	
+	public void printHeader(String input) {
+		System.out.println("\033[31m" + input); // red when overdue
+		System.out.print("\033[0m"); // to reset terminal to default black colour
+	}
 
 	public void resetToDefault() {
 		System.out.print("\033[0m"); // to reset terminal to default black colour

@@ -217,11 +217,6 @@ public class Task {
 	}
 
 	@SuppressWarnings("deprecation")
-	/**
-	 * Parses this Task into the appropriate format for printing
-	 * @param command
-	 * @return
-	 */
 	public String printTaskForDisplay(String command) {
 		String s = null;
 
@@ -254,10 +249,15 @@ public class Task {
 				s = this.getTaskDescription() + this.completionStatus;
 			} else if (this.hasDeadLine()) {
 				if (command.equals("search")) {
-					s = this.getTaskDescription() + "\t"
-							+ this.deadLineToString() + this.completionStatus;
+					s = this.getTaskDescription() + " by "
+							+ formatToTime(this.getDeadline()) + "\t"
+							+ this.deadLineToString()
+							+ this.completionStatus;
+
 				} else if (command.equals("display")) {
-					s = this.getTaskDescription() + this.completionStatus;
+					s = this.getTaskDescription() + " by "
+							+ formatToTime(this.getDeadline()) + "\t"
+							+ this.completionStatus;
 				}
 			}
 		} else {
@@ -298,12 +298,18 @@ public class Task {
 				s += "\t\t #" + this.getProjectName();
 			} else if (this.hasDeadLine()) {
 				if (command.equals("search")) {
-					s = this.getTaskDescription() + "\t"
-							+ this.deadLineToString() + this.completionStatus;
+					s = this.getTaskDescription() + " by "
+							+ formatToTime(this.getDeadline()) + "\t"
+							+ this.deadLineToString()
+							+ this.completionStatus;
 					s = addSpace(s);
 					s += "\t\t #" + this.getProjectName();
 				} else if (command.equals("display")) {
-					s = this.getTaskDescription() + this.completionStatus;
+
+					s = this.getTaskDescription() + " by "
+							+ formatToTime(this.getDeadline()) + "\t"
+							+ this.completionStatus;
+					
 					s = addSpace(s);
 					s += "\t\t #" + this.getProjectName();
 				}
@@ -392,7 +398,7 @@ public class Task {
 		if (hour < 12) {
 			// am
 			if (hour == 0) {
-				output = "12am";
+				output = "midnight";
 			} else if(minutes == 0) {
 				output = hour + "am";
 			}else {
@@ -408,7 +414,7 @@ public class Task {
 			}
 		} else {
 			if (minutes == 0) {
-				output = "12pm";
+				output = "noon";
 			} else {
 				output = 12 + ":" + minutes + "pm";
 			}

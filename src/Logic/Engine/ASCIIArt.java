@@ -6,6 +6,13 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
+import Logic.Interpreter.UIHandler;
+
+/**
+ * 
+ * @author A0119264E
+ *
+ */
 
 public class ASCIIArt {
 
@@ -36,18 +43,23 @@ public class ASCIIArt {
 		// ImageIO.write(image, "png", new File("/users/mkyong/ascii-art.png"));
 
 		for (int y = 0; y < height; y++) {
-			StringBuilder sb = new StringBuilder();
+			String s = "";
 			for (int x = 0; x < width; x++) {
 
-				sb.append(image.getRGB(x, y) == -16777216 ? " " : "$");
+				if(image.getRGB(x, y) == -16777216){
+					s += " ";
+				}else{
+					s += "0";
+				}
 
 			}
 
-			if (sb.toString().trim().isEmpty()) {
+			if (s.trim().isEmpty()) {
 				continue;
 			}
 
-			System.out.println(sb);
+			UIHandler.getInstance().printHeader(s);
+			//System.out.println(s);
 		}
 	}
 }

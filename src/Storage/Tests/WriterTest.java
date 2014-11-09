@@ -87,9 +87,9 @@ public class WriterTest {
 		}
 		sc.close();
 		
-		projectNames.add("flamith");
+		projectNames.add("default");
 		
-		Writer.addToProjectMasterList("flamith");
+		Writer.addToProjectMasterList("default");
 		
 		Scanner sc2 = new Scanner(new File("../Epiphany/src/Storage/projectMasterList.txt"));
 		while (sc2.hasNextLine()) {
