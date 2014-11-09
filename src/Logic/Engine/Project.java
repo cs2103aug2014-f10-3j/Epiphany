@@ -1,3 +1,4 @@
+//@author A0119264E
 package Logic.Engine;
 
 import java.io.IOException;
@@ -9,7 +10,6 @@ import Storage.Writer;
 /**
  * This class is used to create and modify projects that are created by the Engine. 
  * A project contains a project name and an list of Tasks. 
- * @author A0119264E
  */
 public class Project {
 		private String projectName;

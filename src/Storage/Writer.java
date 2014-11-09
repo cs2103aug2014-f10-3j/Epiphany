@@ -1,3 +1,4 @@
+//@author A0119264E
 package Storage;
 
 import java.io.BufferedWriter;
@@ -11,8 +12,6 @@ import Logic.Engine.Task;
 /**
  * This class belongs to the Storage component of the overall architecture.
  * Responsible for writing tasks to the backend.
- * 
- * @author A0119264E
  *
  */
 public class Writer {

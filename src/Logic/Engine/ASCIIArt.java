@@ -1,3 +1,4 @@
+//@author A0119264E-reused
 package Logic.Engine;
 
 import java.awt.Font;
@@ -7,12 +8,6 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
 import Logic.Interpreter.UIHandler;
-
-/**
- * 
- * @author A0119264E
- *
- */
 
 public class ASCIIArt {
 

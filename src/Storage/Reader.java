@@ -1,3 +1,4 @@
+//@author A0119264E
 package Storage;
 
 import java.io.BufferedReader;
@@ -17,8 +18,6 @@ import Logic.Engine.Task;
 /**
  * This class belongs to the Storage component of the overall architecture.
  * Responsible for reading tasks from the backend.
- * 
- * @author A0119264E
  *
  */
 public class Reader {

@@ -1,11 +1,10 @@
+//@author A0119264E
 package Logic.Engine;
-
 
 /**
  * This class exists to denote information about a past command.
  * PastCommands is generally used by the undo and redo functions in Engine to
  * keep track of commands executed by the user.
- * @author A0119264E
  *
  */
 public class PastCommands {
