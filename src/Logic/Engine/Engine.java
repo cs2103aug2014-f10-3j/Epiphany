@@ -47,7 +47,6 @@ public class Engine {
 	private static final String MESSAGE_UNDO_SUCCESS = "Undone!";
 	private static final String MESSAGE_REDO_ERROR = "Nothing to redo!";
 	private static final String MESSAGE_REDO_SUCCESS = "Redone!";
-	private static final String MESSAGE_ERROR_INVALID_PROJECT = "Project does not exist!";
 	private static final String MESSAGE_ERROR_WRONG_CMDTYPE = null;
 	private static final String MESSAGE_ERROR_COMMAND_TYPE_NULL = null;
 	private static final String MESSAGE_UPDATE_TASK_FOR_EDIT = "Please update your task";
@@ -242,7 +241,7 @@ public class Engine {
 		}
 	}
 
-	public void executeCommand(CommandType userCommand) throws IOException {
+	public void executeCommand(CommandType userCommand) throws IOException, ParseException {
 		CommandTypesEnum commandType = determineCommandType(userCommand);
 
 		switch (commandType) {
@@ -507,11 +506,12 @@ public class Engine {
 		*/
 	}
 
-	/********************************* Edit Methods ***********************************/
+	/********************************* Edit Methods 
+	 * @throws ParseException ***********************************/
 
 	// convert to a task
 	private void edit(String taskDescription, String projectName)
-			throws IOException {
+			throws IOException, ParseException {
 
 		Task historyTask = new Task();
 
@@ -614,7 +614,7 @@ public class Engine {
 		int counter = 1;
 		for (Task t : projectList) {
 			UIHandler.getInstance().printToDisplay(
-					counter + ". " + t.printTaskForSearch();
+					counter + ". " + t.printTaskForSearch());
 			counter++;
 		}
 		UIHandler.getInstance().printToDisplay("\n");

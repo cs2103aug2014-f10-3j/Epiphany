@@ -22,8 +22,6 @@ public class ProjectTestCases {
 	Task intervalTask;
 	Task floatingTask;
 	
-	@SuppressWarnings("deprecation")
-	
 	public ProjectTestCases(){
 		deadlineListExpected = new ArrayList<Task>();
 		intervalListExpected = new ArrayList<Task>();
@@ -86,7 +84,7 @@ public class ProjectTestCases {
 		test.addTask(intervalTask);
 		test.addTask(floatingTask);
 		
-		ArrayList<Task> displayResults = test.displayAllTasks();
+		ArrayList<Task> displayResults = test.retrieveAllTasks();
 		
 		
 		ArrayList<Task> expectedList = new ArrayList<Task>();

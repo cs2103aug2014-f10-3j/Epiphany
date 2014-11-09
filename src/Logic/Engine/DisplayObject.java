@@ -58,6 +58,7 @@ public class DisplayObject {
 		
 		
 	/*************String Methods*************/
+		@SuppressWarnings("deprecation")
 		public String dateToString(){
 			String output = "null";
 			
