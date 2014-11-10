@@ -4,11 +4,12 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Date;
 
 import org.junit.Test;
 
-
 import Logic.Engine.Engine;
+import Logic.Engine.Task;
 import Logic.Interpreter.CommandType.AddCommandType;
 import Logic.Interpreter.CommandType.DeleteCommandType;
 import Logic.Interpreter.CommandType.DisplayCommandType;
@@ -27,11 +28,34 @@ import Logic.Interpreter.CommandType.UndoCommandType;
 //@author A0110924R
 
 public class CRUDTest {
-	public static final String TASK_DESCRIPTION_FLOATING = "finish tutorial 5";
-	public static final String TASK_DESCRIPTION_DEADLINE = "finish V0.5 by tomorrow";
-	public static final String TASK_DESCRIPTION_INTERVAL = "complete accounting work from monday to thursday";
-	public static final String TASK_DESCRIPTION_PROJECT = "finish project";
-	public static final String TASK_DESCRIPTION_PROJECT2 = "finish lecture 10";
+	Engine E;
+	private static final String TASK_DESCRIPTION_FLOATING = "finish tutorial 5";
+	private static final String TASK_DESCRIPTION_DEADLINE = "finish V0.5 by tomorrow";
+	private static final String TASK_DESCRIPTION_INTERVAL = "complete accounting work from monday to thursday";
+	private static final String TASK_DESCRIPTION_PROJECT = "finish project";
+	private static final String TASK_DESCRIPTION_PROJECT2 = "finish lecture 10";
+	private static final String TASK_DESCRIPTION_1 = "do something";
+	private static final String TASK_DESCRIPTION_2 = "hello world";
+	private static final String TASK_DESCRIPTION_3 = "quick brown fox jumps over the lazy dog";
+	
+	/************ Constructor **************/
+	
+	public CRUDTest() throws IOException, ParseException {
+		E = Engine.getInstance();
+	}
+	
+	public void taskIsEquals(Task Actual, String name, Date deadLine, Date startDate, String projectName, Boolean isCompleted) {
+		assertEquals(Actual.getTaskDescription(), name);
+		assertEquals(Actual.getDeadline(), deadLine);
+		assertEquals(Actual.getStartDate(), startDate);
+		assertEquals(Actual.getProjectName(), projectName);
+		assertEquals(Actual.isCompleted(), isCompleted);
+	}
+	
+	/*
+	 * Test must be conducted with an empty storage!!!!! Otherwise it will fail
+	 * 
+	 */
 
 	/***************************Reset test**************************/
 	/*@Test
@@ -52,13 +76,13 @@ public class CRUDTest {
 			}
 		
 		E.executeCommand(resetCommandType);*/
+	
 	/******************************** Testing for add ********************************/
+	/*
 	//@author A0110924R
 	@SuppressWarnings("static-access")
 	@Test
 	public void testAddFloating() throws IOException, ParseException {
-		Engine E = Engine.getInstance();
-
 		ResetCommandType resetCommandType = new ResetCommandType();
 		E.executeCommand(resetCommandType);
 		AddCommandType addCommandType = new AddCommandType(
@@ -74,15 +98,29 @@ public class CRUDTest {
 
 		E.executeCommand(resetCommandType);
 	}
+	*/
+	
+	//A0118794R
+	@SuppressWarnings("static-access")
+	@Test
+	public void testAddFloating2() throws IOException, ParseException {
+		ResetCommandType resetCommandType = new ResetCommandType();
+		E.executeCommand(resetCommandType);
+		
+		AddCommandType addCommandType = new AddCommandType(TASK_DESCRIPTION_1);
+		E.executeCommand(addCommandType);
+		
+		Task Actual = E.projectsList.get(0).getFloatingList().get(0);
+		taskIsEquals(Actual, TASK_DESCRIPTION_1, null, null, "default", false);
+	}
+	
+	
 	//@author A0110924R
 	@SuppressWarnings("static-access")
 	@Test
 	public void testAddDeadline() throws IOException, ParseException {
-
-		Engine E = Engine.getInstance();
 		ResetCommandType resetCommandType = new ResetCommandType();
 		E.executeCommand(resetCommandType);
-
 		AddCommandType addCommandType = new AddCommandType(
 				TASK_DESCRIPTION_DEADLINE);
 		E.executeCommand(addCommandType);
@@ -100,7 +138,6 @@ public class CRUDTest {
 	@SuppressWarnings("static-access")
 	@Test
 	public void testAddInterval() throws IOException, ParseException {
-		Engine E = Engine.getInstance();
 		ResetCommandType resetCommandType = new ResetCommandType();
 		E.executeCommand(resetCommandType);
 		AddCommandType addCommandType = new AddCommandType(
@@ -120,8 +157,6 @@ public class CRUDTest {
 	@SuppressWarnings("static-access")
 	@Test
 	public void testAddProject() throws IOException, ParseException {
-		Engine E = Engine.getInstance();
-
 		ResetCommandType resetCommandType = new ResetCommandType();
 		E.executeCommand(resetCommandType);
 		AddCommandType addCommandType = new AddCommandType(
@@ -143,8 +178,6 @@ public class CRUDTest {
 	//@author A0110924R
 	@Test
 	public void testDelete() throws IOException, ParseException {
-
-		Engine E = Engine.getInstance();
 		ResetCommandType resetCommandType = new ResetCommandType();
 		E.executeCommand(resetCommandType);
 
@@ -165,8 +198,6 @@ public class CRUDTest {
 	//@author A0110924R
 	@Test
 	public void testDeleteProject() throws IOException, ParseException {
-
-		Engine E = Engine.getInstance();
 		ResetCommandType resetCommandType = new ResetCommandType();
 		E.executeCommand(resetCommandType);
 
@@ -193,7 +224,6 @@ public class CRUDTest {
 	@SuppressWarnings("static-access")
 	@Test
 	public void searchTest() throws IOException, ParseException {
-		Engine E = Engine.getInstance();
 		ResetCommandType resetCommandType = new ResetCommandType();
 		E.executeCommand(resetCommandType);
 
@@ -219,7 +249,6 @@ public class CRUDTest {
 	//@author A0110924R
 	@Test
 	public void testDisplay() throws IOException, ParseException {
-		Engine E = Engine.getInstance();
 		ResetCommandType resetCommandType = new ResetCommandType();
 		E.executeCommand(resetCommandType);
 
@@ -295,7 +324,6 @@ public class CRUDTest {
 	@SuppressWarnings("static-access")
 	@Test
 	public void testUndoForAdd() throws IOException, ParseException {
-		Engine E = Engine.getInstance();
 
 		ResetCommandType resetCommandType = new ResetCommandType();
 		E.executeCommand(resetCommandType);
@@ -320,8 +348,6 @@ public class CRUDTest {
 	@SuppressWarnings("static-access")
 	@Test
 	public void testRedo() throws IOException, ParseException {
-		Engine E = Engine.getInstance();
-
 		ResetCommandType resetCommandType = new ResetCommandType();
 		E.executeCommand(resetCommandType);
 		

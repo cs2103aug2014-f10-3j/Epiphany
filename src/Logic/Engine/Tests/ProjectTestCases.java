@@ -105,9 +105,7 @@ public class ProjectTestCases {
 		expectedList.add(floatingTaskExpected);
 		
 		Collections.sort(expectedList, new dateComparator());
-		
 		assertEquals(expectedList, testProj.retrieveAllTasks());
-		
 	}
 	
 	@Test
