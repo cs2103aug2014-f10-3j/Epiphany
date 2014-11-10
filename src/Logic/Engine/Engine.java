@@ -108,9 +108,8 @@ public class Engine {
 
 	/**
 	 * Initializes the main data structures to be used by engine. 
-	 * 
+	 * @author A0119264E
 	 */
-	//@author A0119264E
 	private void initializeDS() throws IOException, ParseException {
 		projectsList = new ArrayList<Project>();
 		projectNames = new ArrayList<String>();
@@ -178,19 +177,14 @@ public class Engine {
 	public static int countLines(String filename) throws IOException {
 		File file = new File("../Epiphany/src/Storage/" + filename + ".txt");
 		int lineNumber = 0;
-
 		if (file.exists()) {
-
 			FileReader fr = new FileReader(file);
 			LineNumberReader lnr = new LineNumberReader(fr);
-
 			while (lnr.readLine() != null) {
 				lineNumber++;
 			}
-
 			lnr.close();
 		}
-
 		return lineNumber;
 	}
 
@@ -203,8 +197,8 @@ public class Engine {
 	/**
 	 * Takes a command type input, as is given by the interpreter and returns
 	 * the appropriate case to be executed. 
+	 * @author A0118794R
 	 */
-	 //@author weiyang
 	private CommandTypesEnum determineCommandType(CommandType commandType) {
 		if (commandType == null)
 			throw new Error(MESSAGE_ERROR_COMMAND_TYPE_NULL);
@@ -234,8 +228,8 @@ public class Engine {
 	/**
 	 * This method helps to execute the command as is expected from the above
 	 * method.
+	 * @author A0118794R
 	 */
-	 //@author weiyang
 	public void executeCommand(CommandType userCommand) throws IOException,
 			ParseException {
 		CommandTypesEnum commandType = determineCommandType(userCommand);

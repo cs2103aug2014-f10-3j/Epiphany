@@ -2,35 +2,27 @@ package Logic.Interpreter;
 
 import java.awt.FontFormatException;
 import java.io.IOException;
-import java.text.AttributedString;
 import java.text.ParseException;
 import java.util.HashMap;
-import java.awt.font.TextAttribute;
 
 import org.fusesource.jansi.AnsiConsole;
-
-//import GUIBackup.EpiphanyUI;
 
 /**
  * This is a singleton class that can be instantiated and used to perform
  * all display to the user interface.
  *
- * 
- * @author abdulla contractor and amit gamane
+ * @author A011879R
  */
 
 
 public class UIHandler{
-	
+
 	public static UIHandler uiHandler;
 	private static HashMap<String, String> colors;
 	
-	//public static EpiphanyUI ui;
-
 	private UIHandler() throws IOException, ParseException, FontFormatException {
 		 AnsiConsole.systemInstall();
 		uiHandler=this;
-		//ui = new EpiphanyUI();
 		colors = new HashMap<String, String>();
 		populateColors();
 	}
@@ -95,57 +87,33 @@ public class UIHandler{
 		System.out.println(toPrint);
 	}
 
-	/**
-	 * @author A0118794R
-	 * @param input
-	 */
 	public void strikeThroughText(String input) {
 		//TODO
 		System.out.println("\033[9m" + input); // red when overdue
 		resetToDefault(); // to reset terminal to default system colour
 	}
 
-	/**
-	 * @author A0118794R
-	 * @param input
-	 */
 	// This is for completed tasks
 	public void printToDisplayGreen(String input) {
 		System.out.println("\033[1;32m" + input); // red when overdue
 		resetToDefault(); // to reset terminal to default system colour
 	}
 
-	/**
-	 * @author A0118794R
-	 * @param input
-	 */
 	// This is for overdue tasks
 	public void printToDisplayRed(String input) {
 		System.out.println("\033[31m" + input); // red when overdue
 		resetToDefault(); // to reset terminal to default system colour
 	}
 	
-	/**
-	 * @author A0118794R
-	 * @param input
-	 */
 	public void printHeader(String input) {
 		System.out.println("\033[31m" + input); // red when overdue
 		resetToDefault(); // to reset terminal to default system colour
 	}
-	
-	/**
-	 * @author A0118794R
-	 * @param input
-	 */
+
 	public void resetToDefault() {
 		System.out.print("\033[0m"); // to reset terminal to default system colour
 	}
 	
-	/**
-	 * @author A0118794R
-	 * @param input
-	 */
 	public static boolean isColor(String input){
 		return (colors.containsKey(input));
 	}
