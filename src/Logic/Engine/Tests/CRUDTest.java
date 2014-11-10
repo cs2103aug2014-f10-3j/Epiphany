@@ -29,7 +29,7 @@ public class CRUDTest {
 	private static final String TASK_DESCRIPTION_2 = "hello world";
 	
 	/************ Constructor **************/
-	
+	//@author A0118794R
 	public CRUDTest() throws IOException, ParseException {
 		E = Engine.getInstance();
 	}
@@ -71,7 +71,7 @@ public class CRUDTest {
 		E.executeCommand(resetCommandType);
 	}
 	
-	//A0118794R
+	//@author A0118794R
 	@SuppressWarnings("static-access")
 	@Test
 	public void testAddFloating2() throws IOException, ParseException {
