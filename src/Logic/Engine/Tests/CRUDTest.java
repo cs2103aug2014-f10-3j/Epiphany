@@ -1,3 +1,4 @@
+//@author A0110924R
 package Logic.Engine.Tests;
 
 import static org.junit.Assert.*;
@@ -16,7 +17,7 @@ import Logic.CommandType.*;
  * This class tests the various operations that are used in Engine.
  *
  */
-//@author A0110924R
+
 
 public class CRUDTest {
 	Engine E;
@@ -27,10 +28,6 @@ public class CRUDTest {
 	private static final String TASK_DESCRIPTION_PROJECT2 = "finish lecture 10";
 	private static final String TASK_DESCRIPTION_1 = "do something";
 	private static final String TASK_DESCRIPTION_2 = "hello world";
-	private static final String TASK_DESCRIPTION_3 = "quick brown fox jumps over the lazy dog";
-	private static final String TASK_DESCRIPTION_4 = "complete v0.5";
-	private static final String TASK_DESCRIPTION_5 = "finish ps7";
-	private static final String TASK_DESCRIPTION_6 = "some undefined task";
 	
 	/************ Constructor **************/
 	
