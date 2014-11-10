@@ -32,9 +32,10 @@ import Storage.Reader;
  * reference and another ArrayList of Projects, projectsList is used to store
  * all the projects.
  * 
- * //@author A0110924R
+ * 
  *
  */
+//@author A0110924R
 public class Engine {
 
 	/**************************************** Message Prompts ************************************************/

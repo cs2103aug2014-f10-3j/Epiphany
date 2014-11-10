@@ -51,26 +51,7 @@ public class CRUDTest {
 	 * 
 	 */
 
-	/***************************Reset test**************************/
-	/*@Test
-	public void resetTest() throws IOException, ParseException {
-		
-		Engine E = Engine.getInstance();
-		AddCommandType addCommandType = new AddCommandType(
-				TASK_DESCRIPTION_FLOATING);
-		E.executeCommand(addCommandType);
-		ResetCommandType resetCommandType = new ResetCommandType();
-		E.executeCommand(resetCommandType);
 
-		if(Engine.projectsList.size()==1){
-			assert(true);
-			}
-			else{
-				fail();
-			}
-		
-		E.executeCommand(resetCommandType);*/
-	
 	/******************************** Testing for add ********************************/
 	
 	//@author A0110924R
@@ -173,6 +154,7 @@ public class CRUDTest {
 	 * @throws IOException
 	 * @throws ParseException
 	 */
+	@SuppressWarnings("static-access")
 	@Test
 	public void testProjectFloating() throws IOException, ParseException {
 		ResetCommandType resetCommandType = new ResetCommandType();
@@ -185,36 +167,6 @@ public class CRUDTest {
 		taskIsEquals(Actual, TASK_DESCRIPTION_2, null, null, "cs2010", false);
 	}
 	
-	/*
-	@Test
-	public void testAddWithDeadLineProject() throws IOException, ParseException {
-		
-		Date testDate = new Date(114, 10, 31);
-		ResetCommandType resetCommandType = new ResetCommandType();
-		E.executeCommand(resetCommandType);
-		
-		AddCommandType addCommandType = new AddCommandType(TASK_DESCRIPTION_3, testDate, null, "cs2010");
-		E.executeCommand(addCommandType);
-		
-		Task Actual = E.projectsList.get(E.projectsList.size() - 1).retrieveAllTasks().get(0);
-		taskIsEquals(Actual, TASK_DESCRIPTION_3, testDate, null, "cs2010", false);
-	}
-	
-	@Test
-	public void testAddIntervalProject() throws IOException, ParseException {
-		Date dateFrom = new Date(114, 10, 31);
-		Date dateTo = new Date(115, 11, 10);
-		
-		ResetCommandType resetCommandType = new ResetCommandType();
-		E.executeCommand(resetCommandType);
-		
-		AddCommandType addCommandType = new AddCommandType(TASK_DESCRIPTION_4, dateFrom, dateTo, "cs2010");
-		E.executeCommand(addCommandType);
-		
-		Task Actual = E.projectsList.get(E.projectsList.size() - 1).retrieveAllTasks().get(0);
-		taskIsEquals(Actual, TASK_DESCRIPTION_4, dateTo, dateFrom, "cs2010", false);
-	}
-	*/
 		
 
 	/******************************** Testing of Delete ********************************/
@@ -263,7 +215,7 @@ public class CRUDTest {
 	}
 
 	/******************************** Testing of Search ********************************/
-	//@author weiyang
+	//@author A0118794R
 	@SuppressWarnings("static-access")
 	@Test
 	public void searchTest() throws IOException, ParseException {
@@ -312,57 +264,9 @@ public class CRUDTest {
 		E.executeCommand(resetCommandType);
 	}
 
-/*	public void displayProjectTest() throws IOException, ParseException {
-		Engine E = Engine.getInstance();
-		ResetCommandType resetCommandType = new ResetCommandType();
-		E.executeCommand(resetCommandType);
 
-		AddCommandType addCommandType = new AddCommandType(
-				TASK_DESCRIPTION_PROJECT, null, "CS2103");
-		E.executeCommand(addCommandType);
-		AddCommandType addCommandType2 = new AddCommandType(
-				TASK_DESCRIPTION_PROJECT2, null, "CS2103");
-		E.executeCommand(addCommandType2);
-		
-		DisplayCommandType displayCommandType = new DisplayCommandType("#CS2103");
-		E.executeCommand(displayCommandType);
-		
-		if(Engine.ListByDate.get(1).getList().get(0).getTaskDescription().equals(TASK_DESCRIPTION_PROJECT)){
-			assert(true);}
-		
-			else{
-				fail();
-			}
-		
-		E.executeCommand(resetCommandType);
-	}*/
 	/******************************** Testing of Undo ********************************/
-	/*@SuppressWarnings("static-access")
-	@Test
-	public void testUndoForDelete() throws IOException, ParseException {
-		Engine E = Engine.getInstance();
 
-		ResetCommandType resetCommandType = new ResetCommandType();
-		E.executeCommand(resetCommandType);
-		AddCommandType addCommandType = new AddCommandType(
-				TASK_DESCRIPTION_FLOATING);
-		E.executeCommand(addCommandType);
-		
-		DeleteCommandType deleteCommandType = new DeleteCommandType("finish");
-		E.executeCommand(deleteCommandType);
-		
-		UndoCommandType undoCommandType = new UndoCommandType();
-		E.executeCommand(undoCommandType);
-		
-		if (E.projectsList.get(E.projectsList.size() - 1).retrieveAllTasks()
-				.get(0).getTaskDescription().equals(TASK_DESCRIPTION_FLOATING)) {
-			assert (true);
-		} else {
-			fail();
-		}
-
-		E.executeCommand(resetCommandType);
-	}*/
 	//@author A0110924R
 	@SuppressWarnings("static-access")
 	@Test
@@ -416,59 +320,5 @@ public class CRUDTest {
 
 		E.executeCommand(resetCommandType);
 	}
-	/*********************************Test Complete*****************************/
-	/*@SuppressWarnings("static-access")
-	public void testComplete() throws IOException, ParseException {
-		Engine E = Engine.getInstance();
 
-		ResetCommandType resetCommandType = new ResetCommandType();
-		E.executeCommand(resetCommandType);
-		
-		AddCommandType addCommandType = new AddCommandType(
-				TASK_DESCRIPTION_FLOATING);
-		E.executeCommand(addCommandType);
-		
-		CompleteCommandType completeCommandType = new CompleteCommandType("finish");
-		E.executeCommand(completeCommandType);
-		
-		if (!(E.projectsList.get(E.projectsList.size() - 1).isEmpty())) {
-			assert (true);
-		} else {
-			fail();
-		}
-
-		E.executeCommand(resetCommandType);
-	}*/
-	/********************************Edit Test************************/
-	/******************************** Testing of Edit ********************************/
-/*	@SuppressWarnings("static-access")
-	@Test
-	public void testEdit() throws IOException, ParseException {
-		Engine E = Engine.getInstance();
-
-		ResetCommandType resetCommandType = new ResetCommandType();
-		E.executeCommand(resetCommandType);
-		
-		AddCommandType addCommandType = new AddCommandType(
-				TASK_DESCRIPTION_FLOATING);
-		E.executeCommand(addCommandType);
-		
-		EditCommandType editCommandType = new EditCommandType("finish");
-		E.executeCommand(deleteCommandType);
-		
-		UndoCommandType undoCommandType = new UndoCommandType();
-		E.executeCommand(undoCommandType);
-		
-		RedoCommandType redoCommandType = new RedoCommandType();
-		E.executeCommand(redoCommandType);
-		
-		
-		if (E.projectsList.get(E.projectsList.size() - 1).isEmpty()) {
-			assert (true);
-		} else {
-			fail();
-		}
-
-		E.executeCommand(resetCommandType);
-	}*/
 }
