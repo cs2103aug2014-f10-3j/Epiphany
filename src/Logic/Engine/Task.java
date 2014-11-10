@@ -26,7 +26,6 @@ public class Task {
 	private static HashMap<String, String> colors;
 	private String color;
 	
-	
 	/***************Constructors**********************/
 	
 	/**
@@ -170,10 +169,10 @@ public class Task {
 	
 	/**
 	 * Marks/Unmarks a task as completed.
+	 * @author A0118794R
 	 */
 	public void setStatus() { 
 		this.isCompleted = !this.isCompleted;
-		
 		if (this.isCompleted) {
 			this.completionStatus = " [DONE]";
 			this.color = colors.get("green");
@@ -318,7 +317,6 @@ public class Task {
 		return this.color + s;
 	}
 
-	
 
 	// DD MMM YYYY,
 	@SuppressWarnings("deprecation")
@@ -493,13 +491,7 @@ public class Task {
 				return false;
 			}
 			return true;
-
 		}
 		return false;
-
 	}
-
-
-
-
 }

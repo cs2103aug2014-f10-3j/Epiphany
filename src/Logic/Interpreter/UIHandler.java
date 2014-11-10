@@ -22,7 +22,6 @@ import org.fusesource.jansi.AnsiConsole;
 
 public class UIHandler{
 	
-	
 	public static UIHandler uiHandler;
 	private static HashMap<String, String> colors;
 	
@@ -96,37 +95,58 @@ public class UIHandler{
 		System.out.println(toPrint);
 	}
 
-
-	// wy added a function here to enable strikethrough text
+	/**
+	 * @author A0118794R
+	 * @param input
+	 */
 	public void strikeThroughText(String input) {
 		//TODO
-		AttributedString str_attribute = new AttributedString(input);
-		str_attribute.addAttribute(TextAttribute.STRIKETHROUGH, input.length());
+		System.out.println("\033[9m" + input); // red when overdue
+		resetToDefault(); // to reset terminal to default system colour
 	}
 
+	/**
+	 * @author A0118794R
+	 * @param input
+	 */
 	// This is for completed tasks
 	public void printToDisplayGreen(String input) {
 		System.out.println("\033[1;32m" + input); // red when overdue
-		System.out.print("\033[0m"); // to reset terminal to default black colour
+		resetToDefault(); // to reset terminal to default system colour
 	}
 
+	/**
+	 * @author A0118794R
+	 * @param input
+	 */
 	// This is for overdue tasks
 	public void printToDisplayRed(String input) {
 		System.out.println("\033[31m" + input); // red when overdue
-		System.out.print("\033[0m"); // to reset terminal to default black colour
+		resetToDefault(); // to reset terminal to default system colour
 	}
 	
+	/**
+	 * @author A0118794R
+	 * @param input
+	 */
 	public void printHeader(String input) {
 		System.out.println("\033[31m" + input); // red when overdue
-		System.out.print("\033[0m"); // to reset terminal to default black colour
-	}
-
-	public void resetToDefault() {
-		System.out.print("\033[0m"); // to reset terminal to default black colour
+		resetToDefault(); // to reset terminal to default system colour
 	}
 	
+	/**
+	 * @author A0118794R
+	 * @param input
+	 */
+	public void resetToDefault() {
+		System.out.print("\033[0m"); // to reset terminal to default system colour
+	}
+	
+	/**
+	 * @author A0118794R
+	 * @param input
+	 */
 	public static boolean isColor(String input){
 		return (colors.containsKey(input));
 	}
-
 }

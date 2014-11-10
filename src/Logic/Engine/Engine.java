@@ -194,7 +194,7 @@ public class Engine {
 		return lineNumber;
 	}
 
-	/********************** Command Type Filter ***********************************/
+	/********************** Command Types Filter ***********************************/
 
 	public enum CommandTypesEnum {
 		ADD, DISPLAY, DELETE, RESET, EXIT, INVALID, SEARCH, EDIT, UNDO, REDO, COMPLETE
@@ -767,9 +767,9 @@ public class Engine {
 	/**
 	 * This method marks a task as complete and subsequently removes it from the
 	 * project.
-	 * 
+	 * @author A0118794R
 	 */
-	//@author weiyang
+	
 	private void checkCompleteTask(String input) throws IOException {
 		Task mostRecentTask = new Task();
 		ArrayList<Task> tasksToBeCompleted = new ArrayList<Task>();
@@ -820,7 +820,7 @@ public class Engine {
 	}
 	
 
-	/********************************* Helper methods ********************************/
+	/********************************* Helper methods *************************************/
 
 	/********************************* Helpers for display ********************************/
 
@@ -1155,9 +1155,9 @@ public class Engine {
 	
 	/**
 	 * This method helps to mark tasks as complete.
-	 * 
+	 * @author A0118794R
 	 */
-	 //@author weiyang
+
 	public void markTaskDescriptionAsComplete(Task input) {
 		if (input.isCompleted() == true) {
 
@@ -1174,9 +1174,8 @@ public class Engine {
 	}
 	/**
 	 * This method helps to strike-through text.
-	 * 
+	 * @author A0118794R
 	 */
-	 //@author weiyang
 	public String strikeThroughText(String input) {
 		String output;
 		AttributedString str_attribute = new AttributedString(input);
@@ -1187,9 +1186,8 @@ public class Engine {
 	/**
 	 * Updates the completion status of a task and ensures that the the update
 	 * is reflected in storage.
-	 * 
+	 * @author A0118794R
 	 */
-	// @author weiyang
 	private void updateBackEnd(Task mostRecentTask) throws IOException {
 		String pName = mostRecentTask.getProjectName();
 		int index = findIndex(pName);
@@ -1202,9 +1200,9 @@ public class Engine {
 
 	/**
 	 * Updates the completion status of a task which is in a project.
-	 * 
+	 * @author A0118794R
 	 */
-	// @author weiyang
+	
 	private void completeTaskFromProj(Task taskToBeDeleted) throws IOException {
 		String projectName = taskToBeDeleted.getProjectName();
 		int indexProject = findIndex(projectName);
@@ -1360,7 +1358,6 @@ public class Engine {
 	 */
 	// @author A0110924R
 	private Project findProject(String projectName) {
-
 		int index = findIndex(projectName);
 		Project p = projectsList.get(index);
 		return p;

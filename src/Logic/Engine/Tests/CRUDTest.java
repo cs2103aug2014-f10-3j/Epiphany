@@ -12,12 +12,9 @@ import Logic.Engine.Engine;
 import Logic.Engine.Task;
 import Logic.CommandType.*;
 
-
-
 /**
  * This class tests the various operations that are used in Engine.
- * 
- * 
+ *
  */
 //@author A0110924R
 
@@ -29,6 +26,11 @@ public class CRUDTest {
 	private static final String TASK_DESCRIPTION_PROJECT = "finish project";
 	private static final String TASK_DESCRIPTION_PROJECT2 = "finish lecture 10";
 	private static final String TASK_DESCRIPTION_1 = "do something";
+	private static final String TASK_DESCRIPTION_2 = "hello world";
+	private static final String TASK_DESCRIPTION_3 = "quick brown fox jumps over the lazy dog";
+	private static final String TASK_DESCRIPTION_4 = "complete v0.5";
+	private static final String TASK_DESCRIPTION_5 = "finish ps7";
+	private static final String TASK_DESCRIPTION_6 = "some undefined task";
 	
 	/************ Constructor **************/
 	
@@ -70,7 +72,7 @@ public class CRUDTest {
 		E.executeCommand(resetCommandType);*/
 	
 	/******************************** Testing for add ********************************/
-	/*
+	
 	//@author A0110924R
 	@SuppressWarnings("static-access")
 	@Test
@@ -90,7 +92,6 @@ public class CRUDTest {
 
 		E.executeCommand(resetCommandType);
 	}
-	*/
 	
 	//A0118794R
 	@SuppressWarnings("static-access")
@@ -165,6 +166,56 @@ public class CRUDTest {
 
 		E.executeCommand(resetCommandType);
 	}
+	
+	// Testing add with projects
+	/**
+	 * @author A0118794R
+	 * @throws IOException
+	 * @throws ParseException
+	 */
+	@Test
+	public void testProjectFloating() throws IOException, ParseException {
+		ResetCommandType resetCommandType = new ResetCommandType();
+		E.executeCommand(resetCommandType);
+		
+		AddCommandType addCommandType = new AddCommandType(TASK_DESCRIPTION_2, null, null, "cs2010");
+		E.executeCommand(addCommandType);
+		
+		Task Actual = E.projectsList.get(E.projectsList.size() - 1).retrieveAllTasks().get(0);
+		taskIsEquals(Actual, TASK_DESCRIPTION_2, null, null, "cs2010", false);
+	}
+	
+	/*
+	@Test
+	public void testAddWithDeadLineProject() throws IOException, ParseException {
+		
+		Date testDate = new Date(114, 10, 31);
+		ResetCommandType resetCommandType = new ResetCommandType();
+		E.executeCommand(resetCommandType);
+		
+		AddCommandType addCommandType = new AddCommandType(TASK_DESCRIPTION_3, testDate, null, "cs2010");
+		E.executeCommand(addCommandType);
+		
+		Task Actual = E.projectsList.get(E.projectsList.size() - 1).retrieveAllTasks().get(0);
+		taskIsEquals(Actual, TASK_DESCRIPTION_3, testDate, null, "cs2010", false);
+	}
+	
+	@Test
+	public void testAddIntervalProject() throws IOException, ParseException {
+		Date dateFrom = new Date(114, 10, 31);
+		Date dateTo = new Date(115, 11, 10);
+		
+		ResetCommandType resetCommandType = new ResetCommandType();
+		E.executeCommand(resetCommandType);
+		
+		AddCommandType addCommandType = new AddCommandType(TASK_DESCRIPTION_4, dateFrom, dateTo, "cs2010");
+		E.executeCommand(addCommandType);
+		
+		Task Actual = E.projectsList.get(E.projectsList.size() - 1).retrieveAllTasks().get(0);
+		taskIsEquals(Actual, TASK_DESCRIPTION_4, dateTo, dateFrom, "cs2010", false);
+	}
+	*/
+		
 
 	/******************************** Testing of Delete ********************************/
 	//@author A0110924R
