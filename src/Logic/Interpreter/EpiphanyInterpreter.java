@@ -159,9 +159,9 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 	 */
 	public CommandType interpretCommand(String userInput) throws InvalidCommandException, ExitException {
 		userInput = userInput.trim();
-		if(userInput.equalsIgnoreCase("undo")){
+		if(userInput.equalsIgnoreCase("undo|-u")){
 			return new UndoCommandType();
-		} else if(userInput.equalsIgnoreCase("redo")){
+		} else if(userInput.equalsIgnoreCase("redo|-r")){
 			return new RedoCommandType();
 		} else if(userInput.equalsIgnoreCase("reset")){
 			return new ResetCommandType();
@@ -171,11 +171,11 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 			return interpretCompleteCommand(userInput);
 		} else if(userInput.equals("exit")) {
 			return exitProgram();
-		} else if(userInput.matches("(search|find).*")) {
+		} else if(userInput.matches("(search|find|-f).*")) {
 			return interpretSearchCommand(userInput);
 		} else if(userInput.matches("(delete|remove|rm).*")) {
 			return interpretDeleteCommand(userInput);
-		} else if(userInput.matches("(edit).*")) {
+		} else if(userInput.matches("(edit|-e).*")) {
 			return interpretEditCommand(userInput);
 		} else { 
 			return interpretAddCommand(userInput);
