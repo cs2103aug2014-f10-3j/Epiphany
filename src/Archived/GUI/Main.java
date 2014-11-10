@@ -11,11 +11,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
-/**
- * Unused
- * @author A0118794R
- *
- */
 public class Main extends Application {
 	
 	private Stage primaryStage;
