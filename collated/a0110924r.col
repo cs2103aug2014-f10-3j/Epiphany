@@ -1,0 +1,1357 @@
+//@author: a0110924r
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\DisplayObject.java
+	 */
+
+public class DisplayObject {
+	
+		
+	/*************Attributes*************/	
+		private Date date;
+		private ArrayList<Task> list;
+		private static String[] months = new String[12];
+		private static String[] days = new String[7];
+
+		
+		
+	/*************Constructors*************/
+		public DisplayObject(Date date, ArrayList<Task> list){
+			this.date = date;
+			populateDays();
+			populateMonths();
+			this.list = list;
+		}
+		
+		public DisplayObject(Date date, Task task){
+			this.date = date;
+			populateDays();
+			populateMonths();
+			list.add(task);
+		}
+		
+		public DisplayObject(Date date){
+			list = new ArrayList<Task>();
+			this.date = date;
+			populateDays();
+			populateMonths();
+		}
+		
+		public void addTaskToList(Task t){
+			assert(list != null);
+			this.list.add(t);
+		}
+		
+		
+	/*************Getters*************/
+		public Date getDate(){
+			return this.date;
+		}
+		
+		public ArrayList<Task> getList(){
+			return this.list;
+		}
+		
+		
+	/*************String Methods*************/
+		@SuppressWarnings("deprecation")
+		public String dateToString(){
+			String output = "null";
+			
+			if(date != null){
+				output = convertToDay(date.getDay()) + ", " + date.getDate() + " "+ convertToMonth(date.getMonth()) + " " + convertToYear(date.getYear());
+			}
+			
+			return output;
+		}
+		
+	
+	/*************Other Methods*************/
+		private void populateMonths() {
+			months[0] = "Jan";
+			months[1] = "Feb";
+			months[2] = "Mar";
+			months[3] = "Apr";
+			months[4] = "May";
+			months[5] = "Jun";
+			months[6] = "Jul";
+			months[7] = "Aug";
+			months[8] = "Sep";
+			months[9] = "Oct";
+			months[10] = "Nov";
+			months[11] = "Dec";
+		}
+		
+		private void populateDays(){
+			days[0] = "Sunday";
+			days[1] = "Monday";
+			days[2] = "Tuesday";
+			days[3] = "Wednesday";
+			days[4] = "Thursday";
+			days[5] = "Friday";
+			days[6] = "Saturday";
+		}
+		
+		private static String convertToMonth(int input) {
+			return months[input];
+		}
+		
+		private static String convertToDay(int input){
+			return days[input];
+		}
+		
+		private static int convertToYear(int input){
+			return input + 1900;
+		}
+	
+		
+	}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\DisplayObject.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+package Logic.Engine;
+
+import java.awt.font.TextAttribute;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.text.AttributedString;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Stack;
+
+import Logic.Exceptions.CancelDeleteException;
+import Logic.Exceptions.CancelEditException;
+import Logic.Interpreter.EpiphanyInterpreter;
+import Logic.Interpreter.UIHandler;
+import Logic.CommandType.*;
+import Storage.Writer;
+import Storage.Reader;
+
+/**
+ * This singleton class is essentially the backbone of this program. All data
+ * manipulation takes place in this class.
+ * 
+ * Using this class, a task is assigned into different projects of Type Project
+ * which essentially contains an ArrayList of objects of type Task. These
+ * objects store all the information essential for storage and manipulation of
+ * tasks. The projects have their names stored in a global ArrayList for easy
+ * reference and another ArrayList of Projects, projectsList is used to store
+ * all the projects.
+ * 
+ * 
+ *
+ */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+public class Engine {
+
+	/**************************************** Message Prompts ************************************************/
+
+	private static final String MESSAGE_WELCOME = "";
+	private static final String MESSAGE_NO_ENTRY = "No such entry exists.";
+	private static final String MESSAGE_ADD = "Task Added!";
+	private static final String MESSAGE_ADD_DUPLICATE = "This task already exists!";
+	private static final String MESSAGE_NOTHING_TO_DISPLAY_ERROR = "No items to display.";
+	private static final String MESSAGE_INVALID_SEARCH = "No results to display.";
+	private static final String MESSAGE_UNDO_ERROR = "Nothing to undo!";
+	private static final String MESSAGE_UNDO_SUCCESS = "Undone!";
+	private static final String MESSAGE_REDO_ERROR = "Nothing to redo!";
+	private static final String MESSAGE_REDO_SUCCESS = "Redone!";
+	private static final String MESSAGE_ERROR_WRONG_CMDTYPE = null;
+	private static final String MESSAGE_ERROR_COMMAND_TYPE_NULL = null;
+	private static final String MESSAGE_UPDATE_TASK_FOR_EDIT = "Please update your task";
+	private static final String MESSAGE_ERROR_UNABLE_TO_EDIT = "Cannot edit!";
+	private static final String MESSAGE_NO_INDEX_SPECIFIED = "No index has been specified!";
+	private static final String MESSAGE_FOR_DELETE = "Please enter the index number of the task you want to delete:";
+	private static final String MESSAGE_NOTHING_TO_DELETE = "Nothing to delete!";
+	private static final String MESSAGE_SPECIFY_INDEX_FOR_ISCOMPLETE = "Please specify an index to be marked as completed";
+	private static final String MESSAGE_SPECIFY_INDEX_FOR_EDIT = "Please specify an index you wish to edit";
+	private static final String MESSAGE_REMOVE_SUCCESS = " has been removed.";
+	private static final String MESSAGE_MARKED_AS_ONGOING = " marked as ongoing.";
+	private static final String MESSAGE_MARKED_AS_COMPLETE = " marked as complete.";
+	private static final String MESSAGE_ERROR_INVALID_TASK = " No such task exists!";
+	private static final int N = 999;
+	private static final String MESSAGE_RESET = "System restarted!";
+
+	/****************************** Data Structures and Objects ********************/
+
+	private static EpiphanyInterpreter interp;
+	private static Engine engine;
+	public static ArrayList<String> projectNames;
+	public static ArrayList<Project> projectsList;
+	private static Stack<PastCommands> undoStack;
+	private static Stack<PastCommands> redoStack;
+	public static ArrayList<DisplayObject> ListByDate;
+	private static String[] months;
+
+	private Engine() throws IOException, ParseException {
+		engine = this;
+		run();
+	}
+
+	/**
+	 * Singleton implementation of Engine
+	 */
+	public static Engine getInstance() throws IOException, ParseException {
+		if (engine == null) {
+			return new Engine();
+		}
+		return engine;
+	}
+
+	/***************************** Engine Initialization Methods ***********************************/
+
+	/**
+	 * Initializes the Engine. It also populates the engine with the files that
+	 * are contained within storage. 
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	private void add(String taskDescription, Date dateFrom, Date dateTo,
+			String projectName) throws IOException {
+
+		Task incomingTask = new Task(taskDescription, dateFrom, dateTo,
+				projectName, false);
+
+		// Duplicate check.
+		if (projectNames.contains(projectName)) {
+			int indexProj = findIndex(projectName);
+			Project proj = projectsList.get(indexProj);
+
+			if (proj.containsTask(incomingTask)) {
+				UIHandler.getInstance()
+						.printToDisplayRed(MESSAGE_ADD_DUPLICATE);
+				return;
+			}
+		}
+
+		if (projectNames.contains(projectName)) {
+
+			int index = findIndex(projectName);
+			Project currProject = projectsList.get(index);
+			currProject.addTask(incomingTask);
+			projectsList.set(index, currProject);
+		} else {
+
+			if (projectName.equals("default")) {
+				int index = 0;
+				Project currProject = projectsList.get(index);
+				currProject.addTask(incomingTask);
+				projectsList.set(index, currProject);
+			}
+
+			else {
+				projectNames.add(projectName);
+				ArrayList<Task> temp = new ArrayList<Task>();
+				temp.add(incomingTask);
+				projectsList.add(new Project(projectName, temp));
+				Writer.updateProjectMasterList(projectName, projectNames);
+			}
+		}
+
+		UIHandler.getInstance().printToDisplayGreen(MESSAGE_ADD);
+		addToUndoStack("add", projectName, incomingTask,
+				incomingTask.getParity());
+	}
+
+	/********************** Delete Methods ***********************************/
+	/**
+	 * This method helps to delete tasks and projects. This method is subdivided
+	 * into many components; by virtue of their unique circumstance. A phrase
+	 * that is unique to any task would result in immediate deletion of that
+	 * Task. If there are, however, more than one tasks with a common phrase,
+	 * all those tasks would be reflected where the specific task or group of
+	 * selected tasks may then be removed. Projects may be deleted in their
+	 * entirety as well.
+	 * 
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	private void delete(String taskDescription, String projectName)
+			throws IOException {
+		if (taskDescription == null && !projectName.equals("default")) {
+			Project projToDelete = projectsList.get(findIndex(projectName));
+			ArrayList<Task> tasksToDelete = projToDelete.retrieveAllTasks();
+
+			for (Task t : tasksToDelete) {
+				t.flipParity();
+				removeTaskFromProj(t);
+			}
+
+			return;
+		}
+
+		ArrayList<Task> tasksToDisplayForDelete = searchForTask(taskDescription);
+
+		if (tasksToDisplayForDelete.size() == 0) {
+			UIHandler.getInstance()
+					.printToDisplayRed(MESSAGE_NOTHING_TO_DELETE);
+
+		} else if (tasksToDisplayForDelete.size() == 1) {
+
+			Task taskToBeDeleted = tasksToDisplayForDelete.get(0);
+			removeTaskFromProj(taskToBeDeleted);
+
+		} else if (tasksToDisplayForDelete.size() > 1) {
+
+			ArrayList<Task> temp;
+
+			temp = tasksToDisplayForDelete;
+			displayArrayList(tasksToDisplayForDelete);
+
+			UIHandler.getInstance().printToDisplay(MESSAGE_FOR_DELETE);
+
+			try {
+				int[] input = interp.askForAdditionalInformationForDelete();
+
+				if (input.length == 0) {
+					UIHandler.getInstance().printToDisplayRed(
+							MESSAGE_NO_INDEX_SPECIFIED);
+				} else {
+					for (int i = 0; i < input.length; i++) {
+						if (input[i] <= temp.size()) {
+							Task taskToBeDeleted = temp.get(input[i] - 1);
+							removeTaskFromProj(taskToBeDeleted);
+						}
+					}
+				}
+			} catch (CancelDeleteException e) {
+				return;
+			}
+
+		} else {
+			UIHandler.getInstance().printToDisplayRed("No such task exists!");
+		}
+	}
+
+	/********************************* Edit Methods ***********************************/
+
+	/**
+	 * This method allows us to edit an already entered task. This method has a
+	 * fail safe where it asks the user to confirm the index of the task they
+	 * wish to update/edit even if that is the only one.
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	private void edit(String taskDescription, String projectName)
+			throws IOException, ParseException {
+
+		Task recentTask = new Task();
+
+		ArrayList<Task> temp = search(taskDescription);
+
+		if (!temp.isEmpty()) {
+
+			try {
+				UIHandler.getInstance().printToDisplay(
+						MESSAGE_SPECIFY_INDEX_FOR_EDIT);
+
+				int input = interp.askForAdditionalInformationForEdit();
+
+				Task taskToBeEdited = temp.get(input - 1);
+				recentTask = taskToBeEdited;
+				projectName = taskToBeEdited.getProjectName();
+				int index = findIndex(projectName);
+
+				Project currProject = projectsList.get(index);
+				currProject.deleteTask(taskToBeEdited);
+
+				UIHandler.getInstance().printToDisplay(
+						MESSAGE_UPDATE_TASK_FOR_EDIT);
+
+				CommandType newUserCommand = interp.askForNewTaskForEdit();
+				executeCommand(newUserCommand);
+
+			} catch (CancelEditException e) {
+				return;
+			}
+
+		} else {
+			UIHandler.getInstance().printToDisplayRed(
+					MESSAGE_ERROR_UNABLE_TO_EDIT);
+		}
+
+		addToUndoStack("edit", recentTask.getProjectName(), null, false);
+	}
+
+	/********************** Search Methods ***********************************/
+
+	/**
+	 * This method allows enables the user to search within a specified project
+	 * and or in general for a certain phrase which could be a constituent of
+	 * any of the tasks.
+	 * 
+	 * 
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	private void searchInProj(String searchPhrase, String projectName)
+			throws IOException {
+		if (projectName.equals("")) {
+			search(searchPhrase);
+		} else {
+			int index = findIndex(projectName);
+			Project curr = projectsList.get(index);
+			ArrayList<Task> currList = curr.searchForTask(searchPhrase);
+			displayArrayListForSearch(currList);
+		}
+	}
+
+	/**
+	 * This method helps to search for a particular phrase from within the
+	 * entire program. 
+	 * 
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	private ArrayList<Task> search(String searchPhrase) throws IOException {
+		ArrayList<Task> tempResultsForProject = new ArrayList<Task>();
+		ArrayList<Task> allInclusive = new ArrayList<Task>();
+		for (Project p : projectsList) {
+			tempResultsForProject = (p.searchForTask(searchPhrase));
+
+			if (!tempResultsForProject.isEmpty()) {
+				allInclusive.addAll(tempResultsForProject);
+			}
+		}
+		displayArrayListForSearch(allInclusive);
+		return allInclusive;
+	}
+
+	/****************************** Display Method ***********************************/
+
+	/**
+	 * This method is used to print to terminal. It enables display by date,
+	 * project as well as an overall display. The default display works by
+	 * printing the a date which constitutes the deadline and then the tasks
+	 * that fall on that deadline. It also enables support for tasks which are
+	 * overdue. These would be presented first given their urgency followed by
+	 * all other task with deadlines closest to the current date.
+	 *
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	private void displayOverall(String input) throws IOException {
+		if (input.matches("\\d+-\\d+-\\d+")) {
+			displayByDate(input);
+		} else if (input.equals("all")) {
+
+			if (projectsList.size() == 1 && projectsList.get(0).isEmpty()
+					|| !isThereATask()) {
+				UIHandler.getInstance().printToDisplay(
+						MESSAGE_NOTHING_TO_DISPLAY_ERROR);
+			}
+			collateAllForDisplay();
+			displayAll();
+
+		} else if (projectNames.contains(input)) {
+
+			displayProject(input);
+		} else {
+			UIHandler.getInstance().printToDisplay(
+					MESSAGE_NOTHING_TO_DISPLAY_ERROR);
+		}
+
+	}
+
+	/********************************** Undo Method ***********************************/
+	/**
+	 * The undo method helps to revert, infinitely until exhaustion, the recent
+	 * add, delete- single task and entire project, edit and mark as complete
+	 * operations.
+	 * 
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	private void displayAll() {
+
+		for (DisplayObject disp : ListByDate) {
+
+			Date currDate = disp.getDate();
+
+			if (currDate == null) {
+				ArrayList<Task> listDisObj = disp.getList();
+
+				if (!listDisObj.isEmpty()) {
+					if (listDisObj.get(0).hasDeadLine()) {
+						UIHandler.getInstance().printToDisplayRed(
+								"------------");
+						UIHandler.getInstance().printToDisplayRed(
+								"> " + "Overdue:" + " |");
+						UIHandler.getInstance().printToDisplayRed(
+								"------------");
+						displayArrayList(listDisObj);
+
+					} else {
+						UIHandler.getInstance().printToDisplay(
+								"----------------");
+						UIHandler.getInstance().printToDisplay(
+								"> " + "Bucket List:" + " |");
+						UIHandler.getInstance().printToDisplay(
+								"----------------");
+						displayArrayList(listDisObj);
+					}
+				}
+
+			} else {
+				UIHandler.getInstance().printToDisplay(
+						"------------------------");
+				UIHandler.getInstance().printToDisplay(
+						"> " + disp.dateToString() + " |");
+				UIHandler.getInstance().printToDisplay(
+						"------------------------");
+
+				displayArrayList(disp.getList());
+
+			}
+		}
+
+	}
+
+	/**
+	 * This method is used to collate all the tasks for display of all tasks. It
+	 * works by displaying the tasks under their deadline(in date format)
+	 * header. Overdue tasks are shown first and floating tasks are shown last
+	 * with all deadline and interval tasks in between according to their
+	 * deadlines.
+	 * 
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	private void collateAllForDisplay() {
+		ListByDate = new ArrayList<DisplayObject>();
+		ArrayList<Task> floating = new ArrayList<Task>();
+		ArrayList<Task> overdue = new ArrayList<Task>();
+
+		for (String projectName : projectNames) {
+			ArrayList<Task> currProjectTasks = projectsList.get(
+					findIndex(projectName)).retrieveAllTasks();
+
+			for (Task currTask : currProjectTasks) {
+
+				if (!currTask.hasDeadLine()) {
+					floating.add(currTask);
+				} else if (isTaskOverDue(currTask)) {
+
+					currTask.setOverdue();
+					overdue.add(currTask);
+
+				} else if (checkIndexOfDeadlineObject(currTask) >= 0) {
+
+					DisplayObject currDisplayObject = ListByDate
+							.get(checkIndexOfDeadlineObject(currTask));
+					currDisplayObject.addTaskToList(currTask);
+				} else {
+					DisplayObject newDisplayObject = new DisplayObject(
+							currTask.getDeadline());
+					newDisplayObject.addTaskToList(currTask);
+					ListByDate.add(newDisplayObject);
+				}
+			}
+		}
+		ListByDate.add(new DisplayObject(null, floating));
+		ListByDate.add(0, new DisplayObject(null, overdue));
+	}
+
+	/**
+	 * This method helps to display tasks for a specific date.
+	 * 
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	private void displayByDate(String input) {
+
+		if (input.matches("\\d+-\\d+-\\d+")) {
+			String[] dateRequired = input.split("-");
+
+			int date = Integer.parseInt(dateRequired[2]);
+			int month = Integer.parseInt(dateRequired[1]);
+			int year = Integer.parseInt(dateRequired[0]);
+			Date dateToBeDisplayedBy = getDate(date, month, year);
+
+			UIHandler.getInstance().printToDisplay(parseDate(input) + ":");
+			ArrayList<Task> toBeDisplayed = new ArrayList<Task>();
+
+			for (int i = 0; i < projectNames.size(); i++) {
+				ArrayList<Task> tasksInCurrentProject = projectsList.get(i)
+						.retrieveAllTasks();
+				for (int j = 0; j < tasksInCurrentProject.size(); j++) {
+					Task currTask = tasksInCurrentProject.get(j);
+					if(currTask.hasDeadLine()){
+					if (isDateEqual(dateToBeDisplayedBy, currTask.getDeadline())) {
+
+						toBeDisplayed.add(currTask);
+					}else{continue;}
+					}
+				}
+			}
+			displayArrayList(toBeDisplayed);
+		}
+	}
+
+	/**
+	 * This method helps to display methods for search. The format here differs
+	 * from the conventional display as it is not sorted by date.
+	 * 
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	private void displayArrayListForSearch(ArrayList<Task> projectList) {
+
+		if (projectList.isEmpty()) {
+			UIHandler.getInstance().printToDisplayRed(MESSAGE_INVALID_SEARCH);
+		}
+
+		int counter = 1;
+		for (Task t : projectList) {
+			UIHandler.getInstance().printToDisplay(
+					counter + ". " + t.printTaskForDisplay("search"));
+			counter++;
+		}
+		UIHandler.getInstance().printToDisplay("\n");
+	}
+
+	/**
+	 * This method helps to display all the Tasks within a specified project.
+	 * 
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	private void displayProject(String projectName) {
+		int index = findIndex(projectName);
+		Project curr = projectsList.get(index);
+		displayArrayList(curr.retrieveAllTasks());
+	}
+
+	/**
+	 * This method helps to display an ArrayList of tasks.
+	 * 
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	private void displayArrayList(ArrayList<Task> taskList) {
+
+		if (taskList.isEmpty()) {
+			UIHandler.getInstance().printToDisplayRed(MESSAGE_INVALID_SEARCH);
+		}
+
+		int counter = 1;
+		for (Task t : taskList) {
+			UIHandler.getInstance().printToDisplay(
+					counter + ". " + t.printTaskForDisplay("display"));
+			counter++;
+			UIHandler.getInstance().resetToDefault();
+		}
+		UIHandler.getInstance().printToDisplay("\n");
+	}
+
+	/**
+	 * This method helps to check is a task's deadline has passed.
+	 * 
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	private boolean isTaskOverDue(Task currTask) {
+		Date deadLineForCurrTask = currTask.getDeadline();
+		Date date = new Date();
+		if (deadLineForCurrTask.before(date)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * This method helps to check if a DisplayTask object exists for the given
+	 * date.
+	 * 
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	private int checkIndexOfDeadlineObject(Task currTask) {
+
+		for (int i = 0; i < ListByDate.size(); i++) {
+			if (isDateEqual(currTask.getDeadline(), ListByDate.get(i).getDate())) {
+				return i;
+			} else {
+				continue;
+			}
+		}
+		return -1;
+	}
+
+	/**
+	 * This method helps to check if the program contains at least one task
+	 * 
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	private boolean isThereATask() {
+
+		for (int i = 0; i < projectNames.size(); i++) {
+			Project currProject = projectsList.get(i);
+			if (currProject.retrieveAllTasks().isEmpty()) {
+				continue;
+			} else if (!currProject.retrieveAllTasks().isEmpty()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/********************************** Helper for delete ******************************/
+	/**
+	 * This method helps to remove tasks from a certain project. Used for
+	 * undo/redo functions where the an entire project deletion may be undone in
+	 * an undo/redo command.
+	 *
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	private ArrayList<Task> searchForTask(String taskDescription) {
+
+		ArrayList<Task> positiveMatches = new ArrayList<Task>();
+		for (int i = 0; i < projectsList.size(); i++) {
+			ArrayList<Task> tasksInCurrProject = projectsList.get(i)
+					.retrieveAllTasks();
+			for (int j = 0; j < tasksInCurrProject.size(); j++) {
+				Task currTask = tasksInCurrProject.get(j);
+				if (currTask.getTaskDescription().contains(taskDescription)) {
+					positiveMatches.add(currTask);
+				}
+			}
+		}
+		return positiveMatches;
+	}
+
+	/************************************ Helpers for Mark as complete ****************************/
+	
+	/**
+	 * This method helps to mark tasks as complete.
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	private void reset() throws IOException, ParseException {
+
+		for (int i = 0; i < projectNames.size(); i++) {
+			Project currProject = projectsList.get(i);
+
+			ArrayList<Task> currTaskList = currProject.retrieveAllTasks();
+			for (Task t : currTaskList) {
+				currProject.deleteTask(t);
+			}
+		}
+
+		UIHandler.getInstance().printToDisplay(MESSAGE_RESET);
+	}
+
+	/************************************* Date Helpers ***************************************/
+	/**
+	 * This method helps to compare two dates. Helps in sorting them out when
+	 * they are displayed.
+	 * 
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	public int compareDate(Task task1, Task task2) {
+		if (task1.getDeadline() == null && task2.getDeadline() == null) {
+			return 0;
+		} else if (task1.getDeadline() != null && task2.getDeadline() == null) {
+			return 1;
+		} else if (task1.getDeadline() == null && task2.getDeadline() != null) {
+			return -1;
+		} else if (task1.getDeadline() != null && task2.getDeadline() != null) {
+			return task1.getDeadline().compareTo(task2.getDeadline());
+		}
+
+		return 0;
+	}
+
+	/**
+	 * This method helps to set the date in the format used internally within
+	 * the program.
+	 * 
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	private Date getDate(int year, int month, int day) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(0);
+		cal.set(year, month, day, 0, 0, 0);
+		Date date = cal.getTime();
+		return date;
+	}
+
+	/**
+	 * This method helps to parse the date input into a more readable string.
+	 * 
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	private String parseDate(String input) {
+		String[] components = input.split("-");
+		String date = components[0];
+		String month = components[1];
+		String year = components[2];
+
+		return date + " " + convertToMonth(month) + " " + year;
+	}
+
+	private String convertToMonth(String month) {
+		return months[Integer.parseInt(month)];
+	}
+
+	private void populateMonths() {
+		months[0] = "Jan";
+		months[1] = "Feb";
+		months[2] = "Mar";
+		months[3] = "Apr";
+		months[4] = "May";
+		months[5] = "Jun";
+		months[6] = "Jul";
+		months[7] = "Aug";
+		months[8] = "Sep";
+		months[9] = "Oct";
+		months[10] = "Nov";
+		months[11] = "Dec";
+	}
+
+	/********************************** Multi-purpose helpers ******************************/
+	/**
+	 * This method helps to check if two dates are equal.
+	 * 
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	@SuppressWarnings("deprecation")
+	private boolean isDateEqual(Date d1, Date d2) {
+		if (d1.getDate() != d2.getDate()) {
+			return false;
+		}
+
+		if (d1.getMonth() != d2.getMonth()) {
+			return false;
+		}
+
+		if (d1.getYear() != d2.getYear()) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * This method helps find the index of a project given its name.
+	 * 
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	private int findIndex(String projectName) {
+		for (int i = 0; i < projectNames.size(); i++) {
+			if (projectNames.get(i).equals(projectName)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	/**
+	 * This method helps to find the index of the project given the name of a
+	 * project
+	 * 
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	private Project findProject(String projectName) {
+		int index = findIndex(projectName);
+		Project p = projectsList.get(index);
+		return p;
+	}
+
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Project.java
+	 */
+
+		 *
+		 */
+		private class deadlineComparator implements Comparator<Task> {
+			public int compare(Task one, Task two) {
+				return one.getDeadline().compareTo(two.getDeadline());
+			}
+		}
+		
+		/**
+		 * Puts the task with earlier start date first.
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Project.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\CRUDTest.java
+	 */
+
+package Logic.Engine.Tests;
+
+import static org.junit.Assert.*;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.Date;
+
+import org.junit.Test;
+
+import Logic.Engine.Engine;
+import Logic.Engine.Task;
+import Logic.CommandType.*;
+
+/**
+ * This class tests the various operations that are used in Engine.
+ *
+ */
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\CRUDTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\CRUDTest.java
+	 */
+
+	@SuppressWarnings("static-access")
+	@Test
+	public void testAddFloating() throws IOException, ParseException {
+		ResetCommandType resetCommandType = new ResetCommandType();
+		E.executeCommand(resetCommandType);
+		AddCommandType addCommandType = new AddCommandType(
+				TASK_DESCRIPTION_FLOATING);
+		E.executeCommand(addCommandType);
+
+		if (E.projectsList.get(E.projectsList.size() - 1).retrieveAllTasks()
+				.get(0).getTaskDescription().equals(TASK_DESCRIPTION_FLOATING)) {
+			assert (true);
+		} else {
+			fail();
+		}
+
+		E.executeCommand(resetCommandType);
+	}
+	
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\CRUDTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\CRUDTest.java
+	 */
+
+	@SuppressWarnings("static-access")
+	@Test
+	public void testAddDeadline() throws IOException, ParseException {
+		ResetCommandType resetCommandType = new ResetCommandType();
+		E.executeCommand(resetCommandType);
+		AddCommandType addCommandType = new AddCommandType(
+				TASK_DESCRIPTION_DEADLINE);
+		E.executeCommand(addCommandType);
+
+		if (E.projectsList.get(E.projectsList.size() - 1).retrieveAllTasks()
+				.get(0).getTaskDescription().equals(TASK_DESCRIPTION_DEADLINE)) {
+			assert (true);
+		} else {
+			fail();
+		}
+
+		E.executeCommand(resetCommandType);
+	}
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\CRUDTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\CRUDTest.java
+	 */
+
+	@SuppressWarnings("static-access")
+	@Test
+	public void testAddInterval() throws IOException, ParseException {
+		ResetCommandType resetCommandType = new ResetCommandType();
+		E.executeCommand(resetCommandType);
+		AddCommandType addCommandType = new AddCommandType(
+				TASK_DESCRIPTION_INTERVAL);
+
+		E.executeCommand(addCommandType);
+		if (E.projectsList.get(E.projectsList.size() - 1).retrieveAllTasks()
+				.get(0).getTaskDescription().equals(TASK_DESCRIPTION_INTERVAL)) {
+			assert (true);
+		} else {
+			fail();
+		}
+
+		E.executeCommand(resetCommandType);
+	}
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\CRUDTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\CRUDTest.java
+	 */
+
+	@SuppressWarnings("static-access")
+	@Test
+	public void testAddProject() throws IOException, ParseException {
+		ResetCommandType resetCommandType = new ResetCommandType();
+		E.executeCommand(resetCommandType);
+		AddCommandType addCommandType = new AddCommandType(
+				TASK_DESCRIPTION_PROJECT, null, "CS2103");
+		E.executeCommand(addCommandType);
+		Logic.Engine.Task currTask = E.projectsList.get(1).getFloatingList()
+				.get(0);
+		if (currTask.getTaskDescription().equals(TASK_DESCRIPTION_PROJECT)
+				&& (currTask.getProjectName().equals("CS2103"))) {
+			assert (true);
+		} else {
+			fail();
+		}
+
+		E.executeCommand(resetCommandType);
+	}
+	
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\CRUDTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\CRUDTest.java
+	 */
+
+	@Test
+	public void testDisplay() throws IOException, ParseException {
+		ResetCommandType resetCommandType = new ResetCommandType();
+		E.executeCommand(resetCommandType);
+
+		AddCommandType addCommandType = new AddCommandType(
+				TASK_DESCRIPTION_FLOATING);
+		E.executeCommand(addCommandType);
+		
+		DisplayCommandType displayCommandType = new DisplayCommandType("all");
+		E.executeCommand(displayCommandType);
+		
+		if(Engine.ListByDate.get(Engine.ListByDate.size() - 1).getList().get(0).getTaskDescription().equals(TASK_DESCRIPTION_FLOATING)){
+			assert(true);}
+		
+			else{
+				fail();
+			}
+		
+		E.executeCommand(resetCommandType);
+	}
+
+
+	/******************************** Testing of Undo ********************************/
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\CRUDTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\CRUDTest.java
+	 */
+
+	@SuppressWarnings("static-access")
+	@Test
+	public void testUndoForAdd() throws IOException, ParseException {
+
+		ResetCommandType resetCommandType = new ResetCommandType();
+		E.executeCommand(resetCommandType);
+		AddCommandType addCommandType = new AddCommandType(
+				TASK_DESCRIPTION_FLOATING);
+		E.executeCommand(addCommandType);
+		
+		UndoCommandType undoCommandType = new UndoCommandType();
+		E.executeCommand(undoCommandType);
+		
+		if (E.projectsList.get(E.projectsList.size() - 1).isEmpty()) {
+			assert (true);
+		} else {
+			fail();
+		}
+
+		E.executeCommand(resetCommandType);
+	}
+
+	/******************************** Testing of Redo ********************************/
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\CRUDTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\CRUDTest.java
+	 */
+
+	@SuppressWarnings("static-access")
+	@Test
+	public void testRedo() throws IOException, ParseException {
+		ResetCommandType resetCommandType = new ResetCommandType();
+		E.executeCommand(resetCommandType);
+		
+		AddCommandType addCommandType = new AddCommandType(
+				TASK_DESCRIPTION_FLOATING);
+		E.executeCommand(addCommandType);
+		
+		DeleteCommandType deleteCommandType = new DeleteCommandType("finish");
+		E.executeCommand(deleteCommandType);
+		
+		UndoCommandType undoCommandType = new UndoCommandType();
+		E.executeCommand(undoCommandType);
+		
+		RedoCommandType redoCommandType = new RedoCommandType();
+		E.executeCommand(redoCommandType);
+		
+		
+		if (E.projectsList.get(E.projectsList.size() - 1).isEmpty()) {
+			assert (true);
+		} else {
+			fail();
+		}
+
+		E.executeCommand(resetCommandType);
+	}
+
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\CRUDTest.java
+
+
+
+
+

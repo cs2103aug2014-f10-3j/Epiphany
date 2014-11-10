@@ -1,0 +1,1051 @@
+//@author: a0118794r
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\deleteObserver.java
+	 */
+
+package Logic.Engine;
+
+import java.io.IOException;
+
+import Logic.Exceptions.CancelDeleteException;
+
+public interface deleteObserver {
+	int[] askForAdditionalInformationForDelete() throws CancelDeleteException, IOException;
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\deleteObserver.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	private void run() throws IOException, ParseException {
+		new ASCIIArt().generateArt("EPIPHANY");
+		UIHandler.getInstance().printToDisplay(MESSAGE_WELCOME);
+		initializeDS();
+		initializeEngine();
+	}
+
+	/**
+	 * Initializes the main data structures to be used by engine. 
+	 * 
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	private void initializeDS() throws IOException, ParseException {
+		projectsList = new ArrayList<Project>();
+		projectNames = new ArrayList<String>();
+		interp = new EpiphanyInterpreter();
+		undoStack = new Stack<PastCommands>();
+		redoStack = new Stack<PastCommands>();
+		months = new String[12];
+		populateMonths();
+	}
+
+	/**
+	 * Reads in relevant saved data and boots Epiphany Engine.
+	 * 
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	public enum CommandTypesEnum {
+		ADD, DISPLAY, DELETE, RESET, EXIT, INVALID, SEARCH, EDIT, UNDO, REDO, COMPLETE
+	};
+
+	/**
+	 * Takes a command type input, as is given by the interpreter and returns
+	 * the appropriate case to be executed. 
+	 * 
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	private CommandTypesEnum determineCommandType(CommandType commandType) {
+		if (commandType == null)
+			throw new Error(MESSAGE_ERROR_COMMAND_TYPE_NULL);
+		if (commandType.getType().equalsIgnoreCase("add")) {
+			return CommandTypesEnum.ADD;
+		} else if (commandType.getType().equalsIgnoreCase("display")) {
+			return CommandTypesEnum.DISPLAY;
+		} else if (commandType.getType().equalsIgnoreCase("delete")) {
+			return CommandTypesEnum.DELETE;
+		} else if (commandType.getType().equalsIgnoreCase("search")) {
+			return CommandTypesEnum.SEARCH;
+		} else if (commandType.getType().equalsIgnoreCase("edit")) {
+			return CommandTypesEnum.EDIT;
+		} else if (commandType.getType().equalsIgnoreCase("undo")) {
+			return CommandTypesEnum.UNDO;
+		} else if (commandType.getType().equalsIgnoreCase("redo")) {
+			return CommandTypesEnum.REDO;
+		} else if (commandType.getType().equalsIgnoreCase("complete")) {
+			return CommandTypesEnum.COMPLETE;
+		} else if (commandType.getType().equalsIgnoreCase("reset")) {
+			return CommandTypesEnum.RESET;
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * This method helps to execute the command as is expected from the above
+	 * method.
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	public void executeCommand(CommandType userCommand) throws IOException,
+			ParseException {
+		CommandTypesEnum commandType = determineCommandType(userCommand);
+
+		switch (commandType) {
+		case ADD:
+			AddCommandType addUserCommand = (AddCommandType) userCommand;
+			add(addUserCommand.getDescription(), addUserCommand.getDateFrom(),
+					addUserCommand.getDateTo(), addUserCommand.getProjectName());
+			break;
+
+		case DISPLAY:
+			DisplayCommandType displayUserCommand = (DisplayCommandType) userCommand;
+			displayOverall(displayUserCommand.getModifiers());
+			break;
+
+		case DELETE:
+			DeleteCommandType deleteUserCommand = (DeleteCommandType) userCommand;
+			delete(deleteUserCommand.getTaskDescription(),
+					deleteUserCommand.getProjectName());
+			break;
+
+		case SEARCH:
+			SearchCommandType searchUserCommand = (SearchCommandType) userCommand;
+			searchInProj(searchUserCommand.getTaskDescription(),
+					searchUserCommand.getProjectName());
+			break;
+
+		case EDIT:
+			EditCommandType editUserCommand = (EditCommandType) userCommand;
+			edit(editUserCommand.getTaskDescription(),
+					editUserCommand.getProjectName());
+			break;
+
+		case UNDO:
+			undo();
+			break;
+
+		case REDO:
+			redo();
+			break;
+
+		case RESET:
+			reset();
+			break;
+
+		case COMPLETE:
+			CompleteCommandType completeUserCommand = (CompleteCommandType) userCommand;
+			checkCompleteTask(completeUserCommand.getTaskDescription());
+			break;
+
+		default:
+			throw new Error(MESSAGE_ERROR_WRONG_CMDTYPE);
+		}
+	}
+
+	/********************** Add Methods ***********************************/
+	/**
+	 * This method helps to check if the task being entered is a duplicate and
+	 * subsequently adds it to the appropriate project. 
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	private void checkCompleteTask(String input) throws IOException {
+		Task mostRecentTask = new Task();
+		ArrayList<Task> tasksToBeCompleted = new ArrayList<Task>();
+		tasksToBeCompleted = searchForTask(input);
+
+		if (tasksToBeCompleted.size() == 0) {
+			UIHandler.getInstance().printToDisplayRed(MESSAGE_NO_ENTRY);
+
+		} else if (tasksToBeCompleted.size() == 1) {
+			Task targetTask = tasksToBeCompleted.get(0);
+			mostRecentTask = targetTask;
+			updateBackEnd(mostRecentTask);
+			markTaskDescriptionAsComplete(mostRecentTask);
+
+		} else if (tasksToBeCompleted.size() > 1) {
+
+			ArrayList<Task> temp;
+			temp = tasksToBeCompleted;
+			displayArrayList(temp);
+			UIHandler.getInstance().printToDisplay(
+					MESSAGE_SPECIFY_INDEX_FOR_ISCOMPLETE);
+			int[] inputForComplete = new int[N];
+
+			try {
+				inputForComplete = interp
+						.askForAdditionalInformationForDelete();
+				if (inputForComplete.length == 0) {
+					UIHandler.getInstance().printToDisplayRed(
+							MESSAGE_NO_INDEX_SPECIFIED);
+				} else {
+					for (int i = 0; i < inputForComplete.length; i++) {
+						if (inputForComplete[i] <= temp.size()) {
+							Task taskToBeDeleted = temp
+									.get(inputForComplete[i] - 1);
+							mostRecentTask = taskToBeDeleted;
+							updateBackEnd(mostRecentTask);
+							markTaskDescriptionAsComplete(mostRecentTask);
+						}
+					}
+				}
+			} catch (CancelDeleteException e) {
+				return;
+			}
+		} else {
+			UIHandler.getInstance().printToDisplayRed(
+					MESSAGE_ERROR_INVALID_TASK);
+		}
+	}
+	
+
+	/********************************* Helper methods *************************************/
+
+	/********************************* Helpers for display ********************************/
+
+	/**
+	 * This method helps to display all the tasks according to their deadlines.
+	 * 
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	 */
+
+	public void markTaskDescriptionAsComplete(Task input) {
+		if (input.isCompleted() == true) {
+
+			String toDisplay = input.getDuplicateTaskDescription()
+					+ MESSAGE_MARKED_AS_ONGOING;
+			UIHandler.getInstance().printToDisplayGreen(toDisplay);
+		} else {
+
+			input.setInstruction(input.getDuplicateTaskDescription());
+			String toDisplay = input.getDuplicateTaskDescription()
+					+ MESSAGE_MARKED_AS_COMPLETE;
+			UIHandler.getInstance().printToDisplayGreen(toDisplay);
+		}
+	}
+	/**
+	 * This method helps to strike-through text.
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	 */
+	public String strikeThroughText(String input) {
+		String output;
+		AttributedString str_attribute = new AttributedString(input);
+		str_attribute.addAttribute(TextAttribute.STRIKETHROUGH, input.length());
+		output = str_attribute.toString();
+		return output;
+	}
+	/**
+	 * Updates the completion status of a task and ensures that the the update
+	 * is reflected in storage.
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	 */
+	private void updateBackEnd(Task mostRecentTask) throws IOException {
+		String pName = mostRecentTask.getProjectName();
+		int index = findIndex(pName);
+		if (index < -1) {
+			UIHandler.getInstance().printToDisplayRed("error");
+		} else {
+			completeTaskFromProj(mostRecentTask);
+		}
+	}
+
+	/**
+	 * Updates the completion status of a task which is in a project.
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	 */
+	
+	private void completeTaskFromProj(Task taskToBeDeleted) throws IOException {
+		String projectName = taskToBeDeleted.getProjectName();
+		int indexProject = findIndex(projectName);
+
+		Project currProject = projectsList.get(indexProject);
+
+		currProject.deleteTask(taskToBeDeleted);
+		ArrayList<Task> taskList = currProject.retrieveAllTasks();
+
+		if (taskList.isEmpty()
+				&& !currProject.getProjectName().equals("default")) {
+
+			projectsList.remove(indexProject);
+			projectNames.remove(projectName);
+			Writer.deleteProject(projectName, projectNames);
+		} else {
+		}
+
+		addToUndoStack("delete", taskToBeDeleted.getProjectName(),
+				taskToBeDeleted, taskToBeDeleted.getParity());
+	}
+
+	/******************************** Reset **********************************/
+	/**
+	 * This method helps clear all projects and tasks from the running copy of
+	 * engine.
+	 * 
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Task.java
+	 */
+
+	 */
+	public void setStatus() { 
+		this.isCompleted = !this.isCompleted;
+		if (this.isCompleted) {
+			this.completionStatus = " [DONE]";
+			this.color = colors.get("green");
+		} else {
+			this.completionStatus = "";
+			this.color = colors.get("reset");
+		}
+	}
+	
+	/**
+	 * Mark this task as overdue
+	 */
+	public void setOverdue(){
+		this.color = colors.get("red");
+	}
+
+	public String getType() {
+		if (!this.hasDeadLine()) {
+			return "floating";
+		} else if (this.hasInterval()) {
+			return "interval";
+		} else {
+			return "deadline";
+		}
+	}
+
+	/********************** String Methods ******************************/
+
+	@Override
+	public String toString() {
+		String s = null;
+
+		if (this.from == null && this.deadLine != null) {
+			s = this.getType() + "~" + this.getTaskDescription() + "~" + "null" + "~" + this.getDeadline().toString() + "~" + this.getProjectName() + "~" + this.isCompleted();
+		} else if (this.from == null && this.deadLine == null) {
+			s = this.getType() + "~" + this.getTaskDescription() + "~" + "null" + "~" + "null" + "~" + this.getProjectName() + "~" + this.isCompleted();
+		} else if (this.from != null && this.deadLine != null) {
+			s = this.getType() + "~" + this.getTaskDescription() + "~" + this.getStartDate().toString() + "~" + this.getDeadline().toString() + "~" + this.getProjectName() + "~" + this.isCompleted();
+		}
+		return s;
+	}
+
+	@SuppressWarnings("deprecation")
+	public String printTaskForDisplay(String command) {
+		String s = null;
+
+		if (this.getProjectName().equals("default")) {
+			if (this.hasInterval()) {
+				if (isSingleDayTask(this.getStartDate(), this.deadLine)) {
+					// print time diff
+					if (command.equals("search")) {
+						s = this.getTaskDescription() + " from "
+								+ formatToTime(this.getStartDate()) + " to "
+								+ formatToTime(this.getDeadline()) + "\t"
+								+ this.deadLineToString()
+								+ this.completionStatus;
+
+					} else if (command.equals("display")) {
+						s = this.getTaskDescription() + " from "
+								+ formatToTime(this.getStartDate()) + " to "
+								+ formatToTime(this.getDeadline())
+								+ this.completionStatus;
+					}
+				} else {
+					s = this.getTaskDescription() + " from "
+							+ this.getStartDate().getDate() + " "
+							+ formatToMonth(this.getStartDate().getMonth())
+							+ " to " + this.getDeadline().getDate() + " "
+							+ formatToMonth(this.getDeadline().getMonth())
+							+ this.completionStatus;
+				}
+			} else if (this.isFloating()) {
+				s = this.getTaskDescription() + this.completionStatus;
+			} else if (this.hasDeadLine()) {
+				if (command.equals("search")) {
+					s = this.getTaskDescription() + " by "
+							+ formatToTime(this.getDeadline()) + "\t"
+							+ this.deadLineToString()
+							+ this.completionStatus;
+
+				} else if (command.equals("display")) {
+					s = this.getTaskDescription() + " by "
+							+ formatToTime(this.getDeadline()) + "\t"
+							+ this.completionStatus;
+				}
+			}
+		} else {
+			if (this.hasInterval()) {
+				if (isSingleDayTask(this.getStartDate(), this.deadLine)) {
+					// print time diff
+					if (command.equals("search")) {
+						s = this.getTaskDescription() + " from "
+								+ formatToTime(this.getStartDate()) + " to "
+								+ formatToTime(this.getDeadline()) + "\t"
+								+ this.deadLineToString()
+								+ this.completionStatus;
+						s = addSpace(s);
+						s += "\t\t #" + this.getProjectName();
+					}// lAST CHANGED
+					else if (command.equals("display")) {
+
+						s = this.getTaskDescription() + " from "
+								+ formatToTime(this.getStartDate()) + " to "
+								+ formatToTime(this.getDeadline())
+								+ this.completionStatus;
+						s = addSpace(s);
+						s += "\t\t #" + this.getProjectName();
+					}
+				} else {
+					s = this.getTaskDescription() + " from "
+							+ this.getStartDate().getDate() + " "
+							+ formatToMonth(this.getStartDate().getMonth())
+							+ " to " + this.getDeadline().getDate() + " "
+							+ formatToMonth(this.getDeadline().getMonth())
+							+ this.completionStatus;
+					s = addSpace(s);
+					s += "\t\t #" + this.getProjectName();
+				}
+			} else if (this.isFloating()) {
+				s = this.getTaskDescription() + this.completionStatus;
+				s = addSpace(s);
+				s += "\t\t #" + this.getProjectName();
+			} else if (this.hasDeadLine()) {
+				if (command.equals("search")) {
+					s = this.getTaskDescription() + " by "
+							+ formatToTime(this.getDeadline()) + "\t"
+							+ this.deadLineToString()
+							+ this.completionStatus;
+					s = addSpace(s);
+					s += "\t\t #" + this.getProjectName();
+				} else if (command.equals("display")) {
+
+					s = this.getTaskDescription() + " by "
+							+ formatToTime(this.getDeadline()) + "\t"
+							+ this.completionStatus;
+					
+					s = addSpace(s);
+					s += "\t\t #" + this.getProjectName();
+				}
+			}
+		}
+		return this.color + s;
+	}
+
+
+	// DD MMM YYYY,
+	@SuppressWarnings("deprecation")
+	public String deadLineToString() {
+		String output = "null";
+		if (this.deadLine != null) {
+			Date dLine = this.deadLine;
+			output = dLine.getDate() + " " + formatToMonth(dLine.getMonth())
+					+ " " + (dLine.getYear() + 1900);
+		} else {
+			output = "";
+		}
+		return output;
+	}
+
+	// DD MMM YYYY,
+	@SuppressWarnings("deprecation")
+	public String startDateToString() {
+		String output = "null";
+		if (this.from != null) {
+			Date startDate = this.from;
+			output = startDate.getDate() + " "
+					+ formatToMonth(startDate.getMonth()) + " "
+					+ (startDate.getYear() + 1900);
+		} else {
+			output = "";
+		}
+		return output;
+	}
+
+	@SuppressWarnings("deprecation")
+	public String getDeadLineDay() {
+		return formatToDay(this.deadLine.getDay());
+	}
+
+	/********************** Helper Methods ****************************/
+
+	private void populateMonths() {
+		months[0] = "Jan";
+		months[1] = "Feb";
+		months[2] = "Mar";
+		months[3] = "Apr";
+		months[4] = "May";
+		months[5] = "Jun";
+		months[6] = "Jul";
+		months[7] = "Aug";
+		months[8] = "Sep";
+		months[9] = "Oct";
+		months[10] = "Nov";
+		months[11] = "Dec";
+	}
+
+	private static String formatToMonth(int input) {
+		return months[input];
+	}
+
+	private void populateDays() {
+		days[0] = "Sunday";
+		days[1] = "Monday";
+		days[2] = "Tuesday";
+		days[3] = "Wednesday";
+		days[4] = "Thursday";
+		days[5] = "Friday";
+		days[6] = "Saturday";
+	}
+
+	private static String formatToDay(int input) {
+		return days[input];
+	}
+
+	@SuppressWarnings("deprecation")
+	private static String formatToTime(Date d) {
+		String output = "";
+		int hour = d.getHours();
+		int minutes = d.getMinutes();
+
+		if (hour < 12) {
+			// am
+			if (hour == 0) {
+				output = "midnight";
+			} else if(minutes == 0) {
+				output = hour + "am";
+			}else {
+				output = hour + ":" + minutes + "am";
+			}
+
+		} else if (hour > 12) {
+			// pm
+			if (minutes == 0) {
+				output = (hour % 12) + "pm";
+			} else {
+				output = (hour % 12) + ":" + minutes + "pm";
+			}
+		} else {
+			if (minutes == 0) {
+				output = "noon";
+			} else {
+				output = 12 + ":" + minutes + "pm";
+			}
+		}
+
+		return output;
+
+	}
+
+	@SuppressWarnings("deprecation")
+	private static boolean isSingleDayTask(Date d1, Date d2) {
+		return (d1.getDate() == d2.getDate() && d1.getMonth() == d2.getMonth() && d1
+				.getYear() == d2.getYear());
+	}
+
+	/**
+	 * Method to maitain consistent spacing for project names during display
+	 * @param s
+	 * @return
+	 */
+	private static String addSpace(String s) {
+		int numOfSpaces = 40 - s.length();
+
+		for (int i = 0; i < numOfSpaces; i++) {
+			s += " ";
+		}
+
+		return s;
+	}
+	
+	/**
+	 * A Dictionary of colors.
+	 * Keys being the color names and the values their respective ANSI color codes
+	 */
+	private static void populateColors(){
+		colors = new HashMap<String, String>();
+		colors.put("green", "\033[32m");
+		colors.put("red", "\033[31m");
+		colors.put("black", "\033[30m");
+		colors.put("white", "\033[37m");
+		colors.put("reset", "\033[0m");
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof Task) {
+			Task t = (Task) o;
+			if (!t.getTaskDescription().equals(this.getTaskDescription())) {
+				return false;
+			}
+
+			if (this.getDeadline() != null && t.getDeadline() != null) {
+				return this.getDeadline().equals(t.getDeadline());
+			}
+			if ((this.getDeadline() == null && t.getDeadline() != null)) {
+				return false;
+			}
+			if ((this.getDeadline() != null && t.getDeadline() == null)) {
+				return false;
+			}
+
+			if (this.getStartDate() != null && t.getStartDate() != null) {
+				return this.getStartDate().equals(t.getStartDate());
+			}
+			if ((this.getStartDate() == null && t.getStartDate() != null)) {
+				return false;
+			}
+			if ((this.getStartDate() != null && t.getStartDate() == null)) {
+				return false;
+			}
+
+			if (!t.getType().equals(this.getType())) {
+				return false;
+			}
+			if (!t.getProjectName().equals(this.getProjectName())) {
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Task.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\CRUDTest.java
+	 */
+
+public class CRUDTest {
+	Engine E;
+	private static final String TASK_DESCRIPTION_FLOATING = "finish tutorial 5";
+	private static final String TASK_DESCRIPTION_DEADLINE = "finish V0.5 by tomorrow";
+	private static final String TASK_DESCRIPTION_INTERVAL = "complete accounting work from monday to thursday";
+	private static final String TASK_DESCRIPTION_PROJECT = "finish project";
+	private static final String TASK_DESCRIPTION_PROJECT2 = "finish lecture 10";
+	private static final String TASK_DESCRIPTION_1 = "do something";
+	private static final String TASK_DESCRIPTION_2 = "hello world";
+	
+	/************ Constructor **************/
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\CRUDTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\CRUDTest.java
+	 */
+
+	public CRUDTest() throws IOException, ParseException {
+		E = Engine.getInstance();
+	}
+	
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\CRUDTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\CRUDTest.java
+	 */
+
+	public void taskIsEquals(Task Actual, String name, Date deadLine, Date startDate, String projectName, Boolean isCompleted) {
+		assertEquals(Actual.getTaskDescription(), name);
+		assertEquals(Actual.getDeadline(), deadLine);
+		assertEquals(Actual.getStartDate(), startDate);
+		assertEquals(Actual.getProjectName(), projectName);
+		assertEquals(Actual.isCompleted(), isCompleted);
+	}
+	
+	/*
+	 * Test must be conducted with an empty storage!!!!! Otherwise it will fail
+	 * 
+	 */
+
+
+	/******************************** Testing for add ********************************/
+	
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\CRUDTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\CRUDTest.java
+	 */
+
+	@SuppressWarnings("static-access")
+	@Test
+	public void testAddFloating2() throws IOException, ParseException {
+		ResetCommandType resetCommandType = new ResetCommandType();
+		E.executeCommand(resetCommandType);
+		
+		AddCommandType addCommandType = new AddCommandType(TASK_DESCRIPTION_1);
+		E.executeCommand(addCommandType);
+		
+		Task Actual = E.projectsList.get(0).getFloatingList().get(0);
+		taskIsEquals(Actual, TASK_DESCRIPTION_1, null, null, "default", false);
+	}
+	
+	
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\CRUDTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\CRUDTest.java
+	 */
+
+	@SuppressWarnings("static-access")
+	@Test
+	public void testProjectFloating() throws IOException, ParseException {
+		ResetCommandType resetCommandType = new ResetCommandType();
+		E.executeCommand(resetCommandType);
+		
+		AddCommandType addCommandType = new AddCommandType(TASK_DESCRIPTION_2, null, null, "cs2010");
+		E.executeCommand(addCommandType);
+		
+		Task Actual = E.projectsList.get(E.projectsList.size() - 1).retrieveAllTasks().get(0);
+		taskIsEquals(Actual, TASK_DESCRIPTION_2, null, null, "cs2010", false);
+	}
+	
+
+	/******************************** Testing of Delete ********************************/
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\CRUDTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\CRUDTest.java
+	 */
+
+	@Test
+	public void testDelete() throws IOException, ParseException {
+		ResetCommandType resetCommandType = new ResetCommandType();
+		E.executeCommand(resetCommandType);
+
+		AddCommandType addCommandType = new AddCommandType(
+				TASK_DESCRIPTION_FLOATING);
+		E.executeCommand(addCommandType);
+
+		DeleteCommandType deleteCommandType = new DeleteCommandType("finish");
+		E.executeCommand(deleteCommandType);
+
+		if (Engine.projectsList.get(0).getFloatingList().isEmpty()) {
+			assert (true);
+		} else {
+			fail();
+		}
+		E.executeCommand(resetCommandType);
+	}
+	
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\CRUDTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\CRUDTest.java
+	 */
+
+	@Test
+	public void testDeleteProject() throws IOException, ParseException {
+		ResetCommandType resetCommandType = new ResetCommandType();
+		E.executeCommand(resetCommandType);
+
+		AddCommandType addCommandType = new AddCommandType(
+				TASK_DESCRIPTION_PROJECT, null, "CS2103");
+		AddCommandType addCommandType2 = new AddCommandType(
+				TASK_DESCRIPTION_PROJECT2, null, "CS2103");
+		E.executeCommand(addCommandType);
+		E.executeCommand(addCommandType2);
+
+		DeleteCommandType deleteCommandType = new DeleteCommandType("#cs2103");
+		E.executeCommand(deleteCommandType);
+
+		if (Engine.projectsList.get(0).getFloatingList().isEmpty()) {
+			assert (true);
+		} else {
+			fail();
+		}
+		E.executeCommand(resetCommandType);
+	}
+
+	/******************************** Testing of Search ********************************/
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\CRUDTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\CRUDTest.java
+	 */
+
+	@SuppressWarnings("static-access")
+	@Test
+	public void searchTest() throws IOException, ParseException {
+		ResetCommandType resetCommandType = new ResetCommandType();
+		E.executeCommand(resetCommandType);
+
+		AddCommandType addCommandType = new AddCommandType(
+				TASK_DESCRIPTION_FLOATING);
+		E.executeCommand(addCommandType);
+		SearchCommandType searchCommandType = new SearchCommandType(
+				TASK_DESCRIPTION_FLOATING);
+		E.executeCommand(searchCommandType);
+
+		Logic.Engine.Task Actual = E.projectsList.get(0).getFloatingList()
+				.get(0);
+
+		assertEquals(Actual.getTaskDescription(), TASK_DESCRIPTION_FLOATING);
+		assertEquals(Actual.getDeadline(), null);
+		assertEquals(Actual.getStartDate(), null);
+		assertEquals(Actual.getProjectName(), "default");
+		assertEquals(Actual.isCompleted(), false);
+
+		E.executeCommand(resetCommandType);
+	}
+	
+	/******************************** Testing of Display ********************************/
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\CRUDTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\UIHandler.java
+	 */
+
+package Logic.Interpreter;
+
+import java.awt.FontFormatException;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.HashMap;
+
+import org.fusesource.jansi.AnsiConsole;
+
+/**
+ * This is a singleton class that can be instantiated and used to perform
+ * all display to the user interface.
+ *
+ */
+
+public class UIHandler{
+
+	public static UIHandler uiHandler;
+	private static HashMap<String, String> colors;
+	
+	private UIHandler() throws IOException, ParseException, FontFormatException {
+		 AnsiConsole.systemInstall();
+		uiHandler=this;
+		colors = new HashMap<String, String>();
+		populateColors();
+	}
+	
+	private static void populateColors(){
+		colors.put("green", "\033[32m");
+		colors.put("red", "\033[31m");
+		colors.put("black", "\033[30m");
+		colors.put("white", "\033[37m");
+	}
+
+	/**
+	 * Obtain a instance of the class
+	 * @return UIHandler
+	 * @throws ParseException 
+	 * @throws IOException 
+	 */
+	public static UIHandler getInstance(){
+		if(uiHandler == null){
+			try {
+				uiHandler = new UIHandler();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} 
+		return uiHandler;
+	}
+
+	/**
+	 * Prints parameter to Terminal.
+	 * @param toPrint
+	 */
+	public void printToTerminal(String toPrint){
+		System.out.println(toPrint);
+	}
+
+	/**
+	 * Prints parameter inline to Terminal.
+	 * @param toPrint
+	 * @param modifier
+	 */
+	public void printToTerminal(String toPrint, String modifier){
+		if(modifier.equals("inline")){
+			System.out.print(toPrint);
+		}else if(isColor(modifier)){
+			System.out.println(colors.get(modifier) + toPrint);
+		}else{
+			System.out.println("error");
+		}
+	}
+
+	/**
+	 * Prints paramter to Display Console
+	 * @param toPrint
+	 */
+	public void printToDisplay(String toPrint){
+		System.out.println(toPrint);
+	}
+
+	public void printToDisplay(String toPrint, String color){
+		System.out.println(toPrint);
+	}
+
+	public void strikeThroughText(String input) {
+		System.out.println("\033[9m" + input); // red when overdue
+		resetToDefault(); // to reset terminal to default system colour
+	}
+
+	// This is for completed tasks
+	public void printToDisplayGreen(String input) {
+		System.out.println("\033[1;32m" + input); // red when overdue
+		resetToDefault(); // to reset terminal to default system colour
+	}
+
+	// This is for overdue tasks
+	public void printToDisplayRed(String input) {
+		System.out.println("\033[31m" + input); // red when overdue
+		resetToDefault(); // to reset terminal to default system colour
+	}
+	
+	public void printHeader(String input) {
+		System.out.println("\033[31m" + input); // red when overdue
+		resetToDefault(); // to reset terminal to default system colour
+	}
+
+	public void resetToDefault() {
+		System.out.print("\033[0m"); // to reset terminal to default system colour
+	}
+	
+	public static boolean isColor(String input){
+		return (colors.containsKey(input));
+	}
+}
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\UIHandler.java
+
+
+
+
+

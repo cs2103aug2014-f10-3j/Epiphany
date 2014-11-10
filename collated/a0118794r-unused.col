@@ -1,0 +1,338 @@
+//@author: a0118794r-unused
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Archived\GUI\EpiphanyUI.java
+	 */
+
+package Archived.GUI;
+
+import java.awt.Color;
+import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.text.ParseException;
+
+import javax.swing.BorderFactory;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+
+import Logic.Interpreter.EpiphanyInterpreter;
+
+public class EpiphanyUI extends JFrame {
+	//INSTANCE VARIABLES
+	public EpiphanyInterpreter interpreter;
+	public static EpiphanyUI epiphanyUI;
+	JLabel systemStatusLabel;
+	JTextField userInputField;
+	JTextArea displayArea;
+	//STATIC VARIABLES
+	private static final Font systemFont = new Font("consolas", Font.PLAIN, 14);
+	private static final Font statusFont = new Font("consolas", Font.PLAIN, 11);
+	private static final Font titleFont = new Font("consolas", Font.BOLD, 14);
+	
+	public static EpiphanyUI getInstance() throws IOException, ParseException{
+		if(epiphanyUI==null){
+			epiphanyUI = new EpiphanyUI();
+		}
+		return epiphanyUI;
+	}
+
+	public EpiphanyUI() throws IOException, ParseException {
+		epiphanyUI = this;
+		this.setVisible(true);
+		interpreter = new EpiphanyInterpreter();
+		setTitle("Epiphany");
+		setSize(500, 650);
+		setResizable(false);
+		getContentPane().setBackground(Color.black);
+		setLocationRelativeTo(null);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setLayout(null);
+
+		systemStatusLabel = setSystemStatusLabel();
+		userInputField = setUserInputField();
+		displayArea = setDisplayArea();
+
+		JLabel titleLabel = new JLabel();
+		titleLabel.setBackground(Color.black);
+		titleLabel.setForeground(Color.LIGHT_GRAY);
+		titleLabel.setFont(titleFont);
+		titleLabel.setText("Epiphany");
+		titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		titleLabel.setBounds(2, 2, 490, 30);
+		add(titleLabel);
+
+		this.changeSystemStatusTo("Welcome to Epiphany! Please enter a task.");
+	}
+
+	private JTextArea setDisplayArea() {
+
+		JTextArea tArea = new JTextArea();
+		tArea.setBackground(Color.black);
+		tArea.setForeground(Color.LIGHT_GRAY);
+		tArea.setLineWrap(true);
+		tArea.setEditable(false);
+		JScrollPane scrollPanel = new JScrollPane(tArea);
+		scrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		scrollPanel.setBounds(2, 32, 490, 520);
+		scrollPanel.setBackground(Color.black);
+		scrollPanel.setForeground(Color.white);
+
+		scrollPanel.setBorder(BorderFactory.createCompoundBorder(
+				BorderFactory.createLineBorder(Color.LIGHT_GRAY), 
+		        BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+		add(scrollPanel);
+		return tArea;
+	}
+
+
+	private JTextField setUserInputField() {
+
+		JTextField userInputField = new JTextField();
+		userInputField.setBounds(2,560,490,35);
+		userInputField.setBackground(Color.black);
+		userInputField.setForeground(Color.white);
+		userInputField.setBorder(BorderFactory.createCompoundBorder(
+				BorderFactory.createLineBorder(Color.LIGHT_GRAY), 
+		        BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+		userInputField.addActionListener(new TextFieldListener());
+		add(userInputField);
+		userInputField.setFont(systemFont);
+		return userInputField;
+	}
+
+	public void changeDisplayTo(String toDisplay){
+		displayArea.append(toDisplay + "\n");
+	}
+	
+	public void resetDisplay(){
+		displayArea.setText("");
+	}
+	
+	public void changeSystemStatusTo(String newStatus){
+		systemStatusLabel.setText(newStatus);
+	}
+
+	public void changeSystemStatusTo(String newStatus, Color newColor){
+		systemStatusLabel.setText(newStatus);
+		systemStatusLabel.setForeground(newColor);
+	}
+
+	private JLabel setSystemStatusLabel() {
+		JLabel systemStatusLabel = new JLabel();
+		systemStatusLabel.setBounds(2,595,490,25);
+		systemStatusLabel.setBackground(Color.LIGHT_GRAY);
+		systemStatusLabel.setOpaque(true);
+		systemStatusLabel.setForeground(Color.black);
+		systemStatusLabel.setBorder(BorderFactory.createCompoundBorder(
+				BorderFactory.createLineBorder(Color.LIGHT_GRAY), 
+		        BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+		add(systemStatusLabel);
+		systemStatusLabel.setFont(statusFont);
+		return systemStatusLabel;
+	}
+
+	// The listener for the textfield.
+	private class TextFieldListener implements ActionListener
+	{
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			String inputString = userInputField.getText();
+			//displayArea.append(inputString + "\n");
+			userInputField.setText("");
+		}
+	}
+
+	public static void main(String[] args) {
+
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				EpiphanyUI ex;
+				try {
+					ex = new EpiphanyUI();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Archived\GUI\EpiphanyUI.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Archived\GUI\GUIController.java
+	 */
+
+package Archived.GUI;
+
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+
+
+public class GUIController {
+
+	@FXML private TextArea displayArea;
+	@FXML private TextArea terminal;
+	@FXML private TextField console;
+	@FXML private Button enterButton;
+	private Main main;
+	private static GUIController singleton = null;
+	private static final String MESSAGE_INITIALIZE = "EpiphanyGUI.GUIController.initialize";
+	private static final String MESSAGE_READY = "Epiphany is ready for your commands";
+	private static final String MESSAGE_PROMPT = "write some stuff in here! e.g. Visit cheers to buy snacks today";
+
+	/******** GUIController as a singleton object ***************/
+	public GUIController() {
+		singleton = this;
+	}
+	
+	public static GUIController getInstance() {
+		return singleton;
+	}
+	
+	/**
+	 * Initializes the controller class immediately
+	 */
+	@FXML
+	private void initialize() {
+		System.out.println(MESSAGE_INITIALIZE);
+		displayArea.setEditable(false);
+		terminal.setText(MESSAGE_READY);
+		terminal.setEditable(false);
+		console.setPromptText(MESSAGE_PROMPT);
+		console.setOnKeyReleased(keyReleasedHandler);
+	
+		enterButton.setOnAction((event) -> {
+			String text = console.getText();
+			displayArea.appendText(text + System.lineSeparator()); // instead of appending the input text, input -> interpreter -> engine -> UIhandler 
+			inputDisplayArea(text);
+			console.clear();
+		});
+	}
+	
+	/**
+	 * Handles the button action
+	 */
+	@FXML
+	private void handleButtonAction() {
+		String text = console.getText();
+		displayArea.appendText(System.lineSeparator() + text);
+	}
+	
+	/**
+	 * Accepts a string input and directly appends it to the displayArea
+	 * @param input
+	 */
+	public void inputDisplayArea(String input) {
+		displayArea.appendText(input + System.lineSeparator());
+	}
+	
+	public void inputTerminal(String input) {
+		terminal.setText(input + System.lineSeparator());
+	}
+
+	/**
+	 * Is called by the main application to give reference back to itself
+	 * @param main
+	 */
+	public void setMain(Main main) {
+		this.main = main;
+	}
+
+	private EventHandler<KeyEvent> keyReleasedHandler = new EventHandler<KeyEvent>() {
+		public void handle(final KeyEvent keyEvent){
+			if (keyEvent.getCode().equals(KeyCode.ENTER)) {
+				String text = console.getText();
+				displayArea.appendText(text + System.lineSeparator());
+				console.clear();
+			}
+		}
+	};
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Archived\GUI\GUIController.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Archived\GUI\Main.java
+	 */
+
+package Archived.GUI;
+	
+import java.io.IOException;
+
+import Archived.GUI.GUIController;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
+
+public class Main extends Application {
+	
+	private Stage primaryStage;
+	private BorderPane rootLayout;
+
+	@Override
+	public void start(Stage primaryStage) throws IOException {
+			this.primaryStage = primaryStage;
+			this.primaryStage.setTitle("Epiphany");
+			rootLayout = new BorderPane();
+			Scene scene = new Scene(rootLayout,600,600);
+			showEpiphanyOverview();
+		
+			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+			primaryStage.setScene(scene);
+			primaryStage.show();
+	}
+
+	public void showEpiphanyOverview() {
+		try {
+			// load epiphany overview
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(Main.class.getResource("EpiphanyStage.fxml"));
+			AnchorPane epiphanyOverview = (AnchorPane) loader.load();
+
+			// set epiphany overview into the centre of the root layout
+			rootLayout.setCenter(epiphanyOverview);
+			GUIController controller = loader.getController();
+			controller.setMain(this);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void main(String[] args) {
+		launch(args);
+	}
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Archived\GUI\Main.java
+
+
+
+
+

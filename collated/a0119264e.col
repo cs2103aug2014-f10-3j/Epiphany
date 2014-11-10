@@ -1,0 +1,2052 @@
+//@author: a0119264e
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\DeleteCommandType.java
+	 */
+
+package Logic.CommandType;
+
+/**
+ * This is a class that can be instantiated to represent a delete command. It can
+ * support all types of delete commands (all tasks, specific projects) Each type of delete command
+ * has a dedicated constructor.
+ */
+
+public class DeleteCommandType implements CommandType{
+	
+	private String projectName;
+	private String taskDescription;
+
+	/**
+	 * delete a task without a project
+	 * @param _taskDescription
+	 */
+	public DeleteCommandType(String _taskDescription) {
+		taskDescription = _taskDescription;
+		projectName = "default";
+	}
+	
+	/**
+	 * delete a task with a project
+	 * @param _taskDescription
+	 */
+	public DeleteCommandType(String _taskDescription, String _projectName) {
+		taskDescription = _taskDescription;
+		projectName = _projectName;
+	}
+	
+	public String getType() {
+		return "delete";
+	}
+	
+	public String getProjectName(){
+		return projectName;
+	}
+	
+	public String getTaskDescription(){
+		return taskDescription;
+	}
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\DeleteCommandType.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\DisplayCommandType.java
+	 */
+
+package Logic.CommandType;
+
+/**
+ * This is a class that can be instantiated to represent a display command. It can
+ * support all types of display commands (all tasks, specific projects) Each type of display command
+ * has a dedicated constructor.
+*/
+
+public class DisplayCommandType implements CommandType{
+
+	private String modifiers;
+	
+	public DisplayCommandType() {
+		modifiers = "all";
+	}
+	
+	public DisplayCommandType(String _modifiers) {
+		modifiers = _modifiers;
+	}
+	
+	public String getType() {
+		return "display";
+	}
+	
+	public String getModifiers() {
+		return modifiers;
+	}
+	
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\DisplayCommandType.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\EditCommandType.java
+	 */
+
+package Logic.CommandType;
+
+/**
+ * This is a class that can be instantiated to represent an edit command.
+ */
+
+public class EditCommandType implements CommandType{
+	
+	private String projectName;
+	private String taskDescription;
+
+	/**
+	 * edit a task without a project
+	 * @param _taskDescription
+	 */
+	public EditCommandType(String _taskDescription) {
+		taskDescription = _taskDescription;
+		projectName = "default";
+	}
+	
+	/**
+	 * edit a task with a project
+	 * @param _taskDescription
+	 */
+	public EditCommandType(String _taskDescription, String _projectName) {
+		taskDescription = _taskDescription;
+		projectName = _projectName;
+	}
+	
+	public String getType() {
+		return "edit";
+	}
+	
+	public String getProjectName(){
+		return projectName;
+	}
+	
+	public String getTaskDescription(){
+		return taskDescription;
+	}
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\EditCommandType.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\SearchCommandType.java
+	 */
+
+package Logic.CommandType;
+
+/**
+ * This is a class that can be instantiated to represent an search command.
+ */
+
+
+public class SearchCommandType implements CommandType{
+
+	private String taskDescription;
+	private String projectName;
+	
+	/**
+	 * Search across all projects.
+	 * @param _taskDescription
+	 */
+	public SearchCommandType(String _taskDescription) {
+		taskDescription = _taskDescription; //search everything.
+		projectName = "";
+	}
+	
+	/**
+	 * Search in a specific project.
+	 * @param _taskDescription
+	 * @param _projectName
+	 */
+	public SearchCommandType(String _taskDescription, String _projectName) {
+		taskDescription = _taskDescription; 
+		projectName = _projectName;
+	}
+	
+	public String getType() {
+		return "search";
+	}
+	
+	public String getTaskDescription(){
+		return taskDescription;
+	}
+	
+	public String getProjectName(){
+		return projectName;
+	}
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\SearchCommandType.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\UndoCommandType.java
+	 */
+
+package Logic.CommandType;
+
+/**
+ * This is a class that can be instantiated to represent an undo command. 
+ * 
+ */
+
+public class UndoCommandType implements CommandType{
+
+	public UndoCommandType(){
+		
+	}
+	
+	public String getType() {
+		return "undo";
+	}
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\UndoCommandType.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	private void initializeEngine() throws IOException, FileNotFoundException,
+			ParseException {
+
+		int noOfProjects = countLines("projectMasterList");
+		if (noOfProjects == 0) {
+			createDefault(); // Default project is created.
+		} else {
+			populateProjectNames();
+			populateProjectsWithTasks();
+		}
+	}
+
+	/**
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	 * 
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	private void createDefault() throws IOException {
+		projectNames.add("default");
+		projectsList.add(new Project("default", new ArrayList<Task>()));
+		Writer.generateDefault();
+	}
+
+	/**
+	 * Adds all tasks to their projects within engine. 
+	 * 
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	private void populateProjectsWithTasks() throws FileNotFoundException,
+			IOException, ParseException {
+		Reader reader = new Reader(projectNames, projectsList);
+		reader.readProjectData();
+	}
+
+	/**
+	 * Adds all the project names to engine.
+	 * 
+	 * 
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	private void populateProjectNames() throws FileNotFoundException,
+			IOException {
+		Reader reader = new Reader(projectNames, projectsList);
+		reader.readProjectTitles();
+	}
+
+	public static int countLines(String filename) throws IOException {
+		File file = new File("../Epiphany/src/Storage/" + filename + ".txt");
+		int lineNumber = 0;
+		if (file.exists()) {
+			FileReader fr = new FileReader(file);
+			LineNumberReader lnr = new LineNumberReader(fr);
+			while (lnr.readLine() != null) {
+				lineNumber++;
+			}
+			lnr.close();
+		}
+		return lineNumber;
+	}
+
+	/********************** Command Types Filter ***********************************/
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	private void undo() throws IOException {
+
+		if (undoStack.isEmpty()) {
+			UIHandler.getInstance().printToDisplayRed(MESSAGE_UNDO_ERROR);
+		} else {
+			PastCommands mostRecent = undoStack.pop();
+
+			String typeOfCommand = mostRecent.getType();
+			Task task = mostRecent.getTask();
+			if (!projectNames.contains(mostRecent.getProjectName())) {
+
+				Task mostRecentTask = mostRecent.getTask();
+				add(mostRecentTask.getTaskDescription(),
+						mostRecentTask.getStartDate(),
+						mostRecentTask.getDeadline(),
+						mostRecentTask.getProjectName());
+				undoStack.pop();
+				redoStack.push(mostRecent);
+
+				PastCommands top = undoStack.peek();
+
+				if (top.getTask().getParity()) {
+					while (top.getType().equals("delete")
+							&& top.getProjectName().equals(
+									mostRecentTask.getProjectName())) {
+						PastCommands recent = undoStack.pop();
+						redoStack.push(recent);
+						Task toAdd = recent.getTask();
+
+						add(toAdd.getTaskDescription(), toAdd.getStartDate(),
+								toAdd.getDeadline(), toAdd.getProjectName());
+						undoStack.pop();
+						if (undoStack.isEmpty()) {
+							break;
+						}
+						top = undoStack.peek();
+					}
+				}
+
+			} else {
+				if (typeOfCommand.equals("add")) {
+					Project p = findProject(mostRecent.getProjectName());
+					p.deleteTask(task);
+					redoStack.push(mostRecent);
+
+				} else if (typeOfCommand.equals("delete")) {
+					Task mostRecentTask = mostRecent.getTask();
+					add(mostRecentTask.getTaskDescription(),
+							mostRecentTask.getStartDate(),
+							mostRecentTask.getDeadline(),
+							mostRecentTask.getProjectName());
+					undoStack.pop();
+					redoStack.push(mostRecent);
+					if (!undoStack.isEmpty()) {
+						PastCommands top = undoStack.peek();
+
+						while (top.getType().equals("delete")) {
+
+							if (!top.getProjectName().equals(
+									mostRecentTask.getProjectName())) {
+								return;
+							}
+
+							PastCommands recent = undoStack.pop();
+							redoStack.push(recent);
+							Task toAdd = recent.getTask();
+
+							add(toAdd.getTaskDescription(),
+									toAdd.getStartDate(), toAdd.getDeadline(),
+									toAdd.getProjectName());
+							undoStack.pop();
+							if (undoStack.isEmpty()) {
+								break;
+							}
+							top = undoStack.peek();
+						}
+					}
+
+				} else if (typeOfCommand.equals("edit")) {
+
+					PastCommands first = undoStack.pop();
+
+					if (projectNames.contains(first.getProjectName())) {
+
+						int index = findIndex(first.getProjectName());
+						Project p = projectsList.get(index);
+
+						if (first.getType().equals("add")) {
+							p.deleteTask(first.getTask());
+						}
+					}
+
+					PastCommands toPut = undoStack.peek();
+
+					if (projectNames.contains(toPut.getProjectName())) {
+						int index = findIndex(toPut.getProjectName());
+						Project p = projectsList.get(index);
+						p.addTask(toPut.getTask());
+					}
+
+					redoStack.push(first);
+					redoStack.push(toPut);
+					redoStack.push(mostRecent);
+				}
+
+				UIHandler.getInstance().printToDisplayGreen(
+						MESSAGE_UNDO_SUCCESS);
+			}
+		}
+	}
+
+	/********************************** Redo Method ***********************************/
+	/**
+	 * This method helps to revert undo's, infinitely until exhaustion.
+	 * 
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	private void redo() throws IOException {
+
+		if (redoStack.isEmpty()) {
+			UIHandler.getInstance().printToDisplayRed(MESSAGE_REDO_ERROR);
+		} else {
+			PastCommands mostRecent = redoStack.pop();
+
+			String type = mostRecent.getType();
+			Task task = mostRecent.getTask();
+
+			if (type.equals("add")) {
+				if (projectNames.contains(task.getProjectName())) {
+					// Match found
+
+					int index = findIndex(task.getProjectName());
+					Project p = projectsList.get(index);
+					p.addTask(task);
+
+				}
+
+			} else if (type.equals("delete")) {
+				if (projectNames.contains(task.getProjectName())) {
+
+					Task toAdd = mostRecent.getTask();
+					deleteForRedo(toAdd.getTaskDescription(),
+							toAdd.getProjectName());
+					if (!undoStack.isEmpty()) {
+						undoStack.pop();
+					}
+					if (!redoStack.isEmpty()) {
+						PastCommands top = redoStack.peek();
+
+						if (top.getTask().getParity()) {
+							while (top.getType().equals("delete")
+									&& top.getProjectName().equals(
+											toAdd.getProjectName())) {
+								Task recent = redoStack.pop().getTask();
+								delete(recent.getTaskDescription(),
+										recent.getProjectName());
+								if (!undoStack.isEmpty()) {
+									undoStack.pop();
+								}
+								if (redoStack.isEmpty()) {
+									return;
+								}
+								top = redoStack.peek();
+							}
+
+						} else {
+							while (top.getType().equals("delete")) {
+								Task recent = redoStack.pop().getTask();
+								deleteForRedo(recent.getTaskDescription(),
+										recent.getProjectName());
+								if (!undoStack.isEmpty()) {
+									undoStack.pop();
+								}
+								if (redoStack.isEmpty()) {
+									return;
+								}
+								top = redoStack.peek();
+							}
+						}
+					}
+				}
+			} else if (type.equals("edit")) {
+				PastCommands existingTask = redoStack.pop();
+
+				PastCommands newTask = redoStack.pop();
+
+				if (projectNames.contains(existingTask.getProjectName())) {
+
+					int index = findIndex(existingTask.getProjectName());
+					Project p = projectsList.get(index);
+
+					if (existingTask.getType().equals("add")) {
+						p.deleteTask(existingTask.getTask());
+					}
+				}
+
+				if (projectNames.contains(newTask.getProjectName())) {
+					int index = findIndex(newTask.getProjectName());
+					Project p = projectsList.get(index);
+					p.addTask(newTask.getTask());
+				}
+
+			}
+
+			UIHandler.getInstance().printToDisplayGreen(MESSAGE_REDO_SUCCESS);
+		}
+	}
+
+	private void addToUndoStack(String type, String projectName,
+			Task incomingTask, boolean parity) {
+		undoStack.push(new PastCommands(type, incomingTask, projectName));
+	}
+
+	/************************ Mark as complete method *************************/
+
+	/**
+	 * This method marks a task as complete and subsequently removes it from the
+	 * project.
+	 * 
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+
+	private void removeTaskFromProj(Task taskToBeDeleted) throws IOException {
+		String projectName = taskToBeDeleted.getProjectName();
+		int indexProject = findIndex(projectName);
+
+		Project currProject = projectsList.get(indexProject);
+
+		currProject.deleteTask(taskToBeDeleted);
+		ArrayList<Task> taskList = currProject.retrieveAllTasks();
+
+		if (taskList.isEmpty()
+				&& !currProject.getProjectName().equals("default")) {
+
+			projectsList.remove(indexProject);
+			projectNames.remove(projectName);
+			Writer.deleteProject(projectName, projectNames);
+			UIHandler.getInstance().printToDisplayGreen(
+					taskToBeDeleted.getTaskDescription() + " has been removed");
+			UIHandler.getInstance().printToDisplayGreen(
+					projectName + MESSAGE_REMOVE_SUCCESS);
+		} else {
+			UIHandler.getInstance().printToDisplayGreen(
+					taskToBeDeleted.getTaskDescription()
+							+ MESSAGE_REMOVE_SUCCESS);
+		}
+
+		addToUndoStack("delete", taskToBeDeleted.getProjectName(),
+				taskToBeDeleted, taskToBeDeleted.getParity());
+	}
+
+	/**
+	 * THis method assists in the deletion of a task such that it facilitates
+	 * future redo's.
+	 * 
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+	 */
+
+	private void deleteForRedo(String taskDescription, String projectName)
+			throws IOException {
+		if (taskDescription == null && !projectName.equals("default")) {
+			// Deleting a project instead.
+			Project projToDelete = projectsList.get(findIndex(projectName));
+			ArrayList<Task> tasksToDelete = projToDelete.retrieveAllTasks();
+
+			for (Task t : tasksToDelete) {
+				t.flipParity();
+				removeTaskFromProj(t);
+			}
+
+			return;
+		}
+
+		int index = findIndex(projectName);
+		ArrayList<Task> taskList = projectsList.get(index).retrieveAllTasks();
+
+		for (Task t : taskList) {
+			if (t.getTaskDescription().equals(taskDescription)) {
+				removeTaskFromProj(t);
+			}
+		}
+	}
+
+	/********************************** Helper for Search ******************************/
+
+	/**
+	 * This methods helps to search for all tasks matching a certain task
+	 * description.
+	 * 
+	 * 
+	 */
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Engine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\PastCommands.java
+	 */
+
+package Logic.Engine;
+
+/**
+ * This class exists to denote information about a past command.
+ * PastCommands is generally used by the undo and redo functions in Engine to
+ * keep track of commands executed by the user.
+ *
+ */
+public class PastCommands {
+	
+/*************Attributes*************/	
+	private String type;
+	private Task task;
+	private Project project;
+	private String projectName;
+	
+	
+/*************Constructors*************/
+	public PastCommands(String type, Task t, String projectName){
+		this.type = type;
+		this.task = t;
+		this.projectName = projectName;
+	}
+	
+	public PastCommands(String type, Project project){
+		this.type = type;
+		this.project = project;
+		
+	}
+	
+	public PastCommands(String type, String projectName){
+		this.type = type;
+		this.projectName = projectName;
+	}
+	
+	
+/*************Getters*************/
+	public String getType(){
+		return this.type;
+	}
+	
+	public Task getTask(){
+		return this.task;
+	}
+	
+	public Project getProject(){
+		return this.project;
+	}
+	
+	public String getProjectName(){
+		return this.projectName;
+	}
+		
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\PastCommands.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Project.java
+	 */
+
+package Logic.Engine;
+
+import java.io.IOException;
+import java.util.*;
+
+import Storage.Writer;
+
+
+/**
+ * This class is used to create and modify projects that are created by the Engine. 
+ * A project contains a project name and an list of Tasks. 
+ */
+public class Project {
+		private String projectName;
+		private ArrayList<Task> deadLineList; // for tasks with a deadline
+		private ArrayList<Task> intervalList; // for tasks that run within an interval
+		private ArrayList<Task> floatingList; // for tasks that have no imminent deadline
+		private Writer writer; // Writer obj to update backend
+
+/**********************Constructors ***********************************/
+		/**
+		 * @param name
+		 * @param list
+		 * @throws IOException
+		 */
+		public Project(String name, ArrayList<Task> list) throws IOException {
+			this.setProjectName(name);
+			deadLineList = new ArrayList<Task>();
+			intervalList = new ArrayList<Task>();
+			floatingList = new ArrayList<Task>();
+			writer = new Writer(projectName, deadLineList, intervalList, floatingList);
+			
+			if(!list.isEmpty()){
+				populateLists(list);
+			}
+			
+			createNewFile(); //creates a new text file with relevant info. 
+		}
+
+/**********************Getters***********************************/		
+		
+		public String getProjectName() {
+			return projectName;
+		}
+
+		public ArrayList<Task> getDeadlineList() {
+			return this.deadLineList;
+		}
+		
+		public ArrayList<Task> getIntervalList() {
+			return this.intervalList;
+		}
+		
+		public ArrayList<Task> getFloatingList() {
+			return this.floatingList;
+		}
+		
+		public boolean isEmpty(){
+			if(this.floatingList.isEmpty() && this.deadLineList.isEmpty() && this.intervalList.isEmpty()){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		
+		/**
+		 * This method checks if Task t already exists in this project.
+		 * @param t
+		 * @return
+		 */
+		public boolean containsTask(Task t){
+			if(this.deadLineList.contains(t) || this.intervalList.contains(t) || this.floatingList.contains(t)){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		
+/**********************Mutators***********************************/		
+
+		/**
+		 * Tasks are to be added according to the following priority
+		 * 1) Tasks with deadline, with most recent on top
+		 * 2) Tasks that have an interval, sorted by earliest start date first.
+		 * 3) Tasks with no deadline, sorted alphabetically.
+		 * @param t
+		 * @throws IOException 
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Project.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Project.java
+	 */
+
+		 */
+		public void addTask(Task t) throws IOException{
+			assert(t.hasTask()); // ensures that we have a valid task.
+			
+			if(t.hasInterval()){
+				// Add to the second section
+				intervalList.add(t);
+				Collections.sort(intervalList, new intervalComparator());
+				
+			}else if(t.hasDeadLine()){
+				// Add to the first section
+				deadLineList.add(t);
+				Collections.sort(deadLineList, new deadlineComparator());
+				
+			}else{
+				//Is a floating task. Add to last section.
+				floatingList.add(t);
+				Collections.sort(floatingList, new floatingComparator());
+				
+			}
+			
+			writer.writeToFile(); 		// Task added. Repopulate txt file.
+
+		} 
+		
+		/**
+		 * This method removes the specified task from this project, regardless of the type of project it is.
+		 * @param t
+		 * @throws IOException
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Project.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Project.java
+	 */
+
+		 */
+		public void deleteTask(Task t) throws IOException{
+			if(deadLineList.contains(t)){
+				deadLineList.remove(t);
+			}else if(intervalList.contains(t)){
+				intervalList.remove(t);
+			}else if(floatingList.contains(t)){
+				floatingList.remove(t);
+			}
+			
+			writer.writeToFile(); 			// Update text file.
+
+		}
+		
+		/**
+		 * This method takes in a string and results in a list of any task descriptions that contain(even in part) the search string.
+		 * @param input
+		 * @return ArrayList<Task>
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Project.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Project.java
+	 */
+
+		 */
+		public ArrayList<Task> searchForTask(String input){
+			ArrayList<Task> results = new ArrayList<Task>();
+			
+			for(Task t : deadLineList){
+				if(t.getTaskDescription().contains(input)){
+					results.add(t);
+				}
+			}
+			
+			for(Task t : intervalList){
+				if(t.getTaskDescription().contains(input)){
+					results.add(t);
+				}
+			}
+			
+			for(Task t : floatingList){
+				if(t.getTaskDescription().contains(input)){
+					results.add(t);
+				}
+			}
+			
+			return results;
+		}
+				
+		/**
+		 * This method returns a list of all the tasks in this project.
+		 * The list is sorted by date and thus an impending task will be prioritized.
+		 * @return ArrayList<Task>
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Project.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Project.java
+	 */
+
+		 */
+		public ArrayList<Task> retrieveAllTasks(){
+			ArrayList<Task> results = new ArrayList<Task>();
+			
+			results.addAll(deadLineList);
+			results.addAll(intervalList);
+			results.addAll(floatingList);
+			
+			Collections.sort(results, new dateComparator());
+			return results;
+		}
+		
+		/**
+		 * This method changes the name of the Project.
+		 * @param projectName
+		 */
+		public void setProjectName(String projectName) {
+			this.projectName = projectName;
+		}
+		
+		
+/**********************Other methods***********************************/		
+
+		/**
+		 * Creates a new text file to store the new project file
+		 * 
+		 * @param fileName
+		 *            is the name of the file/project
+		 * @param items
+		 *            is the ArrayList of items that is inside this project
+		 * @throws IOException
+		 */
+		public void createNewFile() throws IOException {
+			writer.writeToFile();
+		}
+
+		private void populateLists(ArrayList<Task> list) {
+			for(Task t : list){
+				String type = t.getType();
+				if(type.equals("interval")){
+					intervalList.add(t);
+				}else if(type.equals("deadline")){
+					deadLineList.add(t);
+				}else if(type.equals("floating")){
+					floatingList.add(t);
+				}
+			}
+		}
+		
+/**********************Sorting Compartors***********************************/		
+
+		
+		/**
+		 * This method helps compare two dates.
+		 * Task with earlier deadline is put first.
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Project.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Project.java
+	 */
+
+		 *
+		 */
+		private class intervalComparator implements Comparator<Task> {
+			public int compare(Task one, Task two) {
+				return one.getStartDate().compareTo(two.getStartDate());
+			}
+		}
+		
+		/**
+		 * Sorts tasks alphabetically(by task description)
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Project.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Project.java
+	 */
+
+		 *
+		 */
+		private class floatingComparator implements Comparator<Task> {
+			public int compare(Task one, Task two) {
+				return one.getTaskDescription().compareTo(two.getTaskDescription());
+			}
+		}
+		
+		/**
+		 * To compare 2 dates in a task.
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Project.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Project.java
+	 */
+
+		 *
+		 */
+	private class dateComparator implements Comparator<Task> {
+		public int compare(Task task1, Task task2) {
+			if (task1.getDeadline() == null && task2.getDeadline() == null) {
+				return 0;
+			} else if (task1.getDeadline() != null
+					&& task2.getDeadline() == null) {
+				return 1;
+			} else if (task1.getDeadline() == null
+					&& task2.getDeadline() != null) {
+				return -1;
+			} else if (task1.getDeadline() != null && task2.getDeadline() != null) {
+				return task1.getDeadline().compareTo(task2.getDeadline());
+			}
+			
+			return 0;
+		}
+
+	} 
+}
+
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Project.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Task.java
+	 */
+
+ */
+public class Task {
+	
+	/***************Attributes**********************/
+	private String taskDescription;
+	private String duplicateTaskDescription; // backup of taskDescription, cannot be mutated							
+	private Date from;
+	private Date deadLine;
+	private String projectName;
+	private boolean isCompleted;
+	private String completionStatus;
+	private static String[] months;
+	private static String[] days;
+	private boolean parity; // to help undo/redo tracking
+	private static HashMap<String, String> colors;
+	private String color;
+	
+	/***************Constructors**********************/
+	
+	/**
+	 * Overloaded constructors for the creation of tasks are shown below. They
+	 * differ in the type of arguments that they receive.
+	 * 
+	 * @param taskDescription
+	 * @param date
+	 *            stores the deadline
+	 * @param ProjectName
+	 *            stores the name of the project that the task belongs to
+	 */
+	public Task(String instruction, Date from, Date deadLine, String ProjectName) {
+		populateColors();
+		this.taskDescription = instruction;
+		this.from = from;
+		this.deadLine = deadLine;
+		this.projectName = ProjectName;
+		this.duplicateTaskDescription = taskDescription;
+		this.completionStatus = "";
+		this.parity = false;
+		this.color = colors.get("reset");
+
+		months = new String[12];
+		populateMonths();
+
+		days = new String[7];
+		populateDays();
+
+	}
+
+	public Task(String instruction, Date from, Date deadLine, String ProjectName, boolean isCompleted) {
+		populateColors();
+
+		this.taskDescription = instruction;
+		this.from = from;
+		this.deadLine = deadLine;
+		this.projectName = ProjectName;
+		this.duplicateTaskDescription = taskDescription;
+		this.isCompleted = isCompleted;
+		this.parity = false;
+		this.color = colors.get("reset");
+
+
+		if (this.isCompleted) {
+			this.completionStatus = " [DONE]";
+			this.color = colors.get("green");
+			
+		} else {
+			this.completionStatus = "";
+			this.color = colors.get("reset");
+		}
+
+		months = new String[12];
+		populateMonths();
+
+		days = new String[7];
+		populateDays();
+	}
+
+	public Task() {
+
+	}
+
+	/********************** Getters ******************************/
+	public String getTaskDescription() {
+		return this.taskDescription;
+	}
+
+	public String getDuplicateTaskDescription() {
+		return this.duplicateTaskDescription;
+	}
+
+	public boolean getParity() {
+		return this.parity;
+	}
+
+	public Date getStartDate() {
+		return this.from;
+	}
+
+	public Date getDeadline() {
+		return this.deadLine;
+	}
+
+	public String getProjectName() {
+		return this.projectName;
+	}
+
+	public boolean isCompleted() {
+		return isCompleted;
+	}
+
+	public boolean hasTask() {
+		return (this.taskDescription == null) ? false : true;
+	}
+
+	/**
+	 * Checks if this task has an interval, i.e a start and end date.
+	 * 
+	 * @return
+	 */
+	public boolean hasInterval() {
+		if (this.getStartDate() != null && this.getDeadline() != null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public boolean hasDeadLine() {
+		return (this.deadLine == null) ? false : true;
+	}
+
+	public boolean isFloating() {
+		return (this.from == null && this.deadLine == null);
+	}
+
+	/********************** Mutators ******************************/
+
+	public void setInstruction(String newInstruction) {
+		this.taskDescription = newInstruction;
+	}
+
+	public void setDeadLine(Date newDate) {
+		this.deadLine = newDate;
+	}
+
+	public void setProjectName(String newProjectName) {
+		this.projectName = newProjectName;
+	}
+
+	public void flipParity() {
+		this.parity = !this.parity;
+	}
+
+	public boolean isFinished() {
+		this.isCompleted = true;
+		return this.isCompleted;
+	}
+	
+	/**
+	 * Marks/Unmarks a task as completed.
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Task.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\PastCommandsTest.java
+	 */
+
+package Logic.Engine.Tests;
+
+import static org.junit.Assert.*;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
+import org.junit.Test;
+
+import Logic.Engine.PastCommands;
+import Logic.Engine.Project;
+import Logic.Engine.Task;
+
+public class PastCommandsTest {
+	private static String type;
+	private static Task task;
+	private static Project project;
+	private static String projectName;
+	
+	public PastCommandsTest() throws IOException{
+		type = "add";
+		task = new Task("FLY BASS", null, null, "VIM");
+		project = new Project("VIM", new ArrayList<Task>());
+		projectName = "VIM";
+	}
+	@Test
+	public void testGetType(){
+		PastCommands p = new PastCommands(type, task, projectName);
+		
+		assertEquals("add", p.getType());
+	}
+	
+	@Test
+	public void testGetTask(){
+		PastCommands p = new PastCommands(type, task, projectName);
+
+		assertEquals(task, p.getTask());
+	}
+	
+	@Test
+	public void testGetProject(){
+		PastCommands p = new PastCommands(type, project);
+
+		assertEquals(project, p.getProject());
+	}
+	
+	@Test
+	public void testGetProjectName(){
+		PastCommands p = new PastCommands(type, projectName);
+		
+		assertEquals(projectName, p.getProjectName());
+		
+	}
+
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\PastCommandsTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\ProjectTestCases.java
+	 */
+
+package Logic.Engine.Tests;
+
+import static org.junit.Assert.*;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+
+import org.junit.Test;
+
+import Logic.Engine.Project;
+import Logic.Engine.Task;
+
+public class ProjectTestCases {
+	//To test, make an actual project and test it against an expected set of results.
+	
+	/*********Test Attributes*******************/
+	private ArrayList<Task> deadLineListExpected;
+	private ArrayList<Task> intervalListExpected;
+	private ArrayList<Task> floatingListExpected;
+	Task deadLineTaskExpected;
+	Task intervalTaskExpected;
+	Task floatingTaskExpected;
+	
+	/***************To be tested on***********/
+	static Project testProj;
+	
+	
+	public ProjectTestCases() throws IOException{
+		// Need to initialize DS.
+		deadLineListExpected = new ArrayList<Task>();
+		intervalListExpected = new ArrayList<Task>();
+		floatingListExpected = new ArrayList<Task>();
+		
+		Date d1 = Calendar.getInstance().getTime();
+		Calendar.getInstance().set(2000, 12, 12);
+		Date d2 = Calendar.getInstance().getTime();
+		
+		intervalTaskExpected = new Task("FLY DAMITH", d1, d2, "CS2103");
+		deadLineTaskExpected = new Task("FLY RABBIT", null, d2, "CS2103");
+		floatingTaskExpected = new Task("FLY RENEGADE", null, null, "CS2103");
+		
+		deadLineListExpected.add(deadLineTaskExpected);
+		intervalListExpected.add(intervalTaskExpected);
+		floatingListExpected.add(floatingTaskExpected);
+		
+		testProj = new Project("CS2103", new ArrayList<Task>());
+		
+	}
+	
+	@Test
+	public void testAddTask() throws IOException{
+		populateTestProj();
+		
+		assertEquals(deadLineListExpected, testProj.getDeadlineList());
+		assertEquals(intervalListExpected, testProj.getIntervalList());
+		assertEquals(floatingListExpected, testProj.getFloatingList());
+	}
+
+	private void populateTestProj() throws IOException {
+		testProj.addTask(deadLineTaskExpected);
+		testProj.addTask(floatingTaskExpected);
+		testProj.addTask(intervalTaskExpected);
+	}
+	
+	@Test
+	public void testDeleteTask() throws IOException{
+		testProj.deleteTask(deadLineTaskExpected);
+		testProj.deleteTask(floatingTaskExpected);
+		testProj.deleteTask(intervalTaskExpected);
+		
+		deadLineListExpected.clear();
+		intervalListExpected.clear();
+		floatingListExpected.clear();
+		
+		assertEquals(deadLineListExpected, testProj.getDeadlineList());
+		assertEquals(intervalListExpected, testProj.getIntervalList());
+		assertEquals(floatingListExpected, testProj.getFloatingList());
+	}
+	
+	@Test
+	public void testSearchForTask() throws IOException{
+		populateTestProj();
+		ArrayList<Task> expectedList = new ArrayList<Task>();
+		
+		expectedList.add(deadLineTaskExpected);
+		expectedList.add(intervalTaskExpected);
+		expectedList.add(floatingTaskExpected);
+		
+		assertEquals(expectedList, testProj.searchForTask("FLY"));
+	}
+	
+	@Test
+	public void testRetrieve() throws IOException{
+		populateTestProj();
+
+		ArrayList<Task> expectedList = new ArrayList<Task>();
+		
+		expectedList.add(deadLineTaskExpected);
+		expectedList.add(intervalTaskExpected);
+		expectedList.add(floatingTaskExpected);
+		
+		Collections.sort(expectedList, new dateComparator());
+		assertEquals(expectedList, testProj.retrieveAllTasks());
+	}
+	
+	@Test
+	public void testGetProjectName(){
+		assertEquals("CS2103", testProj.getProjectName());
+	}
+	
+	@Test
+	public void testContainsTask() throws IOException{
+		populateTestProj();
+		Task t = new Task("FLY RENEGADE", null, null, "CS2103");
+
+		assertEquals(true, testProj.containsTask(t));
+	}
+
+	
+	/**********************Sorting Comparators***********************************/		
+
+	private class dateComparator implements Comparator<Task> {
+		public int compare(Task task1, Task task2) {
+			if (task1.getDeadline() == null && task2.getDeadline() == null) {
+				return 0;
+			} else if (task1.getDeadline() != null
+					&& task2.getDeadline() == null) {
+				return 1;
+			} else if (task1.getDeadline() == null
+					&& task2.getDeadline() != null) {
+				return -1;
+			} else if (task1.getDeadline() != null && task2.getDeadline() != null) {
+				return task1.getDeadline().compareTo(task2.getDeadline());
+			}
+			
+			return 0;
+		}
+	
+	} 
+
+	
+}
+
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\ProjectTestCases.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\TaskTestCases.java
+	 */
+
+package Logic.Engine.Tests;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+import Logic.Engine.Task;
+
+public class TaskTestCases {
+	
+	/*****Test Attributes********/
+	/*
+	private static String taskDescription;
+	private static String duplicateTaskDescription; // backup of taskDescription, cannot be mutated							
+	private static Date from;
+	private static Date deadLine;
+	private static String projectName;
+	private static boolean isCompleted;
+	private static String completionStatus;
+	*/
+//	private static String[] months;
+//	private static String[] days;
+//	private static boolean parity;
+//	private static HashMap<String, String> colors;
+//	private String color;
+	
+	/*******Test Object************/
+	static Task testTask;
+	
+	/*public TaskTestCases(){
+		taskDescription = "FLY DAMITH";
+		duplicateTaskDescription = "FLY DAMITH";
+		from = Calendar.getInstance().getTime();
+		Calendar.getInstance().set(2000, 12, 12);
+		deadLine = Calendar.getInstance().getTime();
+		projectName = "RENEGADE";
+		isCompleted = false;
+		completionStatus = "";
+		months = new String[12];
+		days = new String[7];
+		parity = false;
+		color = colors.get("reset");
+		
+		testTask = new Task(taskDescription, from, deadLine, projectName, isCompleted);
+		populateDays();
+		populateMonths();
+		populateColors();
+		
+	}*/
+	
+	@Test
+	public void testGetTaskDescription(){
+		testTask = new Task("DAMITH", null, null, "", false);
+
+		assertEquals("DAMITH", testTask.getTaskDescription());
+	}
+	
+	@Test
+	public void testStringMethod(){
+		String test = "floating~fly a kite~null~null~default~false";
+		Task t = new Task("fly a kite", null, null, "default");
+		
+		assertEquals(test, t.toString());
+	}
+	
+	
+	
+	/********Other Methods*********/
+	/*
+	private void populateDays() {
+		days[0] = "Sunday";
+		days[1] = "Monday";
+		days[2] = "Tuesday";
+		days[3] = "Wednesday";
+		days[4] = "Thursday";
+		days[5] = "Friday";
+		days[6] = "Saturday";
+	}
+	
+	private void populateMonths() {
+		months[0] = "Jan";
+		months[1] = "Feb";
+		months[2] = "Mar";
+		months[3] = "Apr";
+		months[4] = "May";
+		months[5] = "Jun";
+		months[6] = "Jul";
+		months[7] = "Aug";
+		months[8] = "Sep";
+		months[9] = "Oct";
+		months[10] = "Nov";
+		months[11] = "Dec";
+	}
+	
+	private static void populateColors(){
+		colors = new HashMap<String, String>();
+		colors.put("green", "\033[32m");
+		colors.put("red", "\033[31m");
+		colors.put("black", "\033[30m");
+		colors.put("white", "\033[37m");
+		colors.put("reset", "\033[0m");
+	}
+	*/
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Engine\Tests\TaskTestCases.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Storage\Reader.java
+	 */
+
+package Storage;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Scanner;
+
+import Logic.Engine.Project;
+import Logic.Engine.Task;
+
+/**
+ * This class belongs to the Storage component of the overall architecture.
+ * Responsible for reading tasks from the backend.
+ *
+ */
+public class Reader {
+	/***************** Attributes ***********************/
+	private ArrayList<String> projectNames;
+	private ArrayList<Project> projectsList;
+
+	/***************** Constructor ***********************/
+
+	public Reader(ArrayList<String> projectNames, ArrayList<Project> projectsList) {
+		this.projectNames = projectNames;
+		this.projectsList = projectsList;
+	}
+
+	/***************** Methods ***********************/
+
+	/**
+	 * Reads in all the data regarding projects
+	 * @throws IOException
+	 * @throws ParseException
+	 */
+	public void readProjectData() throws IOException, ParseException {
+		for (String fileName : projectNames) {
+			ArrayList<Task> temp = new ArrayList<Task>();
+
+			File f = new File("../Epiphany/src/Storage/Projects/"
+					+ fileName);
+			BufferedReader reader = new BufferedReader(new FileReader(f));
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				String[] taskComponents = line.split("~");
+
+				String type = taskComponents[0];
+				String description = taskComponents[1];
+				Date from = parseDate(taskComponents[2]);
+				Date to = parseDate(taskComponents[3]);
+				String projName = taskComponents[4];
+				
+				boolean completed = Boolean.valueOf(taskComponents[5]);
+				
+				Task t = null;
+
+				if (type.equals("deadline")) {
+					t = new Task(description, null, to, projName, completed);
+				} else if (type.equals("interval")) {
+					t = new Task(description, from, to, projName, completed);
+				} else if (type.equals("floating")) {
+					t = new Task(description, null, null, projName, completed);
+				}
+
+				temp.add(t);
+			}
+
+			reader.close();
+
+			Project p = new Project(fileName, temp);
+			projectsList.add(p);
+		}
+
+	}
+
+	/**
+	 * Reads in the list of projects.
+	 * @throws FileNotFoundException
+	 */
+	public void readProjectTitles() throws FileNotFoundException {
+		Scanner sc = new Scanner(new File("../Epiphany/src/Storage/projectMasterList.txt"));
+		while (sc.hasNextLine()) {
+			projectNames.add(sc.nextLine());
+
+		}
+		sc.close();
+	}
+	
+	private static Date parseDate(String input) throws ParseException {
+		Date date = new Date();
+
+		if (!input.equals("null")) {
+			SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+			date = sdf.parse(input);
+		} else {
+			return null;
+		}
+
+		return date;
+	}
+	
+	public ArrayList<String> getProjectNames(){
+		return this.projectNames;
+	}
+	
+	public ArrayList<Project> getProjectList(){
+		return this.projectsList;
+	}
+
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Storage\Reader.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Storage\Tests\ReaderTest.java
+	 */
+
+package Storage.Tests;
+
+import static org.junit.Assert.*;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
+import org.junit.Test;
+
+import Logic.Engine.Project;
+import Logic.Engine.Task;
+import Storage.Reader;
+
+public class ReaderTest {
+	private ArrayList<Task> dLineList;
+	private ArrayList<Task> interList;
+	private ArrayList<Task> floatList;
+	
+	Task deadLineTaskExpected;
+	Task intervalTaskExpected;
+	Task floatingTaskExpected;
+	
+	@Test
+	public void testReadProjectData() throws IOException, ParseException{
+		dLineList = new ArrayList<Task>();
+		interList = new ArrayList<Task>();
+		floatList = new ArrayList<Task>();
+		
+		Date d1 = Calendar.getInstance().getTime();
+		Calendar.getInstance().set(2000, 12, 12);
+		Date d2 = Calendar.getInstance().getTime();
+		
+		intervalTaskExpected = new Task("FLY DAMITH", d1, d2, "CS2103");
+		deadLineTaskExpected = new Task("FLY RABBIT", null, d2, "CS2103");
+		floatingTaskExpected = new Task("FLY RENEGADE", null, null, "CS2103");
+		
+		dLineList.add(deadLineTaskExpected);
+		interList.add(intervalTaskExpected);
+		floatList.add(floatingTaskExpected);
+		
+		
+	//	Writer w = new Writer("CS2103", dLineList, interList, floatList);
+		
+		ArrayList<String> projectNames = new ArrayList<String>();
+		projectNames.add("CS2103");
+		
+		ArrayList<Project> projectsList = new ArrayList<Project>();
+		ArrayList<Task> testList = new ArrayList<Task>();
+		
+		testList.addAll(dLineList);
+		testList.addAll(floatList);
+		testList.addAll(interList);
+		
+		projectsList.add(new Project("CS2103", testList));
+		
+		Reader r = new Reader(projectNames, projectsList);
+		r.readProjectData();
+		
+		assertEquals(r.getProjectNames(), projectNames);
+		assertEquals(r.getProjectList(), projectsList);
+	}
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Storage\Tests\ReaderTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Storage\Tests\WriterTest.java
+	 */
+
+package Storage.Tests;
+
+import static org.junit.Assert.*;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Scanner;
+
+import org.junit.Test;
+
+import Logic.Engine.Project;
+import Logic.Engine.Task;
+import Storage.Reader;
+import Storage.Writer;
+
+public class WriterTest {
+	/***********Test Attributes********/
+	private ArrayList<Task> dLineList;
+	private ArrayList<Task> interList;
+	private ArrayList<Task> floatList;
+	
+	Task deadLineTaskExpected;
+	Task intervalTaskExpected;
+	Task floatingTaskExpected;
+	
+	
+	public WriterTest(){
+		dLineList = new ArrayList<Task>();
+		interList = new ArrayList<Task>();
+		floatList = new ArrayList<Task>();
+		
+		Date d1 = Calendar.getInstance().getTime();
+		Calendar.getInstance().set(2000, 12, 12);
+		Date d2 = Calendar.getInstance().getTime();
+		
+		intervalTaskExpected = new Task("FLY DAMITH", d1, d2, "CS2103");
+		deadLineTaskExpected = new Task("FLY RABBIT", null, d2, "CS2103");
+		floatingTaskExpected = new Task("FLY RENEGADE", null, null, "CS2103");
+		
+		dLineList.add(deadLineTaskExpected);
+		interList.add(intervalTaskExpected);
+		floatList.add(floatingTaskExpected);
+	}
+	
+	@Test
+	public void testWrite() throws IOException, ParseException{
+		Writer w = new Writer("krig", dLineList, interList, floatList);
+		w.writeToFile();
+		
+		ArrayList<String> testNames = new ArrayList<String>();
+		testNames.add("krig");
+		
+		ArrayList<Task> allTaskList = new ArrayList<Task>();
+		allTaskList.addAll(dLineList);
+		allTaskList.addAll(interList);
+		allTaskList.addAll(floatList);
+		
+		
+		Project p = new Project("krig", allTaskList);
+		ArrayList<Project> pList = new ArrayList<Project>();
+		pList.add(p);
+		
+		Reader r = new Reader(testNames, pList);
+		r.readProjectData();
+		
+		assertEquals(testNames, r.getProjectNames());
+	
+	}
+	
+	@Test
+	public void testAddToProjectMasterList() throws IOException{
+		Writer w = new Writer("krig", dLineList, interList, floatList);
+		w.writeToFile();
+		
+		ArrayList<String> projectNames = new ArrayList<String>();
+		ArrayList<String> expected = new ArrayList<String>();
+		
+		
+		Scanner sc = new Scanner(new File("../Epiphany/src/Storage/projectMasterList.txt"));
+		while (sc.hasNextLine()) {
+			projectNames.add(sc.nextLine());
+
+		}
+		sc.close();
+		
+		projectNames.add("default");
+		
+		Writer.addToProjectMasterList("default");
+		
+		Scanner sc2 = new Scanner(new File("../Epiphany/src/Storage/projectMasterList.txt"));
+		while (sc2.hasNextLine()) {
+			expected.add(sc2.nextLine());
+		}
+		sc2.close();
+		
+		assertEquals(expected, projectNames);
+		
+		
+	}
+	
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Storage\Tests\WriterTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Storage\Writer.java
+	 */
+
+package Storage;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import Logic.Engine.Task;
+
+/**
+ * This class belongs to the Storage component of the overall architecture.
+ * Responsible for writing tasks to the backend.
+ *
+ */
+public class Writer {
+	/***************** Attributes ***********************/
+	private String fileName;
+	private ArrayList<Task> dLineList;
+	private ArrayList<Task> interList;
+	private ArrayList<Task> floatList;
+
+	/***************** Constructor ***********************/
+
+	public Writer(String fileName, ArrayList<Task> dLineList, ArrayList<Task> interList, ArrayList<Task> floatList) {
+		this.fileName = fileName;
+		this.dLineList = dLineList;
+		this.interList = interList;
+		this.floatList = floatList;
+	}
+
+	/***************** Methods ***********************/
+
+	/**
+	 * Does the actual writing to .txt file.
+	 * 
+	 * @param dLineList
+	 * @param interList
+	 * @param floatList
+	 * @throws IOException
+	 */
+	public void writeToFile() throws IOException {
+		File file = new File("../Epiphany/src/Storage/Projects/" + fileName);
+		FileWriter f = new FileWriter(file);
+		BufferedWriter writer = new BufferedWriter(f);
+
+		writer.write("");
+
+		// for deadline
+		for (Task t : dLineList) {
+			writer.write(t.toString());
+			writer.newLine();
+			writer.flush();
+		}
+
+		// for interval
+		for (Task t : interList) {
+			writer.write(t.toString());
+			writer.newLine();
+			writer.flush();
+		}
+
+		// for floating
+		for (Task t : floatList) {
+			writer.write(t.toString());
+			writer.newLine();
+			writer.flush();
+		}
+
+		writer.close();
+	}
+
+	/**
+	 * Creates the default project
+	 * @throws IOException
+	 */
+	public static void generateDefault() throws IOException {
+		File file = new File(
+				"../Epiphany/src/Storage/projectMasterList.txt");
+		FileWriter f = new FileWriter(file, true);
+		BufferedWriter writer = new BufferedWriter(f);
+
+		writer.write("default");
+		writer.flush();
+		writer.close();
+	}
+	
+	public static void addToProjectMasterList(String projectName) throws IOException{
+		File file = new File("../Epiphany/src/Storage/projectMasterList.txt");
+		FileWriter f = new FileWriter(file, true);
+		BufferedWriter writer = new BufferedWriter(f);
+		writer.newLine();
+		writer.write(projectName);
+		writer.close();
+	}
+	
+	public static void updateProjectMasterList(String projectName, ArrayList<String> projectList) throws IOException{
+
+		//need to update master list
+		File file = new File("../Epiphany/src/Storage/projectMasterList.txt");
+
+		FileWriter f = new FileWriter(file);
+		BufferedWriter writer = new BufferedWriter(f);
+		
+		for(String name : projectList){
+			writer.write(name);
+			writer.newLine();
+		}
+		writer.close();
+	}
+	
+	
+	public static void deleteProject(String projectName, ArrayList<String> projectList) throws IOException{
+		
+		File project = new File("../Epiphany/src/Storage/Projects/" + projectName);
+		project.delete();
+		updateProjectMasterList(projectName, projectList);
+	
+	}
+
+	/**
+	 * Resets the project. 
+	 * @param list
+	 * @throws IOException
+	 */
+	public static void reset(ArrayList<String> list) throws IOException{
+		// Could be improved. Hard File Deletion non-existent.
+		
+		File file = new File("../Epiphany/src/Storage/projectMasterList.txt");
+		FileWriter f = new FileWriter(file);
+		BufferedWriter writer = new BufferedWriter(f);
+		
+		writer.write("default");
+		writer.newLine();
+		writer.close();
+		
+		for(String projectName : list){
+				File project = new File("../Epiphany/src/Storage/Projects/" + projectName);
+				project.delete();
+		}
+	}
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Storage\Writer.java
+
+
+
+
+

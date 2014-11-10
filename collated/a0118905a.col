@@ -1,0 +1,3609 @@
+//@author: a0118905a
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\AddCommandType.java
+	 */
+
+package Logic.CommandType;
+
+import java.util.Date;
+
+/**
+ * This is a class that can be instantiated to represent an add command. It can
+ * support all types of add commands (with date and project, without date with project,
+ * with date without project and without date without project.) Each type of add command
+ * has a dedicated constructor.
+ */
+
+public class AddCommandType implements CommandType {
+	
+	private String description;
+	private Date dateFrom;
+	private Date dateTo;
+	private String projectName;
+	
+	/**
+	 * Command type to create a floating task without a project.
+	 * @param _description
+	 */
+	public AddCommandType(String _description) {
+		description = _description;
+		dateFrom = null;
+		dateTo = null;
+		projectName = "default";
+	}
+	
+	/**
+	 * Command type to create a deadline task without a project.
+	 * @param _description
+	 * @param _dateTo
+	 */
+	public AddCommandType(String _description, Date _dateTo) {
+		description = _description;
+		dateFrom = null;
+		dateTo = _dateTo;
+		projectName = "default";
+	}
+	
+	/**
+	 * Command type to create a deadline task is a particular project.
+	 * @param _description
+	 * @param _dateTo
+	 * @param _projectName
+	 */
+	public AddCommandType(String _description, Date _dateTo, String _projectName) {
+		description = _description;
+		dateFrom = null;
+		dateTo = _dateTo;
+		projectName = _projectName;
+	}
+
+	/**
+	 * Command type to create a interval task without a project.
+	 * @param _description
+	 * @param _dateFrom
+	 * @param _dateTo
+	 */
+	public AddCommandType(String _description, Date _dateFrom, Date _dateTo) {
+		description = _description;
+		dateFrom = _dateFrom;
+		dateTo = _dateTo;
+		projectName = "default";
+	}
+	
+	/**
+	 * Command type to create a interval task in a particular project.
+	 * @param _description
+	 * @param _dateFrom
+	 * @param _dateTo
+	 * @param _projectName
+	 */
+	public AddCommandType(String _description, Date _dateFrom, Date _dateTo, String _projectName) {
+		description = _description;
+		dateFrom = _dateFrom;
+		dateTo = _dateTo;
+		projectName = _projectName;
+	}
+	
+	public String getType() {
+		return "add";
+	}
+	
+	public String getDescription() {
+		return description;
+	}
+	
+	public Date getDateTo() {
+		return dateTo;
+	}
+	
+	public Date getDateFrom() {
+		return dateFrom;
+	}
+	
+	public String getProjectName() {
+		return projectName;
+	}
+
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\AddCommandType.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\CommandType.java
+	 */
+
+package Logic.CommandType;
+/**
+ * This is an interface which specifies the requirements of a command type, that would be created
+ * by the interpreter and passed to the engine for execution.
+ */
+public interface CommandType {
+	
+	String getType();
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\CommandType.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\CompleteCommandType.java
+	 */
+
+package Logic.CommandType;
+
+/**
+ * This is a class that can be instantiated to represent an complete command. 
+ */
+public class CompleteCommandType implements CommandType{
+	private String projectName;
+	private String taskDescription;
+	
+	/**
+	 * Complete a task without a project
+	 * @param _taskDescription
+	 */
+	public CompleteCommandType(String _taskDescription) {
+		taskDescription = _taskDescription;
+		projectName = "default";
+	}
+	/**
+	 * Complete a task with a project
+	 * @param _taskDescription
+	 */
+	public CompleteCommandType(String _taskDescription, String _projectName) {
+		taskDescription = _taskDescription;
+		projectName = _projectName;
+	}
+	
+	public String getType() {
+		return "complete";
+	}
+	
+	public String getProjectName(){
+		return projectName;
+	}
+	
+	public String getTaskDescription(){
+		return taskDescription;
+	}
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\CompleteCommandType.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\RedoCommandType.java
+	 */
+
+package Logic.CommandType;
+
+/**
+ * This is a class that can be instantiated to represent an undo command. 
+ */
+
+public class RedoCommandType implements CommandType{
+
+	public RedoCommandType(){
+		
+	}
+	
+	public String getType() {
+		return "redo";
+	}
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\RedoCommandType.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\ResetCommandType.java
+	 */
+
+package Logic.CommandType;
+/**
+ * This is a class that can be instantiated to represent an reset command. 
+ */
+public class ResetCommandType implements CommandType{
+	public ResetCommandType(){
+
+	}
+
+	public String getType() {
+		return "reset";
+	}
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\ResetCommandType.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\Tests\AddCommandTypeTestCases.java
+	 */
+
+package Logic.CommandType.Tests;
+
+import static org.junit.Assert.*;
+
+import java.util.Calendar;
+
+import org.junit.Test;
+
+import Logic.CommandType.AddCommandType;
+
+public class AddCommandTypeTestCases {
+
+	@Test
+	public void testAddFloatingCommandTypeWithoutProject() {
+		AddCommandType addFloatingCommand = new AddCommandType("This is a floating command");
+		assertEquals("add", addFloatingCommand.getType());
+		assertEquals("This is a floating command", addFloatingCommand.getDescription());
+		assertEquals(null, addFloatingCommand.getDateFrom());
+		assertEquals(null, addFloatingCommand.getDateTo());
+		assertEquals("default", addFloatingCommand.getProjectName());
+	}
+	
+	@Test
+	public void testAddDeadlineCommandTypeWithoutProject() {
+		Calendar now = Calendar.getInstance();
+		AddCommandType addDeadlineCommand = new AddCommandType("This is a deadline command", now.getTime());
+		assertEquals("add", addDeadlineCommand.getType());
+		assertEquals("This is a deadline command", addDeadlineCommand.getDescription());
+		assertEquals(null, addDeadlineCommand.getDateFrom());
+		assertEquals(now.getTime(), addDeadlineCommand.getDateTo());
+		assertEquals("default", addDeadlineCommand.getProjectName());
+	}
+
+	@Test
+	public void testAddDeadlineCommandTypeWithProject() {
+		Calendar now = Calendar.getInstance();
+		AddCommandType addDeadlineCommand = new AddCommandType("This is a deadline command", now.getTime(), "Project Name");
+		assertEquals("add", addDeadlineCommand.getType());
+		assertEquals("This is a deadline command", addDeadlineCommand.getDescription());
+		assertEquals(null, addDeadlineCommand.getDateFrom());
+		assertEquals(now.getTime(), addDeadlineCommand.getDateTo());
+		assertEquals("Project Name", addDeadlineCommand.getProjectName());
+	}
+	
+	@Test
+	public void testAddIntervalCommandTypeWithoutProject() {
+		Calendar now = Calendar.getInstance();
+		Calendar later = Calendar.getInstance();
+		later.add(Calendar.DAY_OF_MONTH, 3);
+		AddCommandType addIntervalCommand = new AddCommandType("This is an interval command", now.getTime(), later.getTime());
+		assertEquals("add", addIntervalCommand.getType());
+		assertEquals("This is an interval command", addIntervalCommand.getDescription());
+		assertEquals(now.getTime(), addIntervalCommand.getDateFrom());
+		assertEquals(later.getTime(), addIntervalCommand.getDateTo());
+		assertEquals("default", addIntervalCommand.getProjectName());
+	}
+
+	@Test
+	public void testAddIntervalCommandTypeWithProject() {
+		Calendar now = Calendar.getInstance();
+		Calendar later = Calendar.getInstance();
+		AddCommandType addIntervalCommand = new AddCommandType("This is a deadline command", now.getTime(), later.getTime(), "Project Name");
+		assertEquals("add", addIntervalCommand.getType());
+		assertEquals("This is a deadline command", addIntervalCommand.getDescription());
+		assertEquals(now.getTime(), addIntervalCommand.getDateFrom());
+		assertEquals(later.getTime(), addIntervalCommand.getDateTo());
+		assertEquals("Project Name", addIntervalCommand.getProjectName());
+	}
+	
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\Tests\AddCommandTypeTestCases.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\Tests\CompleteCommandTypeTest.java
+	 */
+
+package Logic.CommandType.Tests;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+import Logic.CommandType.CompleteCommandType;
+
+public class CompleteCommandTypeTest {
+
+	@Test
+	public void testCompleteCommandTypeWithoutProject() {
+		CompleteCommandType deleteCommand = new CompleteCommandType("This is a complete command");
+		assertEquals("complete", deleteCommand.getType());
+		assertEquals("This is a complete command", deleteCommand.getTaskDescription());
+		assertEquals("default", deleteCommand.getProjectName());
+	}
+	
+	@Test
+	public void testCompleteCommandTypeWithProject() {
+		CompleteCommandType deleteCommand = new CompleteCommandType("This is a complete command", "Project Name");
+		assertEquals("complete", deleteCommand.getType());
+		assertEquals("This is a complete command", deleteCommand.getTaskDescription());
+		assertEquals("Project Name", deleteCommand.getProjectName());
+	}
+
+
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\Tests\CompleteCommandTypeTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\Tests\DeleteCommandTypeTestCases.java
+	 */
+
+package Logic.CommandType.Tests;
+
+import static org.junit.Assert.*;
+
+
+import org.junit.Test;
+
+import Logic.CommandType.DeleteCommandType;
+
+public class DeleteCommandTypeTestCases {
+
+	@Test
+	public void testDeleteCommandTypeWithoutProject() {
+		DeleteCommandType deleteCommand = new DeleteCommandType("This is a delete command");
+		assertEquals("delete", deleteCommand.getType());
+		assertEquals("This is a delete command", deleteCommand.getTaskDescription());
+		assertEquals("default", deleteCommand.getProjectName());
+	}
+	
+	@Test
+	public void testDeleteCommandTypeWithProject() {
+		DeleteCommandType deleteCommand = new DeleteCommandType("This is a delete command", "Project Name");
+		assertEquals("delete", deleteCommand.getType());
+		assertEquals("This is a delete command", deleteCommand.getTaskDescription());
+		assertEquals("Project Name", deleteCommand.getProjectName());
+	}
+	
+	@Test
+	public void testDeleteProjectCommandType() {
+		DeleteCommandType deleteCommand = new DeleteCommandType(null, "Project Name");
+		assertEquals("delete", deleteCommand.getType());
+		assertEquals(null, deleteCommand.getTaskDescription());
+		assertEquals("Project Name", deleteCommand.getProjectName());
+	}
+
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\Tests\DeleteCommandTypeTestCases.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\Tests\DisplayCommandTypeTestCases.java
+	 */
+
+package Logic.CommandType.Tests;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+import Logic.CommandType.DisplayCommandType;
+
+public class DisplayCommandTypeTestCases {
+
+	@Test
+	public void testDisplayCommandTypeWithoutProject() {
+		DisplayCommandType displayAllCommand = new DisplayCommandType();
+		assertEquals("display", displayAllCommand.getType());
+		assertEquals("all", displayAllCommand.getModifiers());
+	}
+	
+	@Test
+	public void testDisplayCommandTypeWithProject() {
+		DisplayCommandType displaySomeCommand = new DisplayCommandType("some modifiers");
+		assertEquals("display", displaySomeCommand.getType());
+		assertEquals("some modifiers", displaySomeCommand.getModifiers());
+	}
+
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\Tests\DisplayCommandTypeTestCases.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\Tests\EditCommandTypeTestCases.java
+	 */
+
+package Logic.CommandType.Tests;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+import Logic.CommandType.EditCommandType;
+
+public class EditCommandTypeTestCases {
+
+	@Test
+	public void testEditCommandType() {
+		EditCommandType editCommand = new EditCommandType("task description");
+		assertEquals("edit", editCommand.getType());
+		assertEquals("task description", editCommand.getTaskDescription());
+		assertEquals("default", editCommand.getProjectName());
+	}
+	
+	@Test
+	public void testEditWithProjectCommandType() {
+		EditCommandType editCommand = new EditCommandType("task description", "project name");
+		assertEquals("edit", editCommand.getType());
+		assertEquals("task description", editCommand.getTaskDescription());
+		assertEquals("project name", editCommand.getProjectName());
+	}
+
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\Tests\EditCommandTypeTestCases.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\Tests\RedoCommandTypeTest.java
+	 */
+
+package Logic.CommandType.Tests;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+import Logic.CommandType.RedoCommandType;
+
+public class RedoCommandTypeTest {
+
+	@Test
+	public void test() {
+		RedoCommandType deleteCommand = new RedoCommandType();
+		assertEquals("redo", deleteCommand.getType());
+	}
+
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\Tests\RedoCommandTypeTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\Tests\SearchCommandTypeTestCases.java
+	 */
+
+package Logic.CommandType.Tests;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+import Logic.CommandType.SearchCommandType;
+
+public class SearchCommandTypeTestCases {
+
+	@Test
+	public void testSearchCommandTypeWithoutProject() {
+		SearchCommandType searchCommand = new SearchCommandType("Task description");
+		assertEquals("search", searchCommand.getType());
+		assertEquals("Task description", searchCommand.getTaskDescription());
+		assertEquals("", searchCommand.getProjectName());
+	}
+	
+	@Test
+	public void testSearchCommandTypeWithProject() {
+		SearchCommandType searchCommand = new SearchCommandType("Task description", "Project Name");
+		assertEquals("search", searchCommand.getType());
+		assertEquals("Task description", searchCommand.getTaskDescription());
+		assertEquals("Project Name", searchCommand.getProjectName());
+	}
+
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\Tests\SearchCommandTypeTestCases.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\Tests\UndoCommandTypeTest.java
+	 */
+
+package Logic.CommandType.Tests;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+import Logic.CommandType.UndoCommandType;
+
+public class UndoCommandTypeTest {
+
+	@Test
+	public void test() {
+		UndoCommandType deleteCommand = new UndoCommandType();
+		assertEquals("undo", deleteCommand.getType());
+	}
+
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\CommandType\Tests\UndoCommandTypeTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Exceptions\CancelDeleteException.java
+	 */
+
+package Logic.Exceptions;
+
+public class CancelDeleteException extends Exception {
+	private static final long serialVersionUID = 1L;
+}
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Exceptions\CancelDeleteException.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Exceptions\CancelEditException.java
+	 */
+
+package Logic.Exceptions;
+
+public class CancelEditException extends Exception{
+	private static final long serialVersionUID = -1308546201712498684L;
+
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Exceptions\CancelEditException.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Exceptions\ExitException.java
+	 */
+
+package Logic.Exceptions;
+
+public class ExitException extends Exception{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Exceptions\ExitException.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Exceptions\InvalidCommandException.java
+	 */
+
+package Logic.Exceptions;
+
+public class InvalidCommandException extends Exception {
+	private static final long serialVersionUID = 1L;
+}
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Exceptions\InvalidCommandException.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\DateFormatMatcherThree.java
+	 */
+
+package Logic.Interpreter.DateInterpreter;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.util.Date;
+
+class DateFormatMatcherThree implements Matcher {
+
+    private final DateFormat dateFormat;
+
+    public DateFormatMatcherThree(DateFormat dateFormat) {
+        this.dateFormat = dateFormat;
+    }
+
+    public Date tryConvert(String input) {
+        try {
+            return dateFormat.parse(input);
+        } catch (ParseException ex) {
+            return null;
+        }
+    }
+}
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\DateFormatMatcherThree.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\DateFormatMatcherTwo.java
+	 */
+
+package Logic.Interpreter.DateInterpreter;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.util.Calendar;
+import java.util.Date;
+
+class DateFormatMatcherTwo implements Matcher {
+
+    private final DateFormat dateFormat;
+
+    public DateFormatMatcherTwo(DateFormat dateFormat) {
+        this.dateFormat = dateFormat;
+    }
+
+    public Date tryConvert(String input) {
+        try {
+            Date d = dateFormat.parse(input);
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(d);
+            cal.set(Calendar.YEAR, Calendar.getInstance().get(Calendar.YEAR));
+            if(cal.before(Calendar.getInstance())){
+            	cal.add(Calendar.YEAR, 1);
+            }
+            return cal.getTime();
+            
+        } catch (ParseException ex) {
+            return null;
+        }
+    }
+}
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\DateFormatMatcherTwo.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\DayMatcher.java
+	 */
+
+package Logic.Interpreter.DateInterpreter;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.regex.Pattern;
+
+class DayMatcher implements Matcher {
+
+	private final Pattern saturday = Pattern.compile("(this |)(saturday|sat)");
+	private final Pattern sunday = Pattern.compile("(this |)(sunday|sun)");
+	private final Pattern monday = Pattern.compile("(this |)(monday|mon)");
+	private final Pattern tuesday = Pattern.compile("(this |)(tuesday|tue|tues)");
+	private final Pattern wednesday = Pattern.compile("(this |)(wednesday|wed)");
+	private final Pattern thursday = Pattern.compile("(this |)(thursday|thurs)");
+	private final Pattern friday = Pattern.compile("(this |)(friday|fri)");
+
+	public Date tryConvert(String input) {
+
+		if (saturday.matcher(input).matches()) {
+			Calendar now = Calendar.getInstance();  
+			int weekday = now.get(Calendar.DAY_OF_WEEK);  
+			if (weekday != Calendar.SATURDAY)  
+			{  
+				// calculate how much to add  
+				// the 2 is the difference between Saturday and Monday  
+				int days = (Calendar.SATURDAY - weekday) % 7;  
+				now.add(Calendar.DAY_OF_YEAR, days);  
+			}  
+			// now is the date you want  
+			return now.getTime();
+		}
+		
+		if (sunday.matcher(input).matches()) {
+			Calendar now = Calendar.getInstance();  
+			int weekday = now.get(Calendar.DAY_OF_WEEK);  
+			if (weekday != Calendar.SUNDAY)  
+			{  
+				// calculate how much to add  
+				// the 2 is the difference between Saturday and Monday  
+				int days = (Calendar.SATURDAY - weekday + 1) % 7;  
+				now.add(Calendar.DAY_OF_YEAR, days);  
+			}  
+			// now is the date you want  
+			return now.getTime();
+		}
+		
+		if (monday.matcher(input).matches()) {
+			Calendar now = Calendar.getInstance();  
+			int weekday = now.get(Calendar.DAY_OF_WEEK);  
+			if (weekday != Calendar.MONDAY)  
+			{  
+				// calculate how much to add  
+				// the 2 is the difference between Saturday and Monday  
+				int days = (Calendar.SATURDAY - weekday + 2) % 7;  
+				now.add(Calendar.DAY_OF_YEAR, days);  
+			}  
+			// now is the date you want  
+			return now.getTime();
+		}
+		
+		if (tuesday.matcher(input).matches()) {
+			Calendar now = Calendar.getInstance();  
+			int weekday = now.get(Calendar.DAY_OF_WEEK);  
+			if (weekday != Calendar.TUESDAY)  
+			{  
+				// calculate how much to add  
+				// the 2 is the difference between Saturday and Monday  
+				int days = (Calendar.SATURDAY - weekday + 3) % 7;  
+				now.add(Calendar.DAY_OF_YEAR, days);  
+			}  
+			// now is the date you want  
+			return now.getTime();
+		}
+		
+		if (wednesday.matcher(input).matches()) {
+			Calendar now = Calendar.getInstance();  
+			int weekday = now.get(Calendar.DAY_OF_WEEK);  
+			if (weekday != Calendar.WEDNESDAY)  
+			{  
+				// calculate how much to add  
+				// the 2 is the difference between Saturday and Monday  
+				int days = (Calendar.SATURDAY - weekday + 4) % 7;  
+				now.add(Calendar.DAY_OF_YEAR, days);  
+			}  
+			// now is the date you want  
+			return now.getTime();
+		}
+		
+		if (thursday.matcher(input).matches()) {
+			Calendar now = Calendar.getInstance();  
+			int weekday = now.get(Calendar.DAY_OF_WEEK);  
+			if (weekday != Calendar.THURSDAY)  
+			{  
+				// calculate how much to add  
+				// the 2 is the difference between Saturday and Monday  
+				int days = (Calendar.SATURDAY - weekday + 5) % 7;  
+				now.add(Calendar.DAY_OF_YEAR, days);  
+			}  
+			// now is the date you want  
+			return now.getTime();
+		}
+		
+		if (friday.matcher(input).matches()) {
+			Calendar now = Calendar.getInstance();  
+			int weekday = now.get(Calendar.DAY_OF_WEEK);  
+			if (weekday != Calendar.FRIDAY)  
+			{  
+				// calculate how much to add  
+				// the 2 is the difference between Saturday and Monday  
+				int days = (Calendar.SATURDAY - weekday + 6) % 7;  
+				now.add(Calendar.DAY_OF_YEAR, days);  
+			}  
+			// now is the date you want  
+			return now.getTime();
+		}
+
+		return null;
+	}
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\DayMatcher.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\DayMatcherWithTime.java
+	 */
+
+package Logic.Interpreter.DateInterpreter;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.regex.Pattern;
+
+class DayMatcherWithTime implements Matcher {
+
+	private final Pattern saturday = Pattern.compile("(this |)(saturday|sat)( | from )\\d+:\\d\\d");
+	private final Pattern sunday = Pattern.compile("(this |)(sunday|sun)( | from )\\d+:\\d\\d");
+	private final Pattern monday = Pattern.compile("(this |)(monday|mon)( | from )\\d+:\\d\\d");
+	private final Pattern tuesday = Pattern.compile("(this |)(tuesday|tue|tues)( | from )\\d+:\\d\\d");
+	private final Pattern wednesday = Pattern.compile("(this |)(wednesday|wed)( | from )\\d+:\\d\\d");
+	private final Pattern thursday = Pattern.compile("(this |)(thursday|thur)( | from )\\d+:\\d\\d");
+	private final Pattern friday = Pattern.compile("(this |)(friday|fri)( | from )\\d+:\\d\\d");
+
+	public Date tryConvert(String input) {
+
+		if (saturday.matcher(input).matches()) {
+			Calendar now = Calendar.getInstance();  
+			int weekday = now.get(Calendar.DAY_OF_WEEK);  
+			if (weekday != Calendar.SATURDAY)  
+			{  
+				// calculate how much to add  
+				// the 2 is the difference between Saturday and Monday  
+				int days = (Calendar.SATURDAY - weekday) % 7;  
+				now.add(Calendar.DAY_OF_YEAR, days);  
+			}
+			int hour = Integer.parseInt(input.substring(input.lastIndexOf(' ')+1, input.indexOf(':')));
+			int minute = Integer.parseInt(input.substring(input.indexOf(':')+1));
+			now.set(Calendar.HOUR_OF_DAY, hour);
+			now.set(Calendar.MINUTE, minute);
+			// now is the date you want  
+			return now.getTime();
+		}
+
+		if (sunday.matcher(input).matches()) {
+			Calendar now = Calendar.getInstance();  
+			int weekday = now.get(Calendar.DAY_OF_WEEK);  
+			if (weekday != Calendar.SUNDAY)  
+			{  
+				// calculate how much to add  
+				// the 2 is the difference between Saturday and Monday  
+				int days = (Calendar.SATURDAY - weekday + 1) % 7;  
+				now.add(Calendar.DAY_OF_YEAR, days);  
+			}  
+			int hour = Integer.parseInt(input.substring(input.lastIndexOf(' ')+1, input.indexOf(':')));
+			int minute = Integer.parseInt(input.substring(input.indexOf(':')+1));
+			now.set(Calendar.HOUR_OF_DAY, hour);
+			now.set(Calendar.MINUTE, minute);
+			// now is the date you want  
+			return now.getTime();
+		}
+
+		if (monday.matcher(input).matches()) {
+			Calendar now = Calendar.getInstance();  
+			int weekday = now.get(Calendar.DAY_OF_WEEK);  
+			if (weekday != Calendar.MONDAY)  
+			{  
+				// calculate how much to add  
+				// the 2 is the difference between Saturday and Monday  
+				int days = (Calendar.SATURDAY - weekday + 2) % 7;  
+				now.add(Calendar.DAY_OF_YEAR, days);  
+			}  
+			int hour = Integer.parseInt(input.substring(input.lastIndexOf(' ')+1, input.indexOf(':')));
+			int minute = Integer.parseInt(input.substring(input.indexOf(':')+1));
+			now.set(Calendar.HOUR_OF_DAY, hour);
+			now.set(Calendar.MINUTE, minute);
+			// now is the date you want  
+			return now.getTime();
+		}
+
+		if (tuesday.matcher(input).matches()) {
+			Calendar now = Calendar.getInstance();  
+			int weekday = now.get(Calendar.DAY_OF_WEEK);  
+			if (weekday != Calendar.TUESDAY)  
+			{  
+				// calculate how much to add  
+				// the 2 is the difference between Saturday and Monday  
+				int days = (Calendar.SATURDAY - weekday + 3) % 7;  
+				now.add(Calendar.DAY_OF_YEAR, days);  
+			}  
+			int hour = Integer.parseInt(input.substring(input.lastIndexOf(' ')+1, input.indexOf(':')));
+			int minute = Integer.parseInt(input.substring(input.indexOf(':')+1));
+			now.set(Calendar.HOUR_OF_DAY, hour);
+			now.set(Calendar.MINUTE, minute);
+			// now is the date you want  
+			return now.getTime();
+		}
+
+		if (wednesday.matcher(input).matches()) {
+			Calendar now = Calendar.getInstance();  
+			int weekday = now.get(Calendar.DAY_OF_WEEK);  
+			if (weekday != Calendar.WEDNESDAY)  
+			{  
+				// calculate how much to add  
+				// the 2 is the difference between Saturday and Monday  
+				int days = (Calendar.SATURDAY - weekday + 4) % 7;  
+				now.add(Calendar.DAY_OF_YEAR, days);  
+			}  
+			int hour = Integer.parseInt(input.substring(input.lastIndexOf(' ')+1, input.indexOf(':')));
+			int minute = Integer.parseInt(input.substring(input.indexOf(':')+1));
+			now.set(Calendar.HOUR_OF_DAY, hour);
+			now.set(Calendar.MINUTE, minute);
+			// now is the date you want  
+			return now.getTime();
+		}
+
+		if (thursday.matcher(input).matches()) {
+			Calendar now = Calendar.getInstance();  
+			int weekday = now.get(Calendar.DAY_OF_WEEK);  
+			if (weekday != Calendar.THURSDAY)  
+			{  
+				// calculate how much to add  
+				// the 2 is the difference between Saturday and Monday  
+				int days = (Calendar.SATURDAY - weekday + 5) % 7;  
+				now.add(Calendar.DAY_OF_YEAR, days);  
+			}  
+			int hour = Integer.parseInt(input.substring(input.lastIndexOf(' ')+1, input.indexOf(':')));
+			int minute = Integer.parseInt(input.substring(input.indexOf(':')+1));
+			now.set(Calendar.HOUR_OF_DAY, hour);
+			now.set(Calendar.MINUTE, minute);
+			// now is the date you want  
+			return now.getTime();
+		}
+
+		if (friday.matcher(input).matches()) {
+			Calendar now = Calendar.getInstance();  
+			int weekday = now.get(Calendar.DAY_OF_WEEK);  
+			if (weekday != Calendar.FRIDAY)  
+			{  
+				// calculate how much to add  
+				// the 2 is the difference between Saturday and Monday  
+				int days = (Calendar.SATURDAY - weekday + 6) % 7;  
+				now.add(Calendar.DAY_OF_YEAR, days);  
+			}  
+			int hour = Integer.parseInt(input.substring(input.lastIndexOf(' ')+1, input.indexOf(':')));
+			int minute = Integer.parseInt(input.substring(input.indexOf(':')+1));
+			now.set(Calendar.HOUR_OF_DAY, hour);
+			now.set(Calendar.MINUTE, minute);
+			// now is the date you want  
+			return now.getTime();
+		}
+
+		return null;
+	}
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\DayMatcherWithTime.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\DeadlineDateConverter.java
+	 */
+
+package Logic.Interpreter.DateInterpreter;
+
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
+import Logic.Exceptions.InvalidCommandException;
+
+public final class DeadlineDateConverter {
+
+    private static final List<Matcher> matchers;
+	
+    //List of date matcher classes that we will exhaustively use to determine weather
+    //the input contains a deadline style date.
+    static {
+    	matchers = new LinkedList<Matcher>();
+
+        //WITH TIME SPECIFICATIONS
+        matchers.add(new SoonMatcherWithTime());
+        matchers.add(new DayMatcherWithTime());
+        matchers.add(new ExtendedDayMatcherWithTime());
+        matchers.add(new OnlyDateMatcherWithTime());
+        //Matchers which follow default java date formats
+        matchers.add(new DateFormatMatcherThree(new SimpleDateFormat("dd.MM.yyyy HH:mm")));
+        matchers.add(new DateFormatMatcherThree(new SimpleDateFormat("dd/MM/yyyy HH:mm")));
+        matchers.add(new DateFormatMatcherThree(new SimpleDateFormat("dd-MM-yyyy HH:mm")));
+        matchers.add(new DateFormatMatcherThree(new SimpleDateFormat("dd MM yyyy HH:mm")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd MMM HH:mm")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd/MM HH:mm")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd'st' MMM HH:mm")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd'nd' MMM HH:mm")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd'rd' MMM HH:mm")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd'th' MMM HH:mm")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("MMM dd HH:mm")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("MMM dd'st' HH:mm")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("MMM dd'nd' HH:mm")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("MMM dd'rd' HH:mm")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("MMM dd'th' HH:mm")));
+        
+    	//WITHOUT TIME SPECIFICATIONS
+        matchers.add(new SoonMatcher());
+        matchers.add(new DayMatcher());
+        matchers.add(new ExtendedDayMatcher());
+        matchers.add(new OnlyDateMatcher());
+        //Matchers which follow default java date formats
+        matchers.add(new DateFormatMatcherThree(new SimpleDateFormat("dd.MM.yyyy")));
+        matchers.add(new DateFormatMatcherThree(new SimpleDateFormat("dd/MM/yyyy")));
+        matchers.add(new DateFormatMatcherThree(new SimpleDateFormat("dd-MM-yyyy")));
+        matchers.add(new DateFormatMatcherThree(new SimpleDateFormat("dd MM yyyy")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd MMM")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd/MM")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd'st' MMM")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd'nd' MMM")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd'rd' MMM")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd'th' MMM")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("MMM dd")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("MMM dd'st'")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("MMM dd'nd'")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("MMM dd'rd'")));
+        matchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("MMM dd'th'")));
+    }
+
+
+    public static void convert(String input, ArrayList<Date> d) throws InvalidCommandException {
+    	//the format for deadline dates is "<date>"
+    	d.clear();
+    	String toInterpret = input;
+    	//cycle through all of the matchers and if any one of them succeeds, then we have a winner.
+        for (Matcher matcher : matchers) {
+            Date date = matcher.tryConvert(toInterpret);
+            if (date != null) {
+    			d.add(date);
+    			return;
+            }
+        }
+    }
+    
+
+    private DeadlineDateConverter() throws UnsupportedOperationException{
+        throw new UnsupportedOperationException("cannot instantiate");
+    }
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\DeadlineDateConverter.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\ExtendedDayMatcherWithTime.java
+	 */
+
+package Logic.Interpreter.DateInterpreter;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.regex.Pattern;
+
+import Logic.Exceptions.InvalidCommandException;
+import Logic.Interpreter.DateInterpreter.Matcher;
+
+class ExtendedDayMatcherWithTime implements Matcher {
+
+	private final Pattern next = Pattern.compile("(next|the coming|coming).*");
+	private final Pattern following = Pattern.compile("(following|the following).*");
+
+
+	public Date tryConvert(String input) throws InvalidCommandException {
+
+		if (next.matcher(input).matches()) {
+			String extractedDay = input.split("(next|the coming|coming) ")[1];
+			Matcher nextMatcher = new DayMatcherWithTime();
+			Date date = nextMatcher.tryConvert(extractedDay);
+            if (date != null) {
+    			Calendar cal = Calendar.getInstance();
+    			cal.setTime(date);
+    			cal.add(Calendar.DATE, 7);
+                return cal.getTime();
+            }
+		}
+		
+		if (following.matcher(input).matches()) {
+			String extractedDay = input.split("(following|the following) ")[1];
+			Matcher nextMatcher = new DayMatcherWithTime();
+			Date date = nextMatcher.tryConvert(extractedDay);
+            if (date != null) {
+    			Calendar cal = Calendar.getInstance();
+    			cal.setTime(date);
+    			cal.add(Calendar.DATE, 14);
+                return cal.getTime();
+            }
+		}
+		return null;
+	}
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\ExtendedDayMatcherWithTime.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\LongIntervalDateConverter.java
+	 */
+
+package Logic.Interpreter.DateInterpreter;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
+import Logic.Exceptions.InvalidCommandException;
+
+public class LongIntervalDateConverter {
+
+	public static void convert(String input, ArrayList<Date> d) throws InvalidCommandException {
+		//the format for short interval dates is "<start date>to<end date>"
+		//The start and end dates, are of deadline date format.
+		d.clear();
+		String[] tokens = input.split(" to ");
+		ArrayList<Date> dFrom = new ArrayList<Date>();
+		ArrayList<Date> dTo = new ArrayList<Date>();
+		if(tokens.length==2){
+			DeadlineDateConverter.convert(tokens[0], dFrom);
+			DeadlineDateConverter.convert(tokens[1], dTo);
+		}
+		if(dFrom.size()==1 && dTo.size()==1){
+			//If we get a single date from each of the parts, then we consider it to be passed.
+			if(dTo.get(0).before(dFrom.get(0))){
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(dTo.get(0));
+				cal.add(Calendar.MONTH, 1);
+				d.add(dFrom.get(0));
+				d.add(cal.getTime());
+			} else {
+				d.add(dFrom.get(0));
+				d.add(dTo.get(0));
+			}
+		}
+	}
+
+
+	private LongIntervalDateConverter() throws UnsupportedOperationException{
+		throw new UnsupportedOperationException("cannot instantiate");
+	}
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\LongIntervalDateConverter.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\Matcher.java
+	 */
+
+package Logic.Interpreter.DateInterpreter;
+
+import java.util.Date;
+
+import Logic.Exceptions.InvalidCommandException;
+
+public interface Matcher {
+	//Every matcher must have a method to try and convert a string input to a Date output.
+    public Date tryConvert(String input) throws InvalidCommandException;
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\Matcher.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\OnlyDateMatcher.java
+	 */
+
+package Logic.Interpreter.DateInterpreter;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.regex.Pattern;
+
+
+public class OnlyDateMatcher implements Matcher{
+	
+	private final Pattern datewletters = Pattern.compile("(the |)(\\d\\d|\\d)(st|nd|rd|th)");
+	private final Pattern datewoletters = Pattern.compile("(the |)(\\d\\d|\\d)");
+	private final Pattern extractDatePattern = Pattern.compile("\\d+");
+	
+	public Date tryConvert(String input) {
+
+		if (datewoletters.matcher(input).matches() || datewletters.matcher(input).matches()) {
+
+			java.util.regex.Matcher m = extractDatePattern.matcher(input);
+			//m.matches();
+			if(m.find()){
+				Calendar cal = Calendar.getInstance();
+				int date = Integer.parseInt(m.group(0));
+				if(date >= Calendar.getInstance().get(Calendar.DAY_OF_MONTH)){
+					// in within same month.
+					cal.set(Calendar.DAY_OF_MONTH, date);
+				} else{
+
+					cal.set(Calendar.DAY_OF_MONTH, date);
+					cal.add(Calendar.MONTH, 1);
+
+				}
+				return cal.getTime();
+			}
+		}
+
+		return null;
+	}
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\OnlyDateMatcher.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\OnlyDateMatcherWithTime.java
+	 */
+
+package Logic.Interpreter.DateInterpreter;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.regex.Pattern;
+
+
+public class OnlyDateMatcherWithTime implements Matcher{
+	
+	private final Pattern datewletters = Pattern.compile("(the |)(\\d\\d|\\d)(st|nd|rd|th)( | from )\\d+:\\d\\d");
+	private final Pattern datewoletters = Pattern.compile("(the |)(\\d\\d|\\d)( | from )\\d+:\\d\\d");
+	private final Pattern extractDatePattern = Pattern.compile("\\d+");
+	
+	public Date tryConvert(String input) {
+
+		if (datewoletters.matcher(input).matches() || datewletters.matcher(input).matches()) {
+
+			java.util.regex.Matcher m = extractDatePattern.matcher(input);
+			//m.matches();
+			if(m.find()){
+				Calendar cal = Calendar.getInstance();
+				int date = Integer.parseInt(m.group(0));
+				if(date >= Calendar.getInstance().get(Calendar.DAY_OF_MONTH)){
+					// in within same month.
+					cal.set(Calendar.DAY_OF_MONTH, date);
+				} else{
+					cal.set(Calendar.DAY_OF_MONTH, date);
+					cal.add(Calendar.MONTH, 1);
+				}
+
+	            int hour = Integer.parseInt(input.substring(input.lastIndexOf(' ')+1, input.indexOf(':')));
+	            int minute = Integer.parseInt(input.substring(input.indexOf(':')+1));
+	            cal.set(Calendar.HOUR_OF_DAY, hour);
+	            cal.set(Calendar.MINUTE, minute);
+				return cal.getTime();
+			}
+		}
+
+		return null;
+	}
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\OnlyDateMatcherWithTime.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\ShortIntervalDateConverter.java
+	 */
+
+package Logic.Interpreter.DateInterpreter;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
+import Logic.Exceptions.InvalidCommandException;
+
+public class ShortIntervalDateConverter {
+	private static final List<Matcher> fromMatchers;
+
+	//List of date matcher classes that we will exhaustively use to determine whether
+	//the input contains a short interval style date.
+	static {
+		fromMatchers = new LinkedList<Matcher>();
+
+		//WITH TIME SPECIFICATIONS
+		fromMatchers.add(new SoonMatcherWithTime());
+		fromMatchers.add(new DayMatcherWithTime());
+		fromMatchers.add(new ExtendedDayMatcherWithTime());
+		fromMatchers.add(new OnlyDateMatcherWithTime());
+		//Matchers which follow default java date formats
+		fromMatchers.add(new DateFormatMatcherThree(new SimpleDateFormat("dd.MM.yyyy' from 'HH:mm")));
+		fromMatchers.add(new DateFormatMatcherThree(new SimpleDateFormat("dd/MM/yyyy' from 'HH:mm")));
+		fromMatchers.add(new DateFormatMatcherThree(new SimpleDateFormat("dd-MM-yyyy' from 'HH:mm")));
+		fromMatchers.add(new DateFormatMatcherThree(new SimpleDateFormat("dd MM yyyy' from 'HH:mm")));
+		fromMatchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd MMM' from 'HH:mm")));
+		fromMatchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd/MM' from 'HH:mm")));
+		fromMatchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd'st' MMM' from 'HH:mm")));
+		fromMatchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd'nd' MMM' from 'HH:mm")));
+		fromMatchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd'rd' MMM' from 'HH:mm")));
+		fromMatchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("dd'th' MMM' from 'HH:mm")));
+		fromMatchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("MMM dd' from 'HH:mm")));
+		fromMatchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("MMM dd'st'' from 'HH:mm")));
+		fromMatchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("MMM dd'nd'' from 'HH:mm")));
+		fromMatchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("MMM dd'rd'' from 'HH:mm")));
+		fromMatchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("MMM dd'th'' from 'HH:mm")));
+	}
+
+	@SuppressWarnings("deprecation")
+	public static void convert(String input, ArrayList<Date> d) throws InvalidCommandException {
+		//the format for short interval dates is "<date>from<HH:mm>to<HH:mm>" or "<date>"
+		d.clear();
+		String toInterpret = input;
+		if(toInterpret.matches("(.*)\\d+:\\d\\d")&& !(toInterpret.contains(" to "))){
+			//a short interval command cannot contain only a start time. A start time must be accompanied with an end time.
+			throw new InvalidCommandException();
+		}
+		//First we search for the format "on<date>from<HH:mm>to<HH:mm>"
+		for (Matcher matcher : fromMatchers) {
+			//We try to convert the from part of the date (everything before the word to is the from part)
+			Date date = matcher.tryConvert(input.split(" to ")[0]);
+			if (date != null) {
+				//if we get something to match for the from part, then try the to part.
+				d.add(date);
+				String toTimeString = input.split(" to ")[1];
+				try {
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(d.get(0));
+					Date toDate = (new SimpleDateFormat("HH:mm")).parse(toTimeString);
+					cal.set(Calendar.HOUR_OF_DAY, toDate.getHours());
+					cal.set(Calendar.MINUTE, toDate.getMinutes());
+					d.add(cal.getTime());
+				} catch (ParseException ex) {
+					//If the to part is not of the form HH:mm, then it is not of short interval form.
+					d.clear();
+					return;
+				}
+				return;
+			}
+		}
+		//If we get nothing, then we search for the format "on<date>"
+		DeadlineDateConverter.convert(toInterpret, d);
+		if(!d.isEmpty()){
+			//If that passes, then we use the date, and make the interval to be that day from 0000 to 2359
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(d.get(0));
+			d.clear();
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			d.add(cal.getTime());
+			cal.set(Calendar.HOUR_OF_DAY, 23);
+			cal.set(Calendar.MINUTE, 59);
+			d.add(cal.getTime());
+		}
+	}
+
+
+	private ShortIntervalDateConverter() throws UnsupportedOperationException{
+		throw new UnsupportedOperationException("cannot instantiate");
+	}
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\ShortIntervalDateConverter.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\SoonMatcher.java
+	 */
+
+package Logic.Interpreter.DateInterpreter;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.regex.Pattern;
+
+import Logic.Exceptions.InvalidCommandException;
+
+class SoonMatcher implements Matcher {
+
+    private final Pattern tomorrow = Pattern.compile(".*tomorrow.*");
+    private final Pattern today = Pattern.compile(".*(today|tonight).*");
+    private final Pattern yesterday = Pattern.compile(".*(yesterday).*");
+
+    public Date tryConvert(String input) throws InvalidCommandException {
+        if (tomorrow.matcher(input).matches()) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DAY_OF_YEAR, +1);
+            return calendar.getTime();
+        }
+        if (today.matcher(input).matches()) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY,23);
+            calendar.set(Calendar.MINUTE,59);
+            return calendar.getTime();
+        }
+        if (yesterday.matcher(input).matches()) {
+            throw new InvalidCommandException();
+        }
+        else {
+            return null;
+        }
+    }
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\SoonMatcher.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\SoonMatcherWithTime.java
+	 */
+
+package Logic.Interpreter.DateInterpreter;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.regex.Pattern;
+
+import Logic.Exceptions.InvalidCommandException;
+
+class SoonMatcherWithTime implements Matcher {
+
+    private final Pattern tomorrow = Pattern.compile("tomorrow( | from )\\d+:\\d\\d");
+    private final Pattern today = Pattern.compile("(today|tonight)( | from )\\d+:\\d\\d");
+    private final Pattern yesterday = Pattern.compile("(yesterday)( | from )\\d+:\\d\\d");
+
+    public Date tryConvert(String input) throws InvalidCommandException {
+        if (tomorrow.matcher(input).matches()) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DAY_OF_YEAR, +1);
+            int hour = Integer.parseInt(input.substring(input.lastIndexOf(' ')+1, input.indexOf(':')));
+            int minute = Integer.parseInt(input.substring(input.indexOf(':')+1));
+            calendar.set(Calendar.HOUR_OF_DAY, hour);
+            calendar.set(Calendar.MINUTE, minute);
+            return calendar.getTime();
+        }
+        if (today.matcher(input).matches()) {
+            Calendar calendar = Calendar.getInstance();
+            int hour = Integer.parseInt(input.substring(input.lastIndexOf(' ')+1, input.indexOf(':')));
+            int minute = Integer.parseInt(input.substring(input.indexOf(':')+1));
+            calendar.set(Calendar.HOUR_OF_DAY, hour);
+            calendar.set(Calendar.MINUTE, minute);
+            return calendar.getTime();
+        }
+        if (yesterday.matcher(input).matches()) {
+        	throw new InvalidCommandException();
+        }
+        else {
+            return null;
+        }
+    }
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\SoonMatcherWithTime.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\strtotime.java
+	 */
+
+package Logic.Interpreter.DateInterpreter;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Scanner;
+import java.util.TreeSet;
+
+import Logic.Exceptions.*;
+
+public final class strtotime {
+
+	//Regex's which are used to check the type of date we are trying to match.
+    private static final String REGEX_ADD_DEADLINE_COMMAND = ".*\\s(by)\\s.*";
+    private static final String REGEX_ADD_SHORT_INTERVAL_COMMAND = ".*\\s(on)\\s.*";
+    private static final String REGEX_ADD_LONG_INTERVAL_COMMAND = ".*\\s(from)\\s.*";
+    private static final String REGEX_ADD_EDGE_CASE_COMMAND = ".*(this|next|tomorrow|today).*";
+    private static final String REGEX_NOT_ADD_EDGE_CASE_COMMAND = "(this|next|tomorrow|today).*";
+	private static final TreeSet<String> actionWords = new TreeSet<String>(); //dictionary
+	
+	//Regex's which are used to split the input we want to interpret according to the type of date given.
+	private static final String REGEX_SPLIT_ADD_DEADLINE_COMMAND = "\\s(by)\\s(?!.*\\s(by)\\s)";
+	private static final String REGEX_SPLIT_ADD_SHORT_INTERVAL_COMMAND = "\\s(on)\\s(?!.*\\s(on)\\s)";
+	private static final String REGEX_SPLIT_ADD_LONG_INTERVAL_COMMAND = "\\s(from)\\s(?!.*\\s(from)\\s)";
+
+    public static String convert(String input, ArrayList<Date> d) throws InvalidCommandException {
+    	try {
+			populateDictionary();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} // adds an english dictionary
+    	d.clear();
+    	String toInterpret = input;
+    	if(input.matches(REGEX_ADD_DEADLINE_COMMAND)){
+    		//If the command contains the word 'by' it may be a deadline task.
+    		String[] tokens = input.split(REGEX_SPLIT_ADD_DEADLINE_COMMAND);
+    		toInterpret = tokens[1];
+    		DeadlineDateConverter.convert(toInterpret.toLowerCase(), d);
+    		if(!d.isEmpty()){
+    			return tokens[0];
+    		}
+    	} else if(input.matches(REGEX_ADD_SHORT_INTERVAL_COMMAND)){
+    		//If the command contains the word 'by' it may be a interval task within a single day.
+    		String[] tokens = input.split(REGEX_SPLIT_ADD_SHORT_INTERVAL_COMMAND);
+    		toInterpret = tokens[1];
+    		ShortIntervalDateConverter.convert(toInterpret.toLowerCase(), d);
+    		if(d.size()==2){
+    			return tokens[0];
+    		}
+    	} else if(input.matches(REGEX_ADD_EDGE_CASE_COMMAND) && !input.matches(REGEX_NOT_ADD_EDGE_CASE_COMMAND)){
+    		//If the command enters here there may be a date without any of our key words in it.
+    		String taskDescription;
+    		if(input.contains("this")){
+    			toInterpret = input.substring(input.lastIndexOf("this"));
+    			taskDescription = input.substring(0, input.lastIndexOf("this")-1);
+    		} else if(input.contains("next")){
+    			toInterpret = input.substring(input.lastIndexOf("next"));
+    			taskDescription = input.substring(0, input.lastIndexOf("next")-1);
+    		} else if(input.contains("tomorrow")){
+    			toInterpret = input.substring(input.lastIndexOf("tomorrow"));
+    			taskDescription = input.substring(0, input.lastIndexOf("tomorrow")-1);
+    		} else{
+    			toInterpret = input.substring(input.lastIndexOf("today"));
+    			taskDescription = input.substring(0, input.lastIndexOf("today")-1);
+    		}
+    		ShortIntervalDateConverter.convert(toInterpret.toLowerCase(), d);
+    		if(d.size()==2||d.size()==1){
+    			return taskDescription;
+    		}
+    	} else if(input.matches(REGEX_ADD_LONG_INTERVAL_COMMAND)){
+    		//If the command contains the word 'from' it may be a interval task lasting more than a day.
+    		String[] tokens = input.split(REGEX_SPLIT_ADD_LONG_INTERVAL_COMMAND);
+    		toInterpret = tokens[1];
+    		LongIntervalDateConverter.convert(toInterpret.toLowerCase(), d);
+    		if(d.size()==2){
+    			return tokens[0];
+    		}
+    	}
+    	//At this point we know that there is no valid date in the command. That could be because if a spelling error in
+    	//typing the date or because the user tried to enter a floating task.
+    	if(isValidEnglish(toInterpret) || toInterpret.equals(input)){
+        	return input;
+        } else {
+        	throw new InvalidCommandException();
+        }
+    }
+    
+
+    private strtotime() throws UnsupportedOperationException{
+        throw new UnsupportedOperationException("cannot instantiate");
+    }
+    
+    private static boolean isValidEnglish(String toCheck) {
+    	String[] tokensToCheck = toCheck.split(" ");
+    	for (String wordToCheck : tokensToCheck) {
+			if(!actionWords.contains(wordToCheck)){
+				return false;
+			}
+		}
+		return true;
+	}
+    
+    /**
+	 * This function draws on an English Dictionary to check if the action words of the user are legitimate.
+	 */
+	private static void populateDictionary() throws FileNotFoundException{
+		File dict = new File("dictionary.txt");
+		Scanner dictScan = new Scanner(dict);
+		while(dictScan.hasNextLine()){
+			actionWords.add(dictScan.nextLine());
+		}
+		dictScan.close();
+	}
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\strtotime.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\Tests\CalculateCorrectDateTests.java
+	 */
+
+package Logic.Interpreter.DateInterpreter.Tests;
+
+import static org.junit.Assert.*;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
+import org.junit.Test;
+
+import Logic.Exceptions.InvalidCommandException;
+import Logic.Interpreter.DateInterpreter.strtotime;
+
+public class CalculateCorrectDateTests {
+	private static final String COMMAND_PREFIX_BY = "Complete something by ";
+
+	@Test
+	public void nextSaturdayTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		
+		Calendar now = Calendar.getInstance();  
+		int weekday = now.get(Calendar.DAY_OF_WEEK);  
+		if (weekday != Calendar.SATURDAY)  
+		{  
+			// calculate how much to add  
+			// the 2 is the difference between Saturday and Monday  
+			int days = (Calendar.SATURDAY - weekday) % 7;
+			now.add(Calendar.DAY_OF_YEAR, days);  
+		}   
+		now.add(Calendar.DAY_OF_YEAR, 7); 
+		// now is the date you want
+		
+		strtotime.convert(COMMAND_PREFIX_BY+"next saturday", dates);
+		cal.setTime(dates.get(0));
+		assertEquals(now.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH), cal.get(Calendar.MONTH));
+	}
+	
+	@Test
+	public void nextSundayTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		
+		Calendar now = Calendar.getInstance();  
+		int weekday = now.get(Calendar.DAY_OF_WEEK);  
+		if (weekday != Calendar.SUNDAY)  
+		{  
+			// calculate how much to add  
+			// the 2 is the difference between Saturday and Monday  
+			int days = (Calendar.SATURDAY - weekday + 1) % 7; 
+			now.add(Calendar.DAY_OF_YEAR, days);  
+		}   
+		now.add(Calendar.DAY_OF_YEAR, 7); 
+		// now is the date you want
+		
+		strtotime.convert(COMMAND_PREFIX_BY+"next sunday", dates);
+		cal.setTime(dates.get(0));
+		assertEquals(now.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH), cal.get(Calendar.MONTH));
+	}
+	
+	@Test
+	public void nextMondayTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		
+		Calendar now = Calendar.getInstance();  
+		int weekday = now.get(Calendar.DAY_OF_WEEK);  
+		if (weekday != Calendar.MONDAY)  
+		{  
+			// calculate how much to add  
+			// the 2 is the difference between Saturday and Monday  
+			int days = (Calendar.SATURDAY - weekday + 2) % 7;
+			now.add(Calendar.DAY_OF_YEAR, days);  
+		}  
+		now.add(Calendar.DAY_OF_YEAR, 7); 
+		// now is the date you want
+		
+		strtotime.convert(COMMAND_PREFIX_BY+"next monday", dates);
+		cal.setTime(dates.get(0));
+		assertEquals(now.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH), cal.get(Calendar.MONTH));
+	}
+	
+	@Test
+	public void nextTuesdayTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		
+		Calendar now = Calendar.getInstance();  
+		int weekday = now.get(Calendar.DAY_OF_WEEK);  
+		if (weekday != Calendar.TUESDAY)  
+		{  
+			// calculate how much to add  
+			// the 2 is the difference between Saturday and Monday  
+			int days = (Calendar.SATURDAY - weekday + 3) % 7; 
+			now.add(Calendar.DAY_OF_YEAR, days);  
+		}  
+		now.add(Calendar.DAY_OF_YEAR, 7); 
+		// now is the date you want
+		
+		strtotime.convert(COMMAND_PREFIX_BY+"next tuesday", dates);
+		cal.setTime(dates.get(0));
+		assertEquals(now.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH), cal.get(Calendar.MONTH));
+	}
+	
+	@Test
+	public void nextWednesdayTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		
+		Calendar now = Calendar.getInstance();  
+		int weekday = now.get(Calendar.DAY_OF_WEEK);  
+		if (weekday != Calendar.WEDNESDAY)  
+		{  
+			// calculate how much to add  
+			// the 2 is the difference between Saturday and Monday  
+			int days = (Calendar.SATURDAY - weekday + 4) % 7; 
+			now.add(Calendar.DAY_OF_YEAR, days);  
+		}  
+		now.add(Calendar.DAY_OF_YEAR, 7); 
+		// now is the date you want
+		
+		strtotime.convert(COMMAND_PREFIX_BY+"next wednesday", dates);
+		cal.setTime(dates.get(0));
+		assertEquals(now.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH), cal.get(Calendar.MONTH));
+	}
+	
+	@Test
+	public void nextThursdayTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		
+		Calendar now = Calendar.getInstance();  
+		int weekday = now.get(Calendar.DAY_OF_WEEK);  
+		if (weekday != Calendar.THURSDAY)  
+		{  
+			// calculate how much to add  
+			// the 2 is the difference between Saturday and Monday  
+			int days = (Calendar.SATURDAY - weekday + 5) % 7; 
+			now.add(Calendar.DAY_OF_YEAR, days);  
+		}  
+		now.add(Calendar.DAY_OF_YEAR, 7); 
+		// now is the date you want
+		
+		strtotime.convert(COMMAND_PREFIX_BY+"next thursday", dates);
+		cal.setTime(dates.get(0));
+		assertEquals(now.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH), cal.get(Calendar.MONTH));
+	}
+	
+	@Test
+	public void nextFridayTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		
+		Calendar now = Calendar.getInstance();  
+		int weekday = now.get(Calendar.DAY_OF_WEEK);  
+		if (weekday != Calendar.FRIDAY)  
+		{  
+			// calculate how much to add  
+			// the 2 is the difference between Saturday and Monday  
+			int days = (Calendar.SATURDAY - weekday + 6) % 7; 
+			now.add(Calendar.DAY_OF_YEAR, days);  
+		}  
+		now.add(Calendar.DAY_OF_YEAR, 7); 
+		// now is the date you want
+		
+		strtotime.convert(COMMAND_PREFIX_BY+"next friday", dates);
+		cal.setTime(dates.get(0));
+		assertEquals(now.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH), cal.get(Calendar.MONTH));
+	}
+	
+	@Test
+	public void followingFridayTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		
+		Calendar now = Calendar.getInstance();  
+		int weekday = now.get(Calendar.DAY_OF_WEEK);  
+		if (weekday != Calendar.FRIDAY)  
+		{  
+			// calculate how much to add  
+			// the 2 is the difference between Saturday and Monday  
+			int days = (Calendar.SATURDAY - weekday + 6) % 7; 
+			now.add(Calendar.DAY_OF_YEAR, days);  
+		}  
+		now.add(Calendar.DAY_OF_YEAR, 14); 
+		// now is the date you want
+		
+		strtotime.convert(COMMAND_PREFIX_BY+"the following friday", dates);
+		cal.setTime(dates.get(0));
+		assertEquals(now.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH), cal.get(Calendar.MONTH));
+	}
+	
+	@Test
+	public void toFailTest() throws InvalidCommandException {
+		@SuppressWarnings("unused")
+		Calendar cal = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		try{
+		strtotime.convert(COMMAND_PREFIX_BY+"next frday", dates);
+		assert(false);
+		} catch(InvalidCommandException e){
+			assert(true);
+		}
+	}
+	
+	@Test
+	public void nextSaturdayWithTimeTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		
+		Calendar now = Calendar.getInstance();  
+		int weekday = now.get(Calendar.DAY_OF_WEEK);  
+		if (weekday != Calendar.SATURDAY)  
+		{  
+			// calculate how much to add  
+			// the 2 is the difference between Saturday and Monday  
+			int days = (Calendar.SATURDAY - weekday) % 7;
+			now.add(Calendar.DAY_OF_YEAR, days);  
+		}   
+		now.add(Calendar.DAY_OF_YEAR, 7); 
+		// now is the date you want
+		
+		strtotime.convert(COMMAND_PREFIX_BY+"next saturday 14:20", dates);
+		cal.setTime(dates.get(0));
+		assertEquals(now.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH), cal.get(Calendar.MONTH));
+		assertEquals(14, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(20, cal.get(Calendar.MINUTE));
+	}
+	
+	@Test
+	public void nextSundayWithTimeTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		
+		Calendar now = Calendar.getInstance();  
+		int weekday = now.get(Calendar.DAY_OF_WEEK);  
+		if (weekday != Calendar.SUNDAY)  
+		{  
+			// calculate how much to add  
+			// the 2 is the difference between Saturday and Monday  
+			int days = (Calendar.SATURDAY - weekday + 1) % 7; 
+			now.add(Calendar.DAY_OF_YEAR, days);  
+		}   
+		now.add(Calendar.DAY_OF_YEAR, 7); 
+		// now is the date you want
+		
+		strtotime.convert(COMMAND_PREFIX_BY+"next sunday 14:20", dates);
+		cal.setTime(dates.get(0));
+		assertEquals(now.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH), cal.get(Calendar.MONTH));
+		assertEquals(14, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(20, cal.get(Calendar.MINUTE));
+	}
+	
+	@Test
+	public void nextMondayWithTimeTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		
+		Calendar now = Calendar.getInstance();  
+		int weekday = now.get(Calendar.DAY_OF_WEEK);  
+		if (weekday != Calendar.MONDAY)  
+		{  
+			// calculate how much to add  
+			// the 2 is the difference between Saturday and Monday  
+			int days = (Calendar.SATURDAY - weekday + 2) % 7;
+			now.add(Calendar.DAY_OF_YEAR, days);  
+		}  
+		now.add(Calendar.DAY_OF_YEAR, 7); 
+		// now is the date you want
+		
+		strtotime.convert(COMMAND_PREFIX_BY+"next monday 14:20", dates);
+		cal.setTime(dates.get(0));
+		assertEquals(now.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH), cal.get(Calendar.MONTH));
+		assertEquals(14, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(20, cal.get(Calendar.MINUTE));
+	}
+	
+	@Test
+	public void nextTuesdayWithTimeTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		
+		Calendar now = Calendar.getInstance();  
+		int weekday = now.get(Calendar.DAY_OF_WEEK);  
+		if (weekday != Calendar.TUESDAY)  
+		{  
+			// calculate how much to add  
+			// the 2 is the difference between Saturday and Monday  
+			int days = (Calendar.SATURDAY - weekday + 3) % 7; 
+			now.add(Calendar.DAY_OF_YEAR, days);  
+		}  
+		now.add(Calendar.DAY_OF_YEAR, 7); 
+		// now is the date you want
+		
+		strtotime.convert(COMMAND_PREFIX_BY+"next tuesday 14:20", dates);
+		cal.setTime(dates.get(0));
+		assertEquals(now.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH), cal.get(Calendar.MONTH));
+		assertEquals(14, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(20, cal.get(Calendar.MINUTE));
+	}
+	
+	@Test
+	public void nextWednesdayWithTimeTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		
+		Calendar now = Calendar.getInstance();  
+		int weekday = now.get(Calendar.DAY_OF_WEEK);  
+		if (weekday != Calendar.WEDNESDAY)  
+		{  
+			// calculate how much to add  
+			// the 2 is the difference between Saturday and Monday  
+			int days = (Calendar.SATURDAY - weekday + 4) % 7; 
+			now.add(Calendar.DAY_OF_YEAR, days);  
+		}  
+		now.add(Calendar.DAY_OF_YEAR, 7); 
+		// now is the date you want
+		
+		strtotime.convert(COMMAND_PREFIX_BY+"next wednesday 14:20", dates);
+		cal.setTime(dates.get(0));
+		assertEquals(now.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH), cal.get(Calendar.MONTH));
+		assertEquals(14, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(20, cal.get(Calendar.MINUTE));
+	}
+	
+	@Test
+	public void nextThursdayWithTimeTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		
+		Calendar now = Calendar.getInstance();  
+		int weekday = now.get(Calendar.DAY_OF_WEEK);  
+		if (weekday != Calendar.THURSDAY)  
+		{  
+			// calculate how much to add  
+			// the 2 is the difference between Saturday and Monday  
+			int days = (Calendar.SATURDAY - weekday + 5) % 7; 
+			now.add(Calendar.DAY_OF_YEAR, days);  
+		}  
+		now.add(Calendar.DAY_OF_YEAR, 7); 
+		// now is the date you want
+		
+		strtotime.convert(COMMAND_PREFIX_BY+"next thursday 14:20", dates);
+		cal.setTime(dates.get(0));
+		assertEquals(now.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH), cal.get(Calendar.MONTH));
+		assertEquals(14, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(20, cal.get(Calendar.MINUTE));
+	}
+	
+	@Test
+	public void nextFridayWithTimeTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		
+		Calendar now = Calendar.getInstance();  
+		int weekday = now.get(Calendar.DAY_OF_WEEK);  
+		if (weekday != Calendar.FRIDAY)  
+		{  
+			// calculate how much to add  
+			// the 2 is the difference between Saturday and Monday  
+			int days = (Calendar.SATURDAY - weekday + 6) % 7; 
+			now.add(Calendar.DAY_OF_YEAR, days);  
+		}  
+		now.add(Calendar.DAY_OF_YEAR, 7); 
+		// now is the date you want
+		
+		strtotime.convert(COMMAND_PREFIX_BY+"next friday 14:20", dates);
+		cal.setTime(dates.get(0));
+		assertEquals(now.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH), cal.get(Calendar.MONTH));
+		assertEquals(14, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(20, cal.get(Calendar.MINUTE));
+	}
+	
+	@Test
+	public void followingFridayWithTimeTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		
+		Calendar now = Calendar.getInstance();  
+		int weekday = now.get(Calendar.DAY_OF_WEEK);  
+		if (weekday != Calendar.FRIDAY)  
+		{  
+			// calculate how much to add  
+			// the 2 is the difference between Saturday and Monday  
+			int days = (Calendar.SATURDAY - weekday + 6) % 7; 
+			now.add(Calendar.DAY_OF_YEAR, days);  
+		}  
+		now.add(Calendar.DAY_OF_YEAR, 14); 
+		// now is the date you want
+		
+		strtotime.convert(COMMAND_PREFIX_BY+"the following friday 14:20", dates);
+		cal.setTime(dates.get(0));
+		assertEquals(now.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH), cal.get(Calendar.MONTH));
+		assertEquals(14, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(20, cal.get(Calendar.MINUTE));
+	}
+	
+	
+	
+	@Test
+	public void toFailWithTimeTest() throws InvalidCommandException {
+		@SuppressWarnings("unused")
+		Calendar cal = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		try{
+		strtotime.convert(COMMAND_PREFIX_BY+"next frday 14:20", dates);
+		assert(false);
+		} catch(InvalidCommandException e){
+			assert(true);
+		}
+	}
+	
+	@Test
+	public void noPrefixThisTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		
+		Calendar now = Calendar.getInstance();  
+		int weekday = now.get(Calendar.DAY_OF_WEEK);  
+		if (weekday != Calendar.FRIDAY)  
+		{  
+			// calculate how much to add  
+			// the 2 is the difference between Saturday and Monday  
+			int days = (Calendar.SATURDAY - weekday + 6) % 7; 
+			now.add(Calendar.DAY_OF_YEAR, days);  
+		}
+		// now is the date you want
+		
+		strtotime.convert("do something this friday", dates);
+		cal.setTime(dates.get(0));
+		assertEquals(now.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH), cal.get(Calendar.MONTH));
+	}
+	
+	@Test
+	public void noPrefixNextTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		
+		Calendar now = Calendar.getInstance();  
+		int weekday = now.get(Calendar.DAY_OF_WEEK);  
+		if (weekday != Calendar.FRIDAY)  
+		{  
+			// calculate how much to add  
+			// the 2 is the difference between Saturday and Monday  
+			int days = (Calendar.SATURDAY - weekday + 6) % 7; 
+			now.add(Calendar.DAY_OF_YEAR, days);  
+		}
+		now.add(Calendar.DAY_OF_YEAR, 7); 
+		// now is the date you want
+		
+		strtotime.convert("do something next friday", dates);
+		cal.setTime(dates.get(0));
+		assertEquals(now.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH), cal.get(Calendar.MONTH));
+	}
+
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\Tests\CalculateCorrectDateTests.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\Tests\DeadlineDateConverterTest.java
+	 */
+
+package Logic.Interpreter.DateInterpreter.Tests;
+
+import static org.junit.Assert.*;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
+import org.junit.Test;
+
+import Logic.Exceptions.*;
+import Logic.Interpreter.DateInterpreter.strtotime;
+
+public class DeadlineDateConverterTest {
+	
+	private static final String COMMAND_PREFIX_BY = "Complete something by ";
+	//private static final String COMMAND_PREFIX_BY = "";
+	//private static final String COMMAND_PREFIX_ON = "";
+	//private static final String COMMAND_PREFIX_IN = "";
+	
+	@Test
+	public void DateAndMonthWithTimeTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		strtotime.convert(COMMAND_PREFIX_BY+"26th July 14:20", dates);
+		cal.setTime(dates.get(0));
+		assertEquals(26, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(6, cal.get(Calendar.MONTH));
+		assertEquals(14, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(20, cal.get(Calendar.MINUTE));
+		strtotime.convert(COMMAND_PREFIX_BY+"26 July 14:20", dates);
+		cal.setTime(dates.get(0));
+		assertEquals(26, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(6, cal.get(Calendar.MONTH));
+		assertEquals(14, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(20, cal.get(Calendar.MINUTE));
+	}
+	
+	@Test
+	public void SoonTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		Calendar now = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		strtotime.convert(COMMAND_PREFIX_BY+"today",dates);
+		cal.setTime(dates.get(0));
+		assertEquals(now.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH), cal.get(Calendar.MONTH));
+		assertEquals(now.get(Calendar.YEAR), cal.get(Calendar.YEAR));
+		strtotime.convert(COMMAND_PREFIX_BY+"tomorrow",dates);
+		cal.setTime(dates.get(0));
+		now.add(Calendar.DAY_OF_MONTH, 1);
+		assertEquals(now.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH), cal.get(Calendar.MONTH));
+		assertEquals(now.get(Calendar.YEAR), cal.get(Calendar.YEAR));
+	}
+	
+	@Test
+	public void SoonWithTimeTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		Calendar now = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		strtotime.convert(COMMAND_PREFIX_BY+"today 9:30",dates);
+		cal.setTime(dates.get(0));
+		assertEquals(now.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH), cal.get(Calendar.MONTH));
+		assertEquals(now.get(Calendar.YEAR), cal.get(Calendar.YEAR));
+		assertEquals(9, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(30, cal.get(Calendar.MINUTE));
+		strtotime.convert(COMMAND_PREFIX_BY+"tomorrow 13:30",dates);
+		cal.setTime(dates.get(0));
+		now.add(Calendar.DAY_OF_MONTH, 1);
+		assertEquals(now.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH), cal.get(Calendar.MONTH));
+		assertEquals(now.get(Calendar.YEAR), cal.get(Calendar.YEAR));
+		assertEquals(13, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(30, cal.get(Calendar.MINUTE));
+	}
+	
+	@Test
+	public void SingleDateTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		Calendar now = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		strtotime.convert(COMMAND_PREFIX_BY+"the 30th",dates);
+		cal.setTime(dates.get(0));
+		assertEquals(30, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH), cal.get(Calendar.MONTH));
+		strtotime.convert(COMMAND_PREFIX_BY+"the 1st",dates);
+		cal.setTime(dates.get(0));
+		assertEquals(1, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH)+1, cal.get(Calendar.MONTH));
+	}
+	
+	@Test
+	public void SingleDateWithTimeTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		Calendar now = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		strtotime.convert(COMMAND_PREFIX_BY+"the 30th 9:30",dates);
+		cal.setTime(dates.get(0));
+		assertEquals(30, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(9, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(30, cal.get(Calendar.MINUTE));
+		assertEquals(now.get(Calendar.MONTH), cal.get(Calendar.MONTH));
+		strtotime.convert(COMMAND_PREFIX_BY+"the 1st 13:30",dates);
+		cal.setTime(dates.get(0));
+		assertEquals(1, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH)+1, cal.get(Calendar.MONTH));
+		assertEquals(13, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(30, cal.get(Calendar.MINUTE));
+	}
+	
+	@Test
+	public void DateFormatThreeTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		strtotime.convert(COMMAND_PREFIX_BY+"26/7/2020",dates);
+		cal.setTime(dates.get(0));
+		assertEquals(26, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(6, cal.get(Calendar.MONTH));
+		assertEquals(2020, cal.get(Calendar.YEAR));
+		strtotime.convert(COMMAND_PREFIX_BY+"26.7.2020",dates);
+		cal.setTime(dates.get(0));
+		assertEquals(26, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(6, cal.get(Calendar.MONTH));
+		assertEquals(2020, cal.get(Calendar.YEAR));
+		strtotime.convert(COMMAND_PREFIX_BY+"26-7-2020",dates);
+		cal.setTime(dates.get(0));
+		assertEquals(26, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(6, cal.get(Calendar.MONTH));
+		assertEquals(2020, cal.get(Calendar.YEAR));
+		strtotime.convert(COMMAND_PREFIX_BY+"26 7 2020",dates);
+		cal.setTime(dates.get(0));
+		assertEquals(26, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(6, cal.get(Calendar.MONTH));
+		assertEquals(2020, cal.get(Calendar.YEAR));
+	}
+	
+	@Test
+	public void DateFormatThreeWithTimeTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		strtotime.convert(COMMAND_PREFIX_BY+"26/7/2020 14:20",dates);
+		cal.setTime(dates.get(0));
+		assertEquals(26, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(6, cal.get(Calendar.MONTH));
+		assertEquals(2020, cal.get(Calendar.YEAR));
+		assertEquals(14, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(20, cal.get(Calendar.MINUTE));
+		strtotime.convert(COMMAND_PREFIX_BY+"26.7.2020 14:20",dates);
+		cal.setTime(dates.get(0));
+		assertEquals(26, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(6, cal.get(Calendar.MONTH));
+		assertEquals(2020, cal.get(Calendar.YEAR));
+		assertEquals(14, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(20, cal.get(Calendar.MINUTE));
+		strtotime.convert(COMMAND_PREFIX_BY+"26-7-2020 14:20",dates);
+		cal.setTime(dates.get(0));
+		assertEquals(26, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(6, cal.get(Calendar.MONTH));
+		assertEquals(2020, cal.get(Calendar.YEAR));
+		assertEquals(14, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(20, cal.get(Calendar.MINUTE));
+		strtotime.convert(COMMAND_PREFIX_BY+"26 7 2020 14:20",dates);
+		cal.setTime(dates.get(0));
+		assertEquals(26, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(6, cal.get(Calendar.MONTH));
+		assertEquals(2020, cal.get(Calendar.YEAR));
+		assertEquals(14, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(20, cal.get(Calendar.MINUTE));
+	}
+	
+	@Test
+	public void DateAndMonthTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		strtotime.convert(COMMAND_PREFIX_BY+"26/7",dates);
+		cal.setTime(dates.get(0));
+		assertEquals(26, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(6, cal.get(Calendar.MONTH));
+		strtotime.convert(COMMAND_PREFIX_BY+"1st july",dates);
+		cal.setTime(dates.get(0));
+		assertEquals(1, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(6, cal.get(Calendar.MONTH));
+		strtotime.convert(COMMAND_PREFIX_BY+"2nd july",dates);
+		cal.setTime(dates.get(0));
+		assertEquals(2, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(6, cal.get(Calendar.MONTH));
+		strtotime.convert(COMMAND_PREFIX_BY+"3rd july",dates);
+		cal.setTime(dates.get(0));
+		assertEquals(3, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(6, cal.get(Calendar.MONTH));
+		strtotime.convert(COMMAND_PREFIX_BY+"4th july",dates);
+		cal.setTime(dates.get(0));
+		assertEquals(4, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(6, cal.get(Calendar.MONTH));
+		strtotime.convert(COMMAND_PREFIX_BY+"july 1st",dates);
+		cal.setTime(dates.get(0));
+		assertEquals(1, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(6, cal.get(Calendar.MONTH));
+		strtotime.convert(COMMAND_PREFIX_BY+"july 2nd",dates);
+		cal.setTime(dates.get(0));
+		assertEquals(2, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(6, cal.get(Calendar.MONTH));
+		strtotime.convert(COMMAND_PREFIX_BY+"july 3rd",dates);
+		cal.setTime(dates.get(0));
+		assertEquals(3, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(6, cal.get(Calendar.MONTH));
+		strtotime.convert(COMMAND_PREFIX_BY+"july 4th",dates);
+		cal.setTime(dates.get(0));
+		assertEquals(4, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(6, cal.get(Calendar.MONTH));
+	}
+	
+	@Test
+	public void DeadlineDateConvertorFail() throws InvalidCommandException {
+		ArrayList<Date> dates = new ArrayList<Date>();
+		try {
+		strtotime.convert(COMMAND_PREFIX_BY+"this frday", dates);
+		} catch (InvalidCommandException e){
+			assertEquals(0, dates.size());
+		}
+	}
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\Tests\DeadlineDateConverterTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\Tests\LongIntervalDateConverterTest.java
+	 */
+
+package Logic.Interpreter.DateInterpreter.Tests;
+
+import static org.junit.Assert.*;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+
+import Logic.Exceptions.InvalidCommandException;
+import Logic.Interpreter.DateInterpreter.strtotime;
+
+public class LongIntervalDateConverterTest {
+	private static final String COMMAND_PREFIX_FROM = "Complete something from ";
+
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();
+
+	@Test
+	public void DateAndMonthMatcherTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		strtotime.convert(COMMAND_PREFIX_FROM+"26th July 9:30 to 28th July 11:30", dates);
+		cal.setTime(dates.get(0));
+		assertEquals(26, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(6, cal.get(Calendar.MONTH));
+		assertEquals(9, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(30, cal.get(Calendar.MINUTE));
+		cal.setTime(dates.get(1));
+		assertEquals(28, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(6, cal.get(Calendar.MONTH));
+		assertEquals(11, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(30, cal.get(Calendar.MINUTE));
+		try {
+			strtotime.convert(COMMAND_PREFIX_FROM+"26 July from 9:30 to 1130", dates);
+		} catch (InvalidCommandException e){
+			assertEquals(0, dates.size());
+		}
+	}
+
+	@Test
+	public void SoonMatcherTest() throws InvalidCommandException {
+		ArrayList<Date> dates = new ArrayList<Date>();
+		thrown.expect(InvalidCommandException.class);
+		strtotime.convert(COMMAND_PREFIX_FROM+"today 9:30 to tomorrow 11:30",dates);
+	}
+
+	@Test
+	public void SingleDateTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		Calendar now = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		strtotime.convert(COMMAND_PREFIX_FROM+"the 1st 9:30 to 28th 10:30",dates);
+		cal.setTime(dates.get(0));
+		assertEquals(1, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH)+1, cal.get(Calendar.MONTH));
+		assertEquals(9, cal.get(Calendar.HOUR));
+		assertEquals(30, cal.get(Calendar.MINUTE));
+		cal.setTime(dates.get(1));
+		assertEquals(28, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH)+1, cal.get(Calendar.MONTH));
+		assertEquals(10, cal.get(Calendar.HOUR));
+		assertEquals(30, cal.get(Calendar.MINUTE));
+	}
+
+	@Test
+	public void DateFormatThreeTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		strtotime.convert(COMMAND_PREFIX_FROM+"26/9/2014 9:30 to 3/10/2014 13:30",dates);
+		cal.setTime(dates.get(0));
+		assertEquals(26, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(8, cal.get(Calendar.MONTH));
+		assertEquals(2014, cal.get(Calendar.YEAR));
+		assertEquals(9, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(30, cal.get(Calendar.MINUTE));
+		cal.setTime(dates.get(1));
+		assertEquals(3, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(9, cal.get(Calendar.MONTH));
+		assertEquals(2014, cal.get(Calendar.YEAR));
+		assertEquals(13, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(30, cal.get(Calendar.MINUTE));
+	}
+
+	@Test
+	public void LongIntervalDateConverterFail() throws InvalidCommandException {
+		ArrayList<Date> dates = new ArrayList<Date>();
+		try {
+			strtotime.convert(COMMAND_PREFIX_FROM+"26 July from 9:30 to 1130", dates);
+		} catch (InvalidCommandException e){
+			assertEquals(0, dates.size());
+		}
+	}
+
+
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\Tests\LongIntervalDateConverterTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\Tests\MiscDateInterpreterTests.java
+	 */
+
+package Logic.Interpreter.DateInterpreter.Tests;
+
+import static org.junit.Assert.*;
+
+import java.util.ArrayList;
+import java.util.Date;
+
+import org.junit.Test;
+
+import Logic.Exceptions.InvalidCommandException;
+import Logic.Interpreter.DateInterpreter.strtotime;
+
+public class MiscDateInterpreterTests {
+
+	@Test
+	public void edgeCaseTest() throws InvalidCommandException {
+		ArrayList<Date> dates = new ArrayList<Date>();
+		strtotime.convert("visit gardens by the bay",dates);
+		assertEquals(0, dates.size());
+		strtotime.convert("Make sandcastle on the beach",dates);
+		assertEquals(0, dates.size());
+		strtotime.convert("Open gift from my mother",dates);
+		assertEquals(0, dates.size());
+	}
+
+	@Test
+	public void yesterdayTest() throws InvalidCommandException {
+		ArrayList<Date> dates = new ArrayList<Date>();
+		try{
+			strtotime.convert("do something by yesterday",dates);
+			assert(false);
+		} catch(InvalidCommandException e){
+			assert(true);
+		}
+		try{
+			strtotime.convert("do something by yesterday 14:00",dates);
+			assert(false);
+		} catch(InvalidCommandException e){
+			assert(true);
+		}
+	}
+
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\Tests\MiscDateInterpreterTests.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\Tests\ShortIntervalDateConverterTests.java
+	 */
+
+package Logic.Interpreter.DateInterpreter.Tests;
+
+import static org.junit.Assert.*;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
+import org.junit.Test;
+
+import Logic.Exceptions.InvalidCommandException;
+import Logic.Interpreter.DateInterpreter.strtotime;
+
+public class ShortIntervalDateConverterTests {
+
+	private static final String COMMAND_PREFIX_ON = "Complete something on ";
+	private static final String COMMAND_PREFIX_NONE = "Complete something ";
+	
+	@Test
+	public void DateAndMonthMatcherTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		strtotime.convert(COMMAND_PREFIX_ON+"26th July from 9:30 to 11:30", dates);
+		cal.setTime(dates.get(0));
+		assertEquals(26, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(6, cal.get(Calendar.MONTH));
+		assertEquals(9, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(30, cal.get(Calendar.MINUTE));
+		cal.setTime(dates.get(1));
+		assertEquals(11, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(30, cal.get(Calendar.MINUTE));
+		strtotime.convert(COMMAND_PREFIX_ON+"26 July from 9:30 to 11:30", dates);
+		cal.setTime(dates.get(0));
+		assertEquals(26, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(6, cal.get(Calendar.MONTH));
+		assertEquals(9, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(30, cal.get(Calendar.MINUTE));
+		cal.setTime(dates.get(1));
+		assertEquals(11, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(30, cal.get(Calendar.MINUTE));
+		strtotime.convert(COMMAND_PREFIX_ON+"26 July", dates);
+		cal.setTime(dates.get(0));
+		assertEquals(26, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(6, cal.get(Calendar.MONTH));
+		assertEquals(0, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(0, cal.get(Calendar.MINUTE));
+		cal.setTime(dates.get(1));
+		assertEquals(23, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(59, cal.get(Calendar.MINUTE));
+	}
+	
+	@Test
+	public void SoonMatcherTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		Calendar now = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		strtotime.convert(COMMAND_PREFIX_NONE+"today from 9:30 to 15:30",dates);
+		cal.setTime(dates.get(0));
+		assertEquals(now.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH), cal.get(Calendar.MONTH));
+		assertEquals(now.get(Calendar.YEAR), cal.get(Calendar.YEAR));
+		assertEquals(9, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(30, cal.get(Calendar.MINUTE));
+		cal.setTime(dates.get(1));
+		assertEquals(now.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH), cal.get(Calendar.MONTH));
+		assertEquals(now.get(Calendar.YEAR), cal.get(Calendar.YEAR));
+		assertEquals(15, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(30, cal.get(Calendar.MINUTE));
+		strtotime.convert(COMMAND_PREFIX_NONE+"tomorrow from 10:30 to 13:00",dates);
+		now.add(Calendar.DAY_OF_MONTH, 1);
+		cal.setTime(dates.get(0));
+		assertEquals(now.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH), cal.get(Calendar.MONTH));
+		assertEquals(now.get(Calendar.YEAR), cal.get(Calendar.YEAR));
+		assertEquals(10, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(30, cal.get(Calendar.MINUTE));
+		cal.setTime(dates.get(1));
+		assertEquals(now.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH), cal.get(Calendar.MONTH));
+		assertEquals(now.get(Calendar.YEAR), cal.get(Calendar.YEAR));
+		assertEquals(13, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(0, cal.get(Calendar.MINUTE));
+	}
+	
+	@Test
+	public void SingleDateTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		Calendar now = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		strtotime.convert(COMMAND_PREFIX_ON+"the 30th from 10:30 to 13:00",dates);
+		cal.setTime(dates.get(0));
+		assertEquals(30, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH), cal.get(Calendar.MONTH));
+		assertEquals(10, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(30, cal.get(Calendar.MINUTE));
+		cal.setTime(dates.get(1));
+		assertEquals(30, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH), cal.get(Calendar.MONTH));
+		assertEquals(13, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(00, cal.get(Calendar.MINUTE));
+		strtotime.convert(COMMAND_PREFIX_ON+"the 1st from 10:30 to 13:00",dates);
+		cal.setTime(dates.get(0));
+		assertEquals(1, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH)+1, cal.get(Calendar.MONTH));
+		assertEquals(10, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(30, cal.get(Calendar.MINUTE));
+		cal.setTime(dates.get(1));
+		assertEquals(1, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(now.get(Calendar.MONTH)+1, cal.get(Calendar.MONTH));
+		assertEquals(13, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(00, cal.get(Calendar.MINUTE));
+	}
+	
+	@Test
+	public void DateFormatThreeTest() throws InvalidCommandException {
+		Calendar cal = Calendar.getInstance();
+		ArrayList<Date> dates = new ArrayList<Date>();
+		strtotime.convert(COMMAND_PREFIX_ON+"26/7/2020 from 9:30 to 11:30",dates);
+		cal.setTime(dates.get(0));
+		assertEquals(26, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(6, cal.get(Calendar.MONTH));
+		assertEquals(2020, cal.get(Calendar.YEAR));
+		assertEquals(9, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(30, cal.get(Calendar.MINUTE));
+		cal.setTime(dates.get(1));
+		assertEquals(26, cal.get(Calendar.DAY_OF_MONTH));
+		assertEquals(6, cal.get(Calendar.MONTH));
+		assertEquals(2020, cal.get(Calendar.YEAR));
+		assertEquals(11, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(30, cal.get(Calendar.MINUTE));
+	}
+	
+	@Test
+	public void DeadlineDateInterpreterFail() throws InvalidCommandException {
+		ArrayList<Date> dates = new ArrayList<Date>();
+		try {
+		strtotime.convert(COMMAND_PREFIX_ON+"26 July from 9:30 to 1130", dates);
+		} catch (InvalidCommandException e){
+			assertEquals(0, dates.size());
+		}
+	}
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\DateInterpreter\Tests\ShortIntervalDateConverterTests.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\EpiphanyInterpreter.java
+	 */
+
+package Logic.Interpreter;
+
+import java.io.*; 
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.Date; 
+import java.util.TreeSet;
+
+import Logic.Interpreter.DateInterpreter.*;
+import Logic.CommandType.*; 
+import Logic.Engine.*;
+import Logic.Exceptions.*;
+import jline.TerminalFactory;
+import jline.console.ConsoleReader;
+import jline.console.completer.StringsCompleter;
+
+/**
+ * This class contains the main method to run Epiphany. It accepts input from users and parses the input and subsequently
+ * creates a CommandType(command pattern) and passes it to the Engine class which then executes to command appropriately.
+ * This process loops until the user enters 'exit'.
+ * 
+ * This class follows the Observer pattern by implementing deleteObserver and editObserver.
+ */
+public class EpiphanyInterpreter implements deleteObserver, editObserver{
+	///all the string constants that are involved in displaying things to the user.
+	private static final String MESSAGE_COMMAND_PROMPT = "command: ";
+	private static final String MESSAGE_INVALID_COMMAND = "Invalid command!";
+	private static final TreeSet<String> actionWords = new TreeSet<String>(); //Contains a list of supported English words.
+	//References to objects that we will need to perform commands that the user enters.
+	Engine engine;
+	Scanner input; //This scanner will deal with all input from user.
+	ConsoleReader console;
+	UIHandler uiHandler; 
+
+	public EpiphanyInterpreter() throws IOException, ParseException
+	{
+		engine = Engine.getInstance();
+		input = new Scanner(System.in);
+		console = new ConsoleReader();
+		uiHandler = UIHandler.getInstance();
+		this.populateDictionary(); //populates the actionWords TreeSet with valid English words.
+	}
+
+	/**
+	 * This is the main function which dictates the flow of the program. All the functionality is
+	 * abstracted out to other methods.
+	 * @param args which contains the file name (at index 0) entered by the user.
+	 * @throws ParseException 
+	 * @throws IOException
+	 * @throws CancelDeleteException 
+	 * @throws CancelEditException 
+	 */
+	public static void main(String[] args) throws IOException, ParseException, CancelEditException, CancelDeleteException {
+		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
+		interpreter.acceptUserInputUntilExit();
+	}
+
+	/**
+	 * This method accepts the user inputs until the 'exit' command is entered. None of the actual
+	 * operations are carried out in this function - all the operations are left to the Engine.
+	 * @throws IOException 
+	 * @throws CancelDeleteException 
+	 * @throws CancelEditException 
+	 * @throws ParseException 
+	 */
+	void acceptUserInputUntilExit() throws IOException, CancelEditException, CancelDeleteException, ParseException {
+		try {
+			engine.executeCommand(new DisplayCommandType());
+			console.setPrompt(MESSAGE_COMMAND_PROMPT);
+			console.addCompleter(new StringsCompleter(this.getCommandsList()));
+			String line = null;
+			while ((line = console.readLine()) != null) {
+				CommandType toPassToEngine;
+				try {
+					if(line.length()<2){
+						throw new InvalidCommandException();
+					}
+					toPassToEngine = interpretCommand(line);
+					assert(toPassToEngine != null);
+					console.setPrompt("");
+					console.clearScreen();
+					console.setPrompt(MESSAGE_COMMAND_PROMPT);
+					//console.flush();
+					engine.executeCommand(toPassToEngine);
+					//console.flush();
+					if(!toPassToEngine.getType().equals("display") && !toPassToEngine.getType().equals("search")){
+						uiHandler.printToTerminal("");
+						engine.executeCommand(new DisplayCommandType());
+					}
+				} catch (InvalidCommandException e) {
+					console.setPrompt("");
+					console.clearScreen();
+					console.setPrompt(MESSAGE_COMMAND_PROMPT);
+					uiHandler.printToDisplayRed(MESSAGE_INVALID_COMMAND);
+					uiHandler.printToTerminal("");
+					engine.executeCommand(new DisplayCommandType());
+				}
+				catch (ExitException e) {
+					System.exit(0);
+				}
+
+			}
+		} catch(IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				TerminalFactory.get().restore();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		/*String userInput;
+		do{
+			uiHandler.resetToDefault();
+			uiHandler.printToTerminal(MESSAGE_COMMAND_PROMPT, "inline");
+			userInput = input.nextLine();
+			CommandType toPassToEngine;
+			try {
+				toPassToEngine = interpretCommand(userInput);
+				assert(toPassToEngine != null);
+				engine.executeCommand(toPassToEngine);
+			} catch (InvalidCommandException e) {
+				uiHandler.printToTerminal(MESSAGE_INVALID_COMMAND);
+			}
+			catch (ExitException e) {
+				System.exit(0);
+			}
+		} while(!userInput.equalsIgnoreCase("exit"));
+		input.close();*/
+	}
+
+	/**
+	 * This returns a list of commands that the system supports, which will be used for auto-complete purposes.
+	 * @return ArrayList of supported commands (String)
+	 */
+	private ArrayList<String> getCommandsList(){
+		ArrayList<String> commands = new ArrayList<String>();
+		commands.add("delete");
+		commands.add("edit");
+		commands.add("search");
+		commands.add("display");
+		commands.add("exit");
+		commands.add("undo");
+		commands.add("redo");
+		commands.add("reset");
+		commands.add("-m");
+		return commands;
+	}
+
+	/**
+	 * This function recognizes the type of input by user, and then redirects to the appropriate function to
+	 * handle interpretation of that typr of command.
+	 * @param userInput
+	 * @return CommandType of the input.
+	 * @throws InvalidCommandException 
+	 * @throws ExitExeption 
+	 */
+	public CommandType interpretCommand(String userInput) throws InvalidCommandException, ExitException {
+		userInput = userInput.trim();
+		if(userInput.equalsIgnoreCase("undo|-u")){
+			return new UndoCommandType();
+		} else if(userInput.equalsIgnoreCase("redo|-r")){
+			return new RedoCommandType();
+		} else if(userInput.equalsIgnoreCase("reset")){
+			return new ResetCommandType();
+		} else if(userInput.matches("(display|view|ls).*")){
+			return interpretDisplayCommand(userInput);
+		} else if(userInput.matches("(-m).*")){
+			return interpretCompleteCommand(userInput);
+		} else if(userInput.equals("exit")) {
+			return exitProgram();
+		} else if(userInput.matches("(search|find|-f).*")) {
+			return interpretSearchCommand(userInput);
+		} else if(userInput.matches("(delete|remove|rm).*")) {
+			return interpretDeleteCommand(userInput);
+		} else if(userInput.matches("(edit|-e).*")) {
+			return interpretEditCommand(userInput);
+		} else { 
+			return interpretAddCommand(userInput);
+		} 
+	}
+
+	/**
+	 * This function handles to interpretation of 'complete task' commands and returns the standardized complete command according to CommandType Interface.
+	 * @param userInput
+	 * @return
+	 * @throws InvalidCommandException
+	 */
+	private CommandType interpretCompleteCommand(String userInput) throws InvalidCommandException {
+		if(userInput.indexOf(' ')==-1){
+			//the complete command must have some modifiers. ie "-m" would be invalid.
+			throw new InvalidCommandException();
+		}
+		//the modifier is the task description (can be a part of) of the task to mark as completed.
+		String completeMe = userInput.substring(userInput.indexOf(' ') + 1);
+		if(completeMe.contains("#")){
+			//if the command contains # it means that the user has specified a particular project to carry this command out in.
+			if(completeMe.substring(completeMe.indexOf('#')+1).contains("#")){
+				//the command can have only one project (and by extension only one #).
+				throw new InvalidCommandException();
+			}
+			return new CompleteCommandType(completeMe.substring(0,completeMe.indexOf('#')-1),completeMe.substring(completeMe.indexOf('#')+1));
+		}
+		return new CompleteCommandType(completeMe);
+	}
+
+	/**
+	 * This function handles to interpretation of 'edit task' commands and returns the standardized edit command according to CommandType Interface.
+	 * @param userInput
+	 * @return
+	 * @throws InvalidCommandException
+	 */
+	private CommandType interpretEditCommand(String userInput) throws InvalidCommandException {
+		if(userInput.indexOf(' ')==-1){
+			//the edit command must have some modifiers. ie "edit" would be invalid.
+			throw new InvalidCommandException();
+		}
+		//the modifier is the task description (can be a part of) of the task to edit.
+		String toEdit = userInput.substring(userInput.indexOf(' ') + 1); 
+		if(toEdit.contains("#")){
+			//if the command contains # it means that the user has specified a particular project to carry this command out in.
+			if(toEdit.substring(toEdit.indexOf('#')+1).contains("#")){
+				//the command can have only one project (and by extension only one #).
+				throw new InvalidCommandException();
+			}
+			return new EditCommandType(toEdit.substring(0,toEdit.indexOf('#')-1),toEdit.substring(toEdit.indexOf('#')+1));
+		}
+		return new EditCommandType(toEdit);
+	}
+
+	/**
+	 * This function handles to interpretation of 'display' commands and returns the standardized display command according to CommandType Interface.
+	 * @param userInput
+	 * @return DisplayCommandType
+	 * @throws InvalidCommandException 
+	 */
+	@SuppressWarnings("deprecation")
+	private CommandType interpretDisplayCommand(String userInput) throws InvalidCommandException {
+		String[] commandTokens = userInput.split(" ");
+		if(commandTokens.length == 1){
+			// if the user enters just "display", he wants to display all tasks across all projects and times.
+			return new DisplayCommandType();
+		}else if(commandTokens.length >= 2){
+			if(commandTokens[1].startsWith("#")){
+				// if the user enters just "display #projectName", he wants to display all tasks in a particular project.
+				if(commandTokens[1].substring(1).contains("#")){
+					//the command can have only one project (and by extension only one #).
+					throw new InvalidCommandException();
+				}
+				return new DisplayCommandType(userInput.split("#")[1]);
+			} else if(commandTokens[1].equalsIgnoreCase("all")){
+				// if the user enters just "display all", he wants to display all tasks across all projects and times.
+				return new DisplayCommandType(commandTokens[1]);
+			} else{
+				// if the user enters just "display some date", he wants to display all tasks on a particular date.
+				ArrayList<Date> displayDate = new ArrayList<Date>();
+				parseDate(" by "+userInput.substring(userInput.indexOf(' ')+1), displayDate);
+				if(displayDate.size()>=1){
+					return new DisplayCommandType(String.format("%d-%d-%d", displayDate.get(0).getDate(),displayDate.get(0).getMonth(),displayDate.get(0).getYear()+1900));
+				}
+			}
+		}
+		throw new InvalidCommandException();
+	}
+
+	/**
+	 * Exits the program.
+	 * @return CommandType(this function will never return anything).
+	 * @throws ExitException 
+	 */
+	private CommandType exitProgram() throws ExitException {
+		throw new ExitException();
+	}
+
+	/**
+	 * This function returns the standardized search command according to CommandType Interface. 
+	 * @param userInput
+	 * @return SearchCommandType
+	 * @throws InvalidCommandException 
+	 */
+	private CommandType interpretSearchCommand(String userInput) throws InvalidCommandException {
+		if(userInput.indexOf(' ')==-1){
+			//the search command must have some modifiers. ie "search" would be invalid.
+			throw new InvalidCommandException();
+		}
+		//the modifier is the task description (can be a part of) of the task to search for.
+		String findMe = userInput.substring(userInput.indexOf(' ') + 1);
+		if(findMe.contains("#")){
+			if(findMe.startsWith("#")){
+				//the search command must have some modifiers. ie "search #projectName" would be invalid.
+				throw new InvalidCommandException();
+			}
+			//if the command contains # it means that the user has specified a particular project to carry this command out in.
+			if(findMe.substring(findMe.indexOf('#')+1).contains("#")){
+				//the command can have only one project (and by extension only one #).
+				throw new InvalidCommandException();
+			}
+			return new SearchCommandType(findMe.substring(0,findMe.indexOf('#')-1),findMe.substring(findMe.indexOf('#')+1));
+		}
+		return new SearchCommandType(findMe);
+	}
+
+	private CommandType interpretDeleteCommand(String userInput) throws InvalidCommandException {
+		if(userInput.indexOf(' ')==-1){
+			//the delete command must have some modifiers. ie "delete" would be invalid.
+			throw new InvalidCommandException();
+		}
+		//the modifier is the task description (can be a part of) of the task to search for.
+		String toDelete = userInput.substring(userInput.indexOf(' ') + 1); 
+		if(toDelete.contains("#")){
+			//if the command contains # it means that the user has specified a particular project to carry this command out in.
+			if(toDelete.substring(toDelete.indexOf('#')+1).contains("#")){
+				//the command can have only one project (and by extension only one #).
+				throw new InvalidCommandException();
+			}
+			if(toDelete.startsWith("#")){
+				return new DeleteCommandType(null, toDelete.substring(1));
+			}
+			return new DeleteCommandType(toDelete.substring(0,toDelete.indexOf('#')-1),toDelete.substring(toDelete.indexOf('#')+1));
+		}
+		return new DeleteCommandType(toDelete);
+	}
+
+	/**
+	 * This function returns the standardized add command according to CommandType Interface. 
+	 * @param userInput
+	 * @return AddCommandType
+	 * @throws InvalidCommandException 
+	 */
+	private CommandType interpretAddCommand(String userInput) throws InvalidCommandException {
+		if(!userInput.startsWith("\"") && !isValidTask(userInput)){
+			//unless the task description is within double quotes, the first word should be a valid English word.
+			throw new InvalidCommandException();
+		}
+		String projectName = "";
+		if(userInput.contains("#")){
+			//if the command contains # it means that the user has specified a particular project to add this task to.
+			if(userInput.substring(userInput.indexOf('#')+1).contains("#")){
+				//a task can be added to only one project.
+				throw new InvalidCommandException();
+			}
+			projectName = userInput.substring(userInput.indexOf('#')+1);
+			if(projectName.equals("default")){
+				//a user can't explicitly add things to the "default" project. that is reserved for task without any project.
+				throw new InvalidCommandException();
+			}
+			userInput = userInput.substring(0,userInput.indexOf('#')-1);
+		}
+		if(userInput.length()<2){
+			//there can be no task descriptions smaller that 3 letters.
+			throw new InvalidCommandException();
+		}
+		ArrayList<Date> dates = new ArrayList<Date>();
+		String taskDescription;
+		if(userInput.startsWith("\"")){
+			//it is possible that the user has entered the task description without double quotes. The command would be invalid if there
+			//is no closing quote.
+			try{
+				taskDescription = userInput.substring(1,userInput.lastIndexOf('\"'));
+				if(userInput.length()>userInput.lastIndexOf('\"')+1){
+					parseDate(userInput.substring(userInput.lastIndexOf('\"')+1), dates);
+				}
+			} catch (Exception e){
+				throw new InvalidCommandException();
+			}
+		} else{
+			//parseDate adds the dates the user entered in his command to the dates ArrayList and additionally returns the appropriate
+			//task description after removing the parsed dates.
+			taskDescription = parseDate(userInput, dates);
+		}
+		//task desciption can never be null at this point. parseDate throws an InvalidCommandException that does not allow this.
+		assert(taskDescription!=null);
+		if(dates.size()==0){
+			//user has entered a floating task.
+			if(projectName.equals("")){
+				return new AddCommandType(taskDescription);
+			} else{
+				return new AddCommandType(taskDescription, null, projectName);
+			}
+		} else if(dates.size()==1){
+			//the user has entered a deadline task.
+			if(projectName.equals("")){
+				return new AddCommandType(taskDescription, dates.get(0));
+			} else{
+				return new AddCommandType(taskDescription, dates.get(0), projectName);
+			}
+
+		} else{
+			//user has entered a timed task.
+			if(projectName.equals("")){
+				return new AddCommandType(taskDescription, dates.get(0), dates.get(1));
+			} else{
+				return new AddCommandType(taskDescription, dates.get(0), dates.get(1), projectName);
+			}		
+		}
+	}
+
+	/**
+	 * Checks if a task is gibberish
+	 * @param string
+	 */
+	private boolean isValidTask(String taskDescription) {
+		//if the first word is not a valid English word, then it is considered gibberish.
+		return actionWords.contains(taskDescription.split(" ")[0].toLowerCase());
+	}
+
+	/**
+	 * Parses the dates.  
+	 * @param string
+	 * @return Date
+	 * @throws InvalidCommandException 
+	 */
+	private String parseDate(String string, ArrayList<Date> d) throws InvalidCommandException {
+		return strtotime.convert(string, d);
+	}
+
+	/**
+	 * This function draws on an English Dictionary to check if the action words of the user are legitimate.
+	 */
+	private void populateDictionary() throws FileNotFoundException{
+		File dict = new File("dictionary.txt");
+		Scanner dictScan = new Scanner(dict);
+		while(dictScan.hasNextLine()){
+			actionWords.add(dictScan.nextLine());
+		}
+		dictScan.close();
+	}
+
+
+	/**
+	 * When delete is called we will perform a search for the given key, tasks that contain this
+	 * key will be enumerated to the user.
+	 * This function asks the user for the indexes of the tasks to be deleted (from the enumerated list)
+	 * @throws IOException 
+	 */
+	public int[] askForAdditionalInformationForDelete() throws CancelDeleteException, IOException {
+		String inputFromUser = console.readLine();
+		try{
+			//the user can enter multiple indexed separated by commas, the system will delete them all.
+			String[] stringIndeces = inputFromUser.split(",");
+			int[] intIndeces = new int[stringIndeces.length];
+			for (int i = 0; i < stringIndeces.length; i++) {
+				intIndeces[i] = Integer.parseInt(stringIndeces[i].trim());
+				if(intIndeces[i]<1){
+					throw new NumberFormatException("Invalid input : Negative index");
+				}
+			}
+			console.clearScreen();
+			return intIndeces;
+		} catch (NumberFormatException e){
+			//if the user enters an invalid number (or something other than the number), then we ask if he wants to try again.
+			uiHandler.printToTerminal("You have entered an invalid number. Press y to try again, press n to cancel.");
+			String userResponse = console.readLine();
+			if(userResponse.equalsIgnoreCase("y")){
+				return askForAdditionalInformationForDelete();
+			} else{
+				throw new CancelDeleteException();
+			}
+		}
+	}
+
+	/**
+	 * When edit is called we will perform a search for the given key, tasks that contain this
+	 * key will be enumerated to the user.
+	 * This function asks the user for the index of the task to be edited (from the enumerated list)
+	 */
+	public int askForAdditionalInformationForEdit() throws CancelEditException, IOException {
+		String inputFromUser = console.readLine();
+		try{
+			int indexFromUser = Integer.parseInt(inputFromUser);
+			if(indexFromUser<1){
+				throw new NumberFormatException("Invalid input : Negative index");
+			}
+			console.clearScreen();
+			return indexFromUser;
+		} catch (NumberFormatException e){
+			//if the user enters an invalid number (or something other than the number), then we ask if he wants to try again.
+			uiHandler.printToTerminal("You have entered an invalid number. Press y to try again, press n to cancel edit.");
+			String userResponse = console.readLine();
+			if(userResponse.equalsIgnoreCase("y")){
+				return askForAdditionalInformationForEdit();
+			} else{
+				throw new CancelEditException();
+			}
+		}
+	}
+
+	/**
+	 * When we have selected to task to be edited, we then delete it and add
+	 * a new task in its place, this function accepts the new task from the user.
+	 * @return CommandType
+	 * @throws IOException 
+	 */
+	public CommandType askForNewTaskForEdit() throws CancelEditException, IOException {
+		String inputFromUser = console.readLine();
+		CommandType toPassToEngine;
+		try {
+			toPassToEngine = interpretAddCommand(inputFromUser);
+			assert(toPassToEngine != null);
+			return toPassToEngine;
+		} catch (InvalidCommandException e) {
+			//if the user enters an invalid task , then we ask if he wants to try again.
+			uiHandler.printToTerminal("You have entered an invalid task. Press y to try again, press n to cancel edit.");
+			String userResponse = console.readLine();
+			if(userResponse.equalsIgnoreCase("y")){
+				return askForNewTaskForEdit();
+			} else{
+				throw new CancelEditException();
+			}
+		}
+	}
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\EpiphanyInterpreter.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\Tests\EpiphanyInterpreterTestCases.java
+	 */
+
+package Logic.Interpreter.Tests;
+
+import static org.junit.Assert.*;
+
+import java.io.IOException;
+import java.text.ParseException;
+
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+
+import Logic.Exceptions.ExitException;
+import Logic.Exceptions.InvalidCommandException;
+import Logic.Interpreter.EpiphanyInterpreter;
+import Logic.CommandType.*;
+
+public class EpiphanyInterpreterTestCases {
+	/*private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+	private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+
+	@Before
+	public void setUpStreams() {
+	    System.setOut(new PrintStream(outContent));
+	    System.setErr(new PrintStream(errContent));
+	}
+
+	@After
+	public void cleanUpStreams() {
+	    System.setOut(null);
+	    System.setErr(null);
+	}
+
+	@Test
+	public void initializationTest() throws IOException, ParseException {
+		EpiphanyInterpreter.main(null);
+		String inputData = "exit\r\n";
+		System.setIn(new ByteArrayInputStream(inputData.getBytes()));
+		assertEquals("Exiting Program.", outContent.toString());
+
+	}*/
+
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();
+
+	@Test
+	public void interpretDisplayTest() throws IOException, ParseException, InvalidCommandException, ExitException{
+		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
+		CommandType actualCommand = interpreter.interpretCommand("display");
+		if(!actualCommand.getType().equals("display")){
+			fail();
+		}
+		DisplayCommandType actualDisplayCommand = (DisplayCommandType) actualCommand;
+		assertEquals("all", actualDisplayCommand.getModifiers());
+
+		actualCommand = interpreter.interpretCommand("view all");
+		if(!actualCommand.getType().equals("display")){
+			fail();
+		}
+		actualDisplayCommand = (DisplayCommandType) actualCommand;
+		assertEquals("all", actualDisplayCommand.getModifiers());
+
+		actualCommand = interpreter.interpretCommand("display #Project Name");
+		if(!actualCommand.getType().equals("display")){
+			fail();
+		}
+		actualDisplayCommand = (DisplayCommandType) actualCommand;
+		assertEquals("Project Name", actualDisplayCommand.getModifiers());
+
+		actualCommand = interpreter.interpretCommand("display 26/07/2014");
+		if(!actualCommand.getType().equals("display")){
+			fail();
+		}
+		actualDisplayCommand = (DisplayCommandType) actualCommand;
+		assertEquals("26-6-2014", actualDisplayCommand.getModifiers());
+	}
+
+	@Test
+	public void displayInvalidModifierTest() throws IOException, ParseException, InvalidCommandException, ExitException{
+		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
+		thrown.expect(InvalidCommandException.class);
+		@SuppressWarnings("unused")
+		CommandType actualCommand = interpreter.interpretCommand("display something");
+	}
+
+	@Test
+	public void displayTwoHashtagsTest() throws IOException, ParseException, InvalidCommandException, ExitException{
+		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
+		thrown.expect(InvalidCommandException.class);
+		@SuppressWarnings("unused")
+		CommandType actualCommand = interpreter.interpretCommand("display #something#YOLO#Error");
+	}
+
+	@Test
+	public void interpretExitTest() throws IOException, ParseException, InvalidCommandException, ExitException{
+		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
+		thrown.expect(ExitException.class);
+		@SuppressWarnings("unused")
+		CommandType actualCommand = interpreter.interpretCommand("exit");
+	}
+
+	@Test
+	public void interpretSearchTest() throws IOException, ParseException, InvalidCommandException, ExitException{
+		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
+		CommandType actualCommand = interpreter.interpretCommand("search something");
+		if(!actualCommand.getType().equals("search")){
+			fail();
+		}
+		SearchCommandType actualSearchCommand = (SearchCommandType) actualCommand;
+		assertEquals("something", actualSearchCommand.getTaskDescription());
+		assertEquals("", actualSearchCommand.getProjectName());
+
+		actualCommand = interpreter.interpretCommand("search something #Project Name");
+		if(!actualCommand.getType().equals("search")){
+			fail();
+		}
+		actualSearchCommand = (SearchCommandType) actualCommand;
+		assertEquals("something", actualSearchCommand.getTaskDescription());
+		assertEquals("Project Name", actualSearchCommand.getProjectName());
+
+		thrown.expect(InvalidCommandException.class);
+		actualCommand = interpreter.interpretCommand("search");
+	}
+
+	@Test
+	public void interpretDeleteTest() throws IOException, ParseException, InvalidCommandException, ExitException{
+		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
+		CommandType actualCommand = interpreter.interpretCommand("delete something");
+		if(!actualCommand.getType().equals("delete")){
+			fail();
+		}
+		DeleteCommandType actualDeleteCommand = (DeleteCommandType) actualCommand;
+		assertEquals("something", actualDeleteCommand.getTaskDescription());
+		assertEquals("default", actualDeleteCommand.getProjectName());
+
+		actualCommand = interpreter.interpretCommand("delete something #Project Name");
+		if(!actualCommand.getType().equals("delete")){
+			fail();
+		}
+		actualDeleteCommand = (DeleteCommandType) actualCommand;
+		assertEquals("something", actualDeleteCommand.getTaskDescription());
+		assertEquals("Project Name", actualDeleteCommand.getProjectName());
+
+		actualCommand = interpreter.interpretCommand("delete #Project Name");
+		if(!actualCommand.getType().equals("delete")){
+			fail();
+		}
+		actualDeleteCommand = (DeleteCommandType) actualCommand;
+		assertEquals(null, actualDeleteCommand.getTaskDescription());
+		assertEquals("Project Name", actualDeleteCommand.getProjectName());
+
+		thrown.expect(InvalidCommandException.class);
+		actualCommand = interpreter.interpretCommand("delete");
+	}
+
+	@Test
+	public void addFloatingTest() throws IOException, ParseException, InvalidCommandException, ExitException{
+		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
+		CommandType actualCommand = interpreter.interpretCommand("Complete something");
+		if(!actualCommand.getType().equals("add")){
+			fail();
+		}
+		AddCommandType actualAddCommand = (AddCommandType) actualCommand;
+		assertEquals("Complete something", actualAddCommand.getDescription());
+		assertEquals(null, actualAddCommand.getDateFrom());
+		assertEquals(null, actualAddCommand.getDateTo());
+		assertEquals("default", actualAddCommand.getProjectName());
+
+		actualCommand = interpreter.interpretCommand("Complete something #Project Name");
+		if(!actualCommand.getType().equals("add")){
+			fail();
+		}
+		actualAddCommand = (AddCommandType) actualCommand;
+		assertEquals("Complete something", actualAddCommand.getDescription());
+		assertEquals(null, actualAddCommand.getDateFrom());
+		assertEquals(null, actualAddCommand.getDateTo());
+		assertEquals("Project Name", actualAddCommand.getProjectName());
+
+		thrown.expect(InvalidCommandException.class);
+		actualCommand = interpreter.interpretCommand("ansodn valid words");
+	}
+
+	@Test
+	public void addDeadlineTest() throws IOException, ParseException, InvalidCommandException, ExitException{
+		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
+		CommandType actualCommand = interpreter.interpretCommand("Complete something by 26th July");
+		if(!actualCommand.getType().equals("add")){
+			fail();
+		}
+		AddCommandType actualAddCommand = (AddCommandType) actualCommand;
+		assertEquals("Complete something", actualAddCommand.getDescription());
+		assertEquals("default", actualAddCommand.getProjectName());
+
+		actualCommand = interpreter.interpretCommand("Complete something by 26th July #Project Name");
+		if(!actualCommand.getType().equals("add")){
+			fail();
+		}
+		actualAddCommand = (AddCommandType) actualCommand;
+		assertEquals("Complete something", actualAddCommand.getDescription());
+		assertEquals("Project Name", actualAddCommand.getProjectName());
+	}
+
+	@Test
+	public void addIntervalTest() throws IOException, ParseException, InvalidCommandException, ExitException{
+		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
+		CommandType actualCommand = interpreter.interpretCommand("Complete something on 26th July from 9:30 to 11:30");
+		if(!actualCommand.getType().equals("add")){
+			fail();
+		}
+		AddCommandType actualAddCommand = (AddCommandType) actualCommand;
+		assertEquals("Complete something", actualAddCommand.getDescription());
+		assertEquals("default", actualAddCommand.getProjectName());
+
+		actualCommand = interpreter.interpretCommand("Complete something on 26th July from 9:30 to 11:30 #Project Name");
+		if(!actualCommand.getType().equals("add")){
+			fail();
+		}
+		actualAddCommand = (AddCommandType) actualCommand;
+		assertEquals("Complete something", actualAddCommand.getDescription());
+		assertEquals("Project Name", actualAddCommand.getProjectName());
+	}
+
+	@SuppressWarnings("deprecation")
+	@Test
+	public void addMiscTest() throws IOException, ParseException, InvalidCommandException, ExitException{
+		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
+		CommandType actualCommand = interpreter.interpretCommand("\"do something\"");
+		if(!actualCommand.getType().equals("add")){
+			fail();
+		}
+		AddCommandType actualAddCommand = (AddCommandType) actualCommand;
+		assertEquals("do something", actualAddCommand.getDescription());
+		assertEquals("default", actualAddCommand.getProjectName());
+
+		actualCommand = interpreter.interpretCommand("\"do something\" by 26/07");
+		if(!actualCommand.getType().equals("add")){
+			fail();
+		}
+		actualAddCommand = (AddCommandType) actualCommand;
+		assertEquals("do something", actualAddCommand.getDescription());
+		assertEquals("default", actualAddCommand.getProjectName());
+		assertEquals(26, actualAddCommand.getDateTo().getDate());
+		assertEquals(6, actualAddCommand.getDateTo().getMonth());
+
+		try{
+			actualCommand = interpreter.interpretCommand("do something #default");
+			assert(false);
+		} catch(InvalidCommandException e){
+			assert(true);
+		}
+		try{
+			actualCommand = interpreter.interpretCommand("d");
+			assert(false);
+		} catch(InvalidCommandException e){
+			assert(true);
+		}
+	}
+
+	@Test
+	public void undoTest() throws IOException, ParseException, InvalidCommandException, ExitException{
+		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
+		CommandType actualCommand = interpreter.interpretCommand("undo");
+		if(!actualCommand.getType().equals("undo")){
+			fail();
+		}
+	}
+
+	@Test
+	public void redoTest() throws IOException, ParseException, InvalidCommandException, ExitException{
+		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
+		CommandType actualCommand = interpreter.interpretCommand("redo");
+		if(!actualCommand.getType().equals("redo")){
+			fail();
+		}
+	}
+
+	@Test
+	public void completeTaskTest() throws IOException, ParseException, InvalidCommandException, ExitException{
+		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
+		CommandType actualCommand = interpreter.interpretCommand("-m something");
+		if(!actualCommand.getType().equals("complete")){
+			fail();
+		}
+		CompleteCommandType actualCompleteCommand = (CompleteCommandType) actualCommand;
+		assertEquals("something", actualCompleteCommand.getTaskDescription());
+		assertEquals("default", actualCompleteCommand.getProjectName());
+
+		actualCommand = interpreter.interpretCommand("-m something #Project Name");
+		if(!actualCommand.getType().equals("complete")){
+			fail();
+		}
+		actualCompleteCommand = (CompleteCommandType) actualCommand;
+		assertEquals("something", actualCompleteCommand.getTaskDescription());
+		assertEquals("Project Name", actualCompleteCommand.getProjectName());
+
+		thrown.expect(InvalidCommandException.class);
+		actualCommand = interpreter.interpretCommand("-m");
+	}
+
+	@Test
+	public void editTaskTest() throws IOException, ParseException, InvalidCommandException, ExitException{
+		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
+		CommandType actualCommand = interpreter.interpretCommand("edit something");
+		if(!actualCommand.getType().equals("edit")){
+			fail();
+		}
+		EditCommandType actualEditCommand = (EditCommandType) actualCommand;
+		assertEquals("something", actualEditCommand.getTaskDescription());
+		assertEquals("default", actualEditCommand.getProjectName());
+
+		actualCommand = interpreter.interpretCommand("edit something #Project Name");
+		if(!actualCommand.getType().equals("edit")){
+			fail();
+		}
+		actualEditCommand = (EditCommandType) actualCommand;
+		assertEquals("something", actualEditCommand.getTaskDescription());
+		assertEquals("Project Name", actualEditCommand.getProjectName());
+
+		thrown.expect(InvalidCommandException.class);
+		actualCommand = interpreter.interpretCommand("edit");
+	}
+
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\Tests\EpiphanyInterpreterTestCases.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\Tests\UIHandlerTestCases.java
+	 */
+
+package Logic.Interpreter.Tests;
+
+import static org.junit.Assert.assertEquals;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import Logic.Interpreter.UIHandler;
+
+public class UIHandlerTestCases {
+	private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+	private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+
+	@Before
+	public void setUpStreams() {
+	    System.setOut(new PrintStream(outContent));
+	    System.setErr(new PrintStream(errContent));
+	}
+
+	@After
+	public void cleanUpStreams() {
+	    System.setOut(null);
+	    System.setErr(null);
+	}
+
+	@Test
+	public void printToTerminalLnTest() {
+	    UIHandler uiHandler = UIHandler.getInstance();
+	    uiHandler.printToTerminal("hello");
+	    assertEquals("hello\r\n", outContent.toString());
+	}
+	
+	@Test
+	public void printToTerminalTest() {
+	    UIHandler uiHandler = UIHandler.getInstance();
+	    uiHandler.printToTerminal("hello","inline");
+	    assertEquals("hello", outContent.toString());
+	}
+	
+	@Test
+	public void printToDisplayTest() {
+	    UIHandler uiHandler = UIHandler.getInstance();
+	    uiHandler.printToDisplay("hello");
+	    assertEquals("hello\r\n", outContent.toString());
+	}
+}
+
+	// End of segment: C:\Users\abdulla contractor\Desktop\Epiphany\src\Logic\Interpreter\Tests\UIHandlerTestCases.java
+
+
+
+
+
