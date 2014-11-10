@@ -18,6 +18,7 @@ import Logic.CommandType.*;
  *
  */
 
+//@author A0118794R
 public class CRUDTest {
 	Engine E;
 	private static final String TASK_DESCRIPTION_FLOATING = "finish tutorial 5";
@@ -145,7 +146,6 @@ public class CRUDTest {
 		E.executeCommand(resetCommandType);
 	}
 	
-	// Testing add with projects
 	//@author A0118794R
 	@SuppressWarnings("static-access")
 	@Test
@@ -162,7 +162,7 @@ public class CRUDTest {
 	
 
 	/******************************** Testing of Delete ********************************/
-	//@author A0110924R
+	//@author A0118794R
 	@Test
 	public void testDelete() throws IOException, ParseException {
 		ResetCommandType resetCommandType = new ResetCommandType();
@@ -182,7 +182,8 @@ public class CRUDTest {
 		}
 		E.executeCommand(resetCommandType);
 	}
-	//@author A0110924R
+	
+	//@author A0118794R
 	@Test
 	public void testDeleteProject() throws IOException, ParseException {
 		ResetCommandType resetCommandType = new ResetCommandType();
@@ -232,6 +233,7 @@ public class CRUDTest {
 
 		E.executeCommand(resetCommandType);
 	}
+	
 	/******************************** Testing of Display ********************************/
 	//@author A0110924R
 	@Test
