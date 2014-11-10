@@ -10,13 +10,7 @@ import org.junit.Test;
 
 import Logic.Engine.Engine;
 import Logic.Engine.Task;
-import Logic.Interpreter.CommandType.AddCommandType;
-import Logic.Interpreter.CommandType.DeleteCommandType;
-import Logic.Interpreter.CommandType.DisplayCommandType;
-import Logic.Interpreter.CommandType.RedoCommandType;
-import Logic.Interpreter.CommandType.ResetCommandType;
-import Logic.Interpreter.CommandType.SearchCommandType;
-import Logic.Interpreter.CommandType.UndoCommandType;
+import Logic.CommandType.*;
 
 
 
@@ -35,8 +29,6 @@ public class CRUDTest {
 	private static final String TASK_DESCRIPTION_PROJECT = "finish project";
 	private static final String TASK_DESCRIPTION_PROJECT2 = "finish lecture 10";
 	private static final String TASK_DESCRIPTION_1 = "do something";
-	private static final String TASK_DESCRIPTION_2 = "hello world";
-	private static final String TASK_DESCRIPTION_3 = "quick brown fox jumps over the lazy dog";
 	
 	/************ Constructor **************/
 	

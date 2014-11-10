@@ -8,13 +8,8 @@ import java.util.Scanner;
 import java.util.Date; 
 import java.util.TreeSet;
 
-
-
-
-
-
 import Logic.Interpreter.DateInterpreter.*;
-import Logic.Interpreter.CommandType.*; 
+import Logic.CommandType.*; 
 import Logic.Engine.*;
 import Logic.Exceptions.*;
 import jline.TerminalFactory;
@@ -293,6 +288,10 @@ public class EpiphanyInterpreter implements deleteObserver, editObserver{
 		//the modifier is the task description (can be a part of) of the task to search for.
 		String findMe = userInput.substring(userInput.indexOf(' ') + 1);
 		if(findMe.contains("#")){
+			if(findMe.startsWith("#")){
+				//the search command must have some modifiers. ie "search #projectName" would be invalid.
+				throw new InvalidCommandException();
+			}
 			//if the command contains # it means that the user has specified a particular project to carry this command out in.
 			if(findMe.substring(findMe.indexOf('#')+1).contains("#")){
 				//the command can have only one project (and by extension only one #).

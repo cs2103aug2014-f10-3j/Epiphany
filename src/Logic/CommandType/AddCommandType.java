@@ -1,5 +1,5 @@
 //@author A0118905A
-package Logic.Interpreter.CommandType;
+package Logic.CommandType;
 
 import java.util.Date;
 

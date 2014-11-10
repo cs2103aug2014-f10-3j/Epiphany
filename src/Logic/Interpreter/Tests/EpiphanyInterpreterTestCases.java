@@ -3,16 +3,9 @@ package Logic.Interpreter.Tests;
 
 import static org.junit.Assert.*;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -20,14 +13,7 @@ import org.junit.rules.ExpectedException;
 import Logic.Exceptions.ExitException;
 import Logic.Exceptions.InvalidCommandException;
 import Logic.Interpreter.EpiphanyInterpreter;
-import Logic.Interpreter.CommandType.AddCommandType;
-import Logic.Interpreter.CommandType.CommandType;
-import Logic.Interpreter.CommandType.CompleteCommandType;
-import Logic.Interpreter.CommandType.DeleteCommandType;
-import Logic.Interpreter.CommandType.DisplayCommandType;
-import Logic.Interpreter.CommandType.EditCommandType;
-import Logic.Interpreter.CommandType.SearchCommandType;
-import Logic.Interpreter.DateInterpreter.strtotime;
+import Logic.CommandType.*;
 
 public class EpiphanyInterpreterTestCases {
 	/*private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
@@ -93,6 +79,7 @@ public class EpiphanyInterpreterTestCases {
 	public void displayInvalidModifierTest() throws IOException, ParseException, InvalidCommandException, ExitException{
 		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
 		thrown.expect(InvalidCommandException.class);
+		@SuppressWarnings("unused")
 		CommandType actualCommand = interpreter.interpretCommand("display something");
 	}
 
@@ -100,6 +87,7 @@ public class EpiphanyInterpreterTestCases {
 	public void displayTwoHashtagsTest() throws IOException, ParseException, InvalidCommandException, ExitException{
 		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
 		thrown.expect(InvalidCommandException.class);
+		@SuppressWarnings("unused")
 		CommandType actualCommand = interpreter.interpretCommand("display #something#YOLO#Error");
 	}
 
@@ -107,6 +95,7 @@ public class EpiphanyInterpreterTestCases {
 	public void interpretExitTest() throws IOException, ParseException, InvalidCommandException, ExitException{
 		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();
 		thrown.expect(ExitException.class);
+		@SuppressWarnings("unused")
 		CommandType actualCommand = interpreter.interpretCommand("exit");
 	}
 
@@ -231,6 +220,7 @@ public class EpiphanyInterpreterTestCases {
 		assertEquals("Project Name", actualAddCommand.getProjectName());
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void addMiscTest() throws IOException, ParseException, InvalidCommandException, ExitException{
 		EpiphanyInterpreter interpreter = new EpiphanyInterpreter();

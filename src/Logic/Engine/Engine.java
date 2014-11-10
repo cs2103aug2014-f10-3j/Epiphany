@@ -17,24 +17,7 @@ import Logic.Exceptions.CancelDeleteException;
 import Logic.Exceptions.CancelEditException;
 import Logic.Interpreter.EpiphanyInterpreter;
 import Logic.Interpreter.UIHandler;
-<<<<<<< Updated upstream
-=======
-import Logic.Interpreter.CommandType.AddCommandType;
-import Logic.Interpreter.CommandType.CompleteCommandType;
-import Logic.Interpreter.CommandType.DeleteCommandType;
-import Logic.Interpreter.CommandType.DisplayCommandType;
-import Logic.Interpreter.CommandType.EditCommandType;
-import Logic.Interpreter.CommandType.SearchCommandType;
-import Logic.Interpreter.CommandType.UndoCommandType;
-import Logic.Interpreter.CommandType.RedoCommandType;
->>>>>>> Stashed changes
-import Logic.Interpreter.CommandType.CommandType;
-import Logic.Interpreter.CommandType.CompleteCommandType;
-import Logic.Interpreter.CommandType.AddCommandType;
-import Logic.Interpreter.CommandType.DisplayCommandType;
-import Logic.Interpreter.CommandType.DeleteCommandType;
-import Logic.Interpreter.CommandType.EditCommandType;
-import Logic.Interpreter.CommandType.SearchCommandType;
+import Logic.CommandType.*;
 import Storage.Writer;
 import Storage.Reader;
 

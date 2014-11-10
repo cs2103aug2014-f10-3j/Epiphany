@@ -201,6 +201,7 @@ public class CalculateCorrectDateTests {
 	
 	@Test
 	public void toFailTest() throws InvalidCommandException {
+		@SuppressWarnings("unused")
 		Calendar cal = Calendar.getInstance();
 		ArrayList<Date> dates = new ArrayList<Date>();
 		try{
@@ -415,6 +416,7 @@ public class CalculateCorrectDateTests {
 	
 	@Test
 	public void toFailWithTimeTest() throws InvalidCommandException {
+		@SuppressWarnings("unused")
 		Calendar cal = Calendar.getInstance();
 		ArrayList<Date> dates = new ArrayList<Date>();
 		try{

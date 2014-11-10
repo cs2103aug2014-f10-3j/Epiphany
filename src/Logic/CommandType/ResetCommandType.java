@@ -1,5 +1,5 @@
 //@author A0118905A
-package Logic.Interpreter.CommandType;
+package Logic.CommandType;
 /**
  * This is a class that can be instantiated to represent an reset command. 
  */

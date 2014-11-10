@@ -1,5 +1,5 @@
 //@author A0118905A
-package Logic.Interpreter.CommandType.Tests;
+package Logic.CommandType.Tests;
 
 import static org.junit.Assert.*;
 
@@ -7,7 +7,7 @@ import java.util.Calendar;
 
 import org.junit.Test;
 
-import Logic.Interpreter.CommandType.AddCommandType;
+import Logic.CommandType.AddCommandType;
 
 public class AddCommandTypeTestCases {
 

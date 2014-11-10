@@ -42,6 +42,7 @@ public class ShortIntervalDateConverter {
 		fromMatchers.add(new DateFormatMatcherTwo(new SimpleDateFormat("MMM dd'th'' from 'HH:mm")));
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void convert(String input, ArrayList<Date> d) throws InvalidCommandException {
 		//the format for short interval dates is "<date>from<HH:mm>to<HH:mm>" or "<date>"
 		d.clear();
