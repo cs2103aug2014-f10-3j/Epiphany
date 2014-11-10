@@ -1,3 +1,3 @@
 default
 CS2103
-cs2010
+cs2103

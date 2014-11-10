@@ -181,7 +181,6 @@ public class Project {
 		/**
 		 * This method changes the name of the Project.
 		 * @param projectName
-		 * @author amit
 		 */
 		public void setProjectName(String projectName) {
 			this.projectName = projectName;
@@ -198,7 +197,6 @@ public class Project {
 		 * @param items
 		 *            is the ArrayList of items that is inside this project
 		 * @throws IOException
-		 * @author A0119264E
 		 */
 		public void createNewFile() throws IOException {
 			writer.writeToFile();

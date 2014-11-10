@@ -1,3 +1,4 @@
+//@author A0118794R
 package Logic.Interpreter;
 
 import java.awt.FontFormatException;
@@ -11,9 +12,7 @@ import org.fusesource.jansi.AnsiConsole;
  * This is a singleton class that can be instantiated and used to perform
  * all display to the user interface.
  *
- * @author A011879R
  */
-
 
 public class UIHandler{
 
@@ -83,12 +82,10 @@ public class UIHandler{
 	}
 
 	public void printToDisplay(String toPrint, String color){
-
 		System.out.println(toPrint);
 	}
 
 	public void strikeThroughText(String input) {
-		//TODO
 		System.out.println("\033[9m" + input); // red when overdue
 		resetToDefault(); // to reset terminal to default system colour
 	}

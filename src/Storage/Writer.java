@@ -39,7 +39,6 @@ public class Writer {
 	 * @param interList
 	 * @param floatList
 	 * @throws IOException
-	 * @author amit
 	 */
 	public void writeToFile() throws IOException {
 		File file = new File("../Epiphany/src/Storage/Projects/" + fileName);

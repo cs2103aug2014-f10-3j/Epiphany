@@ -1,7 +1,5 @@
+//@author A0118794R-unused
 package Archived.GUI;
-
-
-
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -11,10 +9,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
-/**
- * Unused
- * @author A0118794R
- */
+
 public class GUIController {
 
 	@FXML private TextArea displayArea;

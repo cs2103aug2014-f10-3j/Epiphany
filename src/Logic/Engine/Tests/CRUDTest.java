@@ -18,7 +18,6 @@ import Logic.CommandType.*;
  *
  */
 
-
 public class CRUDTest {
 	Engine E;
 	private static final String TASK_DESCRIPTION_FLOATING = "finish tutorial 5";
@@ -35,6 +34,7 @@ public class CRUDTest {
 		E = Engine.getInstance();
 	}
 	
+	//@author A0118794R
 	public void taskIsEquals(Task Actual, String name, Date deadLine, Date startDate, String projectName, Boolean isCompleted) {
 		assertEquals(Actual.getTaskDescription(), name);
 		assertEquals(Actual.getDeadline(), deadLine);
@@ -146,11 +146,7 @@ public class CRUDTest {
 	}
 	
 	// Testing add with projects
-	/**
-	 * @author A0118794R
-	 * @throws IOException
-	 * @throws ParseException
-	 */
+	//@author A0118794R
 	@SuppressWarnings("static-access")
 	@Test
 	public void testProjectFloating() throws IOException, ParseException {
@@ -164,7 +160,6 @@ public class CRUDTest {
 		taskIsEquals(Actual, TASK_DESCRIPTION_2, null, null, "cs2010", false);
 	}
 	
-		
 
 	/******************************** Testing of Delete ********************************/
 	//@author A0110924R

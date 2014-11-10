@@ -99,9 +99,8 @@ public class Engine {
 	 * Initializes the Engine. It also populates the engine with the files that
 	 * are contained within storage. 
 	 */
-	
+	//@author A0118794R
 	private void run() throws IOException, ParseException {
-
 		new ASCIIArt().generateArt("EPIPHANY");
 		UIHandler.getInstance().printToDisplay(MESSAGE_WELCOME);
 		initializeDS();
@@ -110,8 +109,9 @@ public class Engine {
 
 	/**
 	 * Initializes the main data structures to be used by engine. 
-	 * @author A0119264E
+	 * 
 	 */
+	//@author A0118794R
 	private void initializeDS() throws IOException, ParseException {
 		projectsList = new ArrayList<Project>();
 		projectNames = new ArrayList<String>();
@@ -131,12 +131,9 @@ public class Engine {
 			ParseException {
 
 		int noOfProjects = countLines("projectMasterList");
-
 		if (noOfProjects == 0) {
-
 			createDefault(); // Default project is created.
 		} else {
-
 			populateProjectNames();
 			populateProjectsWithTasks();
 		}
@@ -191,7 +188,7 @@ public class Engine {
 	}
 
 	/********************** Command Types Filter ***********************************/
-
+	//@author A0118794R
 	public enum CommandTypesEnum {
 		ADD, DISPLAY, DELETE, RESET, EXIT, INVALID, SEARCH, EDIT, UNDO, REDO, COMPLETE
 	};
@@ -199,8 +196,9 @@ public class Engine {
 	/**
 	 * Takes a command type input, as is given by the interpreter and returns
 	 * the appropriate case to be executed. 
-	 * @author A0118794R
+	 * 
 	 */
+	//@author A0118794R
 	private CommandTypesEnum determineCommandType(CommandType commandType) {
 		if (commandType == null)
 			throw new Error(MESSAGE_ERROR_COMMAND_TYPE_NULL);
@@ -230,8 +228,8 @@ public class Engine {
 	/**
 	 * This method helps to execute the command as is expected from the above
 	 * method.
-	 * @author A0118794R
 	 */
+	//@author A0118794R
 	public void executeCommand(CommandType userCommand) throws IOException,
 			ParseException {
 		CommandTypesEnum commandType = determineCommandType(userCommand);
@@ -289,7 +287,6 @@ public class Engine {
 	}
 
 	/********************** Add Methods ***********************************/
-
 	/**
 	 * This method helps to check if the task being entered is a duplicate and
 	 * subsequently adds it to the appropriate project. 
@@ -763,9 +760,9 @@ public class Engine {
 	/**
 	 * This method marks a task as complete and subsequently removes it from the
 	 * project.
-	 * @author A0118794R
+	 * 
 	 */
-	
+	//@author A0118794R
 	private void checkCompleteTask(String input) throws IOException {
 		Task mostRecentTask = new Task();
 		ArrayList<Task> tasksToBeCompleted = new ArrayList<Task>();

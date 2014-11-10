@@ -18,7 +18,6 @@ import Logic.Engine.Task;
 public class ProjectTestCases {
 	//To test, make an actual project and test it against an expected set of results.
 	
-	
 	/*********Test Attributes*******************/
 	private ArrayList<Task> deadLineListExpected;
 	private ArrayList<Task> intervalListExpected;
