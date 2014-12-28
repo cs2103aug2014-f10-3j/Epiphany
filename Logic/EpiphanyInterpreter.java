@@ -154,9 +154,15 @@ public class EpiphanyInterpreter {
 						int date = Integer.parseInt(stringDate);
 						if(date >= today.getDate()){
 							// in within same month.
-							return "Date: " + date + " " + months.get(today.getMonth() + 1) + " " + (today.getYear() + 1900); // corner case from jan to dec.
+							return "Date: " + date + " " + months.get(today.getMonth() + 1) + " " + (today.getYear() + 1900); 
 						} else{
-							return "Date: " + date + " " + months.get(today.getMonth() + 2) + " " + (today.getYear() + 1900);
+
+							if((today.getMonth() + 2) > 12){
+								return "Date: " + date + " " + months.get(1) + " " + (today.getYear() + 1901);// corner case from jan to dec.
+							}else{
+								return "Date: " + date + " " + months.get(today.getMonth() + 2) + " " + (today.getYear() + 1900);// corner case from jan to dec.
+							}
+							
 						}
 					} else {
 						return "Date: " + ans[0];
@@ -167,16 +173,35 @@ public class EpiphanyInterpreter {
 				// number then month or
 				// month then number
 				// need to check if its a month or date.
-				try{
-					int date = Integer.parseInt(ans[0]);
-					String month = ans[1];
-					return "Date: " + date + " " + month + " " + (today.getYear() + 1900);
-				}catch(NumberFormatException e){
-					//not a number its a string, i.e month.
-					String month = ans[0];
-					String date = ans[1];
-					return "Date: " + date + " " + month + " " + (today.getYear() + 1900);
-				}
+					String date;
+					String month;
+
+					if(isNumericDate(ans[0])){
+						date = ans[0];
+						month = ans[1];
+						return "Date: " + date + " " + month + " " + (today.getYear() + 1900);
+					}else{
+						//not a number its a string, i.e month.
+						// or its still a number, like 6th
+						
+
+						if((ans[0]).matches(".*\\d+.*")){
+							//contains a number.
+							//6th
+							date = extractDate(ans[0]);
+							month = ans[1];
+							
+							return "Date: " + date + " " + month + " " + (today.getYear() + 1900);
+						} else{
+							date = extractDate(ans[1]);
+							month = ans[0];
+						
+							return "Date: " + date + " " + month + " " + (today.getYear() + 1900);
+						}
+
+
+						
+					}
 			} else if(l == 3){
 				// usually 3 part date will be typed as
 				// 16-Jan-2014
